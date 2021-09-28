@@ -1,0 +1,15 @@
+listen:
+  host: 0.0.0.0
+
+storage:
+  dir: /mnt/notebooks
+  mounts:
+    examples:
+      dir: examples
+      
+spark:
+  properties:
+    spark.hadoop.javax.jdo.option.ConnectionURL: "jdbc:derby://metastore:1527/db;create=true"
+    spark.hadoop.javax.jdo.option.ConnectionDriverName: "org.apache.derby.jdbc.ClientDriver"
+    spark.hadoop.javax.jdo.option.ConnectionUserName: "sa"
+    spark.hadoop.javax.jdo.option.ConnectionPassword: "1234"

@@ -14,8 +14,7 @@ just follow "Run with Docker".
 
 ### Run docker image
 
-
-    docker run --rm -v ${PWD}/data:/mnt/data -v ${PWD}/config:/mnt/config sdl-gs-part-1:latest -c /mnt/config --feed-sel download.*
+    docker run --rm -v ${PWD}/data:/mnt/data -v ${PWD}/config:/mnt/config --network=spark sdl-gs-part-1:latest -c /mnt/config --feed-sel compute.*
 
 ## Run with Maven
 1. Set the following environment variable: `HADOOP_HOME=/path/to/hadoop` (see https://github.com/smart-data-lake/smart-data-lake).

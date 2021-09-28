@@ -1,21 +1,4 @@
-<!--
-  ~ Smart Data Lake Examples - Build your data lake the smart way.
-  ~
-  ~ Copyright © 2019 ELCA Informatique SA (<https://www.elca.ch>)
-  ~
-  ~ This program is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
-  -->
+<!-- this pom is used to collect all SDL dependencies to add them to polynote -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -34,15 +17,29 @@
 		<version>2.1.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>getting-started</artifactId>
-	<version>1.0</version>
-
-	<name>SDL Getting Started</name>
+	<artifactId>sdl-lib</artifactId>
 
 	<properties>
+
 		<!-- default scala version - use predefined maven profiles to override -->
 		<scala.minor.version>2.12</scala.minor.version>
 		<scala.version>${scala.minor.version}.12</scala.version>
+
+		<!-- mark dependencies included in spark distribution as provided -->
+		<scala.deps.scope>provided</scala.deps.scope>
+		<spark.deps.scope>provided</spark.deps.scope>
+		<hadoop.deps.scope>provided</hadoop.deps.scope>
+		<flume.deps.scope>provided</flume.deps.scope>
+		<hive.deps.scope>provided</hive.deps.scope>
+		<hive.parquet.scope>provided</hive.parquet.scope>
+		<hive.storage.scope>provided</hive.storage.scope>
+		<hive.common.scope>provided</hive.common.scope>
+		<hive.llap.scope>provided</hive.llap.scope>
+		<hive.serde.scope>provided</hive.serde.scope>
+		<hive.shims.scope>provided</hive.shims.scope>
+		<orc.deps.scope>provided</orc.deps.scope>
+		<parquet.deps.scope>provided</parquet.deps.scope>
+
 	</properties>
 
 	<repositories>
@@ -57,51 +54,7 @@
 	</repositories>
 
 	<build>
-		<sourceDirectory>src/main/scala</sourceDirectory>
-		<outputDirectory>target/classes</outputDirectory>
 		<plugins>
-			<!-- Compiles Scala sources. -->
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-			</plugin>
-
-			<!-- Copies files in resources folders to target folder. -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-			</plugin>
-
-			<!-- Creates the jar without dependencies -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>io.smartdatalake.app.LocalSmartDataLakeBuilder</mainClass>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Version>${project.version}</Implementation-Version>
-						</manifestEntries>
-					</archive>
-					<excludes>
-						<exclude>log4j.properties</exclude> <!-- Logging configuration should be left to user. -->
-						<exclude>${project.artifactId}*.jar</exclude> <!-- avoid "Error assembling JAR" because of already existing artifact jar -->
-						<exclude>*.conf</exclude> <!-- no SDL configuration files - they must be provided by the user separately -->
-					</excludes>
-				</configuration>
-			</plugin>
-
-			<!-- check for dependency version conflicts -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-			</plugin>
-
 			<!-- copy dependencies to target/lib folder -->
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -113,11 +66,11 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<includeScope>runtime</includeScope>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
 
@@ -180,53 +133,11 @@
 			<groupId>org.datanucleus</groupId>
 			<artifactId>datanucleus-api-jdo</artifactId>
 			<version>4.1.4</version>
-			<scope>${spark.deps.scope}</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derbyclient</artifactId>
 			<version>${derby.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-
-		<!-- TEST dependencies -->
-		<dependency>
-			<groupId>org.scalatest</groupId>
-			<artifactId>scalatest_${scala.minor.version}</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.smartdatalake</groupId>
-			<artifactId>sdl-core_${scala.minor.version}</artifactId>
-			<version>${project.parent.version}</version>
-			<classifier>test-jar</classifier>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.sshd</groupId>
-			<artifactId>sshd-sftp</artifactId>
-			<version>${sshd.test.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.sshd</groupId>
-			<artifactId>sshd-common</artifactId>
-			<version>${sshd.test.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.sshd</groupId>
-			<artifactId>sshd-core</artifactId>
-			<version>${sshd.test.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-standalone</artifactId>
-			<version>2.25.1</version>
-			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
