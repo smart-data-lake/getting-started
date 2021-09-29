@@ -6,9 +6,13 @@ There are multiple ways to run the example code.
 If you are coming from the getting started guide, 
 just follow "Run with Docker".
 
-## Run with Docker
+## Run with Docker and Docker-Compose
 
-### Build docker image
+### Start Polynote notebooks and Metastore database
+
+    docker-compose up
+
+### Build getting-started docker image
 
     docker build -t sdl-gs-part-1 .
 
