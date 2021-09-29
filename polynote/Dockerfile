@@ -19,10 +19,13 @@ RUN mvn -f /home/app/sdl-lib-pom.xml -Pfat-jar package
 #
 FROM polynote/polynote:${POLYNOTE_VERSION}-${SCALA_VERSION}
 
-ARG SCALA_VERSION="2.12" // Arguments after `FROM` are reset
-ARG SPARK_VERSION="3.1.2" // check available versions at https://spark.apache.org/downloads.html
-ARG HADOOP_VERSION="3.2" // check available versions at https://spark.apache.org/downloads.html
-ARG DERBY_VERSION="10.12.1.1" // derby version used by this spark version - we need to load additional derbyclient jar to connect to remote metastore
+# Arguments after `FROM` are reset
+ARG SCALA_VERSION="2.12"
+# check available versions at https://spark.apache.org/downloads.html
+ARG SPARK_VERSION="3.1.2"
+ARG HADOOP_VERSION="3.2"
+# derby version used by this spark version - we need to load additional derbyclient jar to connect to remote metastore
+ARG DERBY_VERSION="10.12.1.1"
 
 WORKDIR /opt
 
