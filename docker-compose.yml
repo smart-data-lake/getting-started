@@ -6,7 +6,7 @@ services:
     ports:
       - "1527:1527"
     volumes:
-      - "./data/_metastore:/mnt/database"
+      - "/mnt/c/Users/pag/Documents/SDL_local/run/data/_metastore:/mnt/database"
     environment:
       DB_DIR: "/mnt/database"
 
@@ -17,13 +17,13 @@ services:
       - metastore
     command: ["--config", "/opt/polynote/config.yml"]
     ports:
-      - "8192:8192"
+      - "8080:8192"
       - "4040-4050:4040-4050"
     volumes:
       - "./polynote/config.yml:/opt/polynote/config.yml"
       - "./polynote/notebooks:/mnt/notebooks"
-      - "./data:/mnt/data"
-      - "./config:/mnt/config" # SDL config to use DataObjects in notebooks
+      - "/mnt/c/Users/pag/Documents/SDL_local/run/data:/mnt/data"
+      - "/mnt/c/Users/pag/Documents/SDL_local/run/config:/mnt/config" # SDL config to use DataObjects in notebooks
 
 networks:
   default:

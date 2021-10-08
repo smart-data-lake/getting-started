@@ -33,6 +33,7 @@ USER root
 
 # install spark
 COPY install_spark.sh .
+RUN chmod 777 ./install_spark.sh
 RUN ./install_spark.sh && rm ./install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
