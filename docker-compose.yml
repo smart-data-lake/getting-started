@@ -6,7 +6,7 @@ services:
     ports:
       - "1527:1527"
     volumes:
-      - "/mnt/c/Users/pag/Documents/SDL_local/run/data/_metastore:/mnt/database"
+      - "./data/_metastore:/mnt/database"
     environment:
       DB_DIR: "/mnt/database"
 
