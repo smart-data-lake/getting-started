@@ -8,8 +8,13 @@ just follow "Run with Docker".
 
 ## Run with Docker and Docker-Compose
 
-### Start Polynote notebooks and Metastore database
+### Build before first start
 
+    mkdir -p ./data/_metastore
+    docker-compose build
+
+### Start Polynote notebooks and Metastore database
+ 
     docker-compose up
 
 ### Build getting-started docker image

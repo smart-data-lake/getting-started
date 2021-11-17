@@ -4,7 +4,8 @@
 # - SDL libraries (to use SDL in notebooks)
 
 ARG POLYNOTE_VERSION=0.4.2
-ARG SCALA_VERSION="2.12" // check available versions at https://spark.apache.org/downloads.html
+# check available versions at https://spark.apache.org/downloads.html
+ARG SCALA_VERSION="2.12"
 
 #
 # Build sdl-lib stage
@@ -27,13 +28,17 @@ ARG HADOOP_VERSION="3.2"
 # derby version used by this spark version - we need to load additional derbyclient jar to connect to remote metastore
 ARG DERBY_VERSION="10.12.1.1"
 
-WORKDIR /opt
-
 USER root
+
+WORKDIR /opt
 
 # install spark
 COPY install_spark.sh .
-RUN ./install_spark.sh && rm ./install_spark.sh
+RUN chmod +x ./install_spark.sh
+RUN ls -l
+RUN cat install_spark.sh
+RUN sh -c install_spark.sh
+#RUN rm ./install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 

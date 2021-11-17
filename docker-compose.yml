@@ -1,6 +1,6 @@
 version: '3.2'
 services:
-  metastore:
+  sdl-metastore:
     build:
       context: ./metastore
     ports:
@@ -10,7 +10,7 @@ services:
     environment:
       DB_DIR: "/mnt/database"
 
-  polynote:
+  sdl-polynote:
     build:
       context: ./polynote
     depends_on:
@@ -25,6 +25,3 @@ services:
       - "./data:/mnt/data"
       - "./config:/mnt/config" # SDL config to use DataObjects in notebooks
 
-networks:
-  default:
-    name: spark
