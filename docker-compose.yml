@@ -22,8 +22,9 @@ services:
     volumes:
       - "./polynote/config.yml:/opt/polynote/config.yml"
       - "./polynote/notebooks:/mnt/notebooks"
-      - "/mnt/c/Users/pag/Documents/SDL_local/run/data:/mnt/data"
-      - "/mnt/c/Users/pag/Documents/SDL_local/run/config:/mnt/config" # SDL config to use DataObjects in notebooks
+      - "/mnt/c/Users/pag/Documents/GVB/Data-Hub/target/data/input:/mnt/data_input" # input data provided by project (outside lake)
+      - "./data:/mnt/data"  # lake storage
+      - "/mnt/c/Users/pag/Documents/GVB/Data-Hub/SmartDataLake/src/main/resources:/mnt/config" # SDL config to use DataObjects in notebooks
 
 networks:
   default:
