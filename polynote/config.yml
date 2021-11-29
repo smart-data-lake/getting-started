@@ -13,3 +13,5 @@ spark:
     spark.hadoop.javax.jdo.option.ConnectionDriverName: "org.apache.derby.jdbc.ClientDriver"
     spark.hadoop.javax.jdo.option.ConnectionUserName: "sa"
     spark.hadoop.javax.jdo.option.ConnectionPassword: "1234"
+    spark.sql.extensions: "io.delta.sql.DeltaSparkSessionExtension"
+    spark.sql.catalog.spark_catalog: "org.apache.spark.sql.delta.catalog.DeltaCatalog"
