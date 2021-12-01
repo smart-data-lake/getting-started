@@ -3,7 +3,7 @@
 # - a spark distribution (because polynote needs more than spark java artifacts)
 # - SDL libraries (to use SDL in notebooks)
 
-ARG POLYNOTE_VERSION=0.4.2
+ARG POLYNOTE_VERSION=0.4.3
 # check available versions at https://spark.apache.org/downloads.html
 ARG SCALA_VERSION="2.12"
 
@@ -13,7 +13,7 @@ ARG SCALA_VERSION="2.12"
 FROM maven:3.6.0-jdk-11-slim AS build
 COPY sdl-lib-pom.xml /home/app/
 # profile fat-jar includes only sdl-libraries, but not spark-libraries.
-RUN mvn -f /home/app/sdl-lib-pom.xml -Pfat-jar package
+RUN mvn -f /home/app/sdl-lib-pom.xml -Pfat-jar,hadoop-3.2,scala-2.12 package
 
 #
 # Package stage
@@ -34,11 +34,7 @@ WORKDIR /opt
 
 # install spark
 COPY install_spark.sh .
-RUN chmod +x ./install_spark.sh
-RUN ls -l
-RUN cat install_spark.sh
-RUN sh -c install_spark.sh
-#RUN rm ./install_spark.sh
+RUN ./install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 

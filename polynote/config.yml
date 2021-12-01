@@ -3,9 +3,6 @@ listen:
 
 storage:
   dir: /mnt/notebooks
-  mounts:
-    examples:
-      dir: examples
       
 spark:
   properties:

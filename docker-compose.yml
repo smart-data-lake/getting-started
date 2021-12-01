@@ -1,6 +1,6 @@
 version: '3.2'
 services:
-  sdl-metastore:
+  metastore:
     build:
       context: ./metastore
     ports:
@@ -10,7 +10,7 @@ services:
     environment:
       DB_DIR: "/mnt/database"
 
-  sdl-polynote:
+  polynote:
     build:
       context: ./polynote
     depends_on:
