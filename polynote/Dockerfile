@@ -34,7 +34,7 @@ WORKDIR /opt
 
 # install spark
 COPY install_spark.sh .
-RUN ./install_spark.sh
+RUN chmod +x install_spark.sh && ./install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
