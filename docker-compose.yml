@@ -18,10 +18,9 @@ services:
     command: ["--config", "/opt/polynote/config.yml"]
     ports:
       - "8192:8192"
-      - "4040-4050:4040-4050"
+      - "4140-4199:4140-4199"
     volumes:
       - "./polynote/config.yml:/opt/polynote/config.yml"
       - "./polynote/notebooks:/mnt/notebooks"
       - "./data:/mnt/data"
       - "./config:/mnt/config" # SDL config to use DataObjects in notebooks
-
