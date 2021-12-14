@@ -13,9 +13,11 @@ ADD entrypoint.sh /entrypoint.sh
 
 WORKDIR /opt
 
-RUN \
-chmod +x /entrypoint.sh && \
-wget -O derby.tgz https://dlcdn.apache.org/db/derby/db-derby-${DERBY_VERSION}/db-derby-${DERBY_VERSION}-lib.tar.gz && \
+# convert line-endings to unix format of entry point
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
+
+# download and extract derby
+RUN wget -O derby.tgz https://dlcdn.apache.org/db/derby/db-derby-${DERBY_VERSION}/db-derby-${DERBY_VERSION}-lib.tar.gz && \
 tar -xzf derby.tgz && mv db-derby-${DERBY_VERSION}-lib derby && rm derby.tgz
 
 EXPOSE 1527 

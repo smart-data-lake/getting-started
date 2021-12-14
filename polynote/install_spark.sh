@@ -19,7 +19,7 @@ fi
 SPARK_NAME="spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}"
 
 pushd /opt
-wget -q "https://dlcdn.apache.org/spark/${SPARK_VERSION_DIR}/${SPARK_NAME}.tgz"
+wget --progress=dot:giga "https://dlcdn.apache.org/spark/${SPARK_VERSION_DIR}/${SPARK_NAME}.tgz"
 tar zxpf "${SPARK_NAME}.tgz"
 mv "${SPARK_NAME}" spark
 rm "${SPARK_NAME}.tgz"

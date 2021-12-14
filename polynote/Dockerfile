@@ -34,7 +34,8 @@ WORKDIR /opt
 
 # install spark
 COPY install_spark.sh .
-RUN chmod +x install_spark.sh && ./install_spark.sh
+# convert line-endings to unix format and start script to install spark
+RUN sed -i 's/\r$//' install_spark.sh && chmod +x install_spark.sh && ./install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
