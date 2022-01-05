@@ -39,3 +39,8 @@ Note: To execute a single example:
    - Working directory: `/path/to/sdl-examples/target` or just `target`
    - Environment variables:
       - `HADOOP_HOME=/path/to/hadoop` (see https://github.com/smart-data-lake/smart-data-lake)
+
+-- local
+docker build . --tag sdl:latest
+
+docker run --rm -v ${PWD}/data:/mnt/data -v /mnt/c/Users/pag/Documents/GVB/Data-Hub/SmartDataLake/data/input:/mnt/data_input -v  /mnt/c/Users/pag/Documents/GVB/Data-Hub/SmartDataLake/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl:latest -c /mnt/config/application,/mnt/local_config --feed-sel .*onetimecollact --state-path /mnt/data/state --name gvbstreaming  > log.log 2>&1
