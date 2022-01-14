@@ -40,11 +40,18 @@ Note: To execute a single example:
    - Environment variables:
       - `HADOOP_HOME=/path/to/hadoop` (see https://github.com/smart-data-lake/smart-data-lake)
 
--- local
-docker build . --tag sdl:latest
 
+------
 
 in ~/.bashrc, define the following:
 export PRJ_PATH="/mnt/c/Users/..your..project..path/SmartDataLake"
 
-docker run --rm -v ${PWD}/data:/mnt/data -v ${PRJ_PATH}/data/input:/mnt/data_input -v  ${PRJ_PATH}/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl:latest -c /mnt/config/application,/mnt/local_config --feed-sel .* --state-path /mnt/data/state --name myapp > log.log 2>&1
+create the empty ./data directory
+
+
+docker-compose up
+
+docker build . --tag sdl_run:latest
+
+
+docker run --rm -v ${PWD}/data:/mnt/data -v ${PRJ_PATH}/data/input:/mnt/data_input -v  ${PRJ_PATH}/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl_run:latest -c /mnt/config/application,/mnt/local_config --feed-sel .*myfeed.* --state-path /mnt/data/state --name myapp > log.log 2>&1
