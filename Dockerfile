@@ -17,4 +17,5 @@ FROM openjdk:11-jre-slim
 COPY --from=build /home/app/target/SDL-1.0.jar /opt/app/SDL.jar
 COPY --from=build /home/app/target/lib/*.jar /opt/app/lib/
 COPY project.jar /opt/app/lib/project.jar
+COPY sqljdbc/mssql-jdbc-9.4.1.jre11.jar /opt/app/lib/
 ENTRYPOINT ["java","-Dlog4j.configuration=file:///mnt/config/log4j.properties","-Duser.dir=/mnt/data","-cp","/opt/app/project.jar:/opt/app/lib/*:/mnt/config/log4j.properties","io.smartdatalake.app.LocalSmartDataLakeBuilder"]

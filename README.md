@@ -43,4 +43,8 @@ Note: To execute a single example:
 -- local
 docker build . --tag sdl:latest
 
-docker run --rm -v ${PWD}/data:/mnt/data -v /mnt/c/Users/pag/Documents/GVB/Data-Hub/SmartDataLake/data/input:/mnt/data_input -v  /mnt/c/Users/pag/Documents/GVB/Data-Hub/SmartDataLake/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl:latest -c /mnt/config/application,/mnt/local_config --feed-sel .*onetimecollact --state-path /mnt/data/state --name gvbstreaming  > log.log 2>&1
+
+in ~/.bashrc, define the following:
+export PRJ_PATH="/mnt/c/Users/..your..project..path/SmartDataLake"
+
+docker run --rm -v ${PWD}/data:/mnt/data -v ${PRJ_PATH}/data/input:/mnt/data_input -v  ${PRJ_PATH}/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl:latest -c /mnt/config/application,/mnt/local_config --feed-sel .* --state-path /mnt/data/state --name myapp > log.log 2>&1
