@@ -1,57 +1,42 @@
-# Code for Getting Started With Smart DataLake
-## Introduction
-This the code used in the Step-By-Step Walk Through Guide to get started with Smart Data Lake Builder (SDL).
 
-There are multiple ways to run the example code.
-If you are coming from the getting started guide, 
-just follow "Run with Docker".
+
+# Local Development - Run Environment
+## Introduction
+This configuration allows to run locally the Smart Data Lake Builder, including project specific jar, while supporting data analysis through Polynote.
+
+
+### in WSL2 Ubuntu:
+
+    in ~/.bashrc, define the following to refer to your intellij project configured in windows:
+    export PRJ_PATH="/mnt/c/Users/..your..intellij..project..path/SmartDataLake"
+
+    in the following, we will assume that you have your SDLB application configuration in  ${PRJ_PATH}/src/main/resources/application    
+            (without the local configuration; local configuration will be defined by the predefined file ./local_config/docker_local.conf )
+    we will also assume that your input data will be at ${PRJ_PATH}/data/input
+
+
+
+    create a run directory in Ubuntu, navigate to it and
+
+    ../run_dir> git clone ...
+
 
 ## Run with Docker and Docker-Compose
-
 ### Start Polynote notebooks and Metastore database
 
-    docker-compose up
+    ./run_dir> docker-compose up
 
-### Build getting-started docker image
-
-    docker build -t sdl-gs-part-1 .
-
-### Run docker image
-
-    docker run --rm -v ${PWD}/data:/mnt/data -v ${PWD}/config:/mnt/config --network=spark sdl-gs-part-1:latest -c /mnt/config --feed-sel compute.*
-
-## Run with Maven
-1. Set the following environment variable: `HADOOP_HOME=/path/to/hadoop` (see https://github.com/smart-data-lake/smart-data-lake).
-1. Change directory to project root.
-1. Execute all feeds: `mvn clean verify`
-
-Note: To execute a single example:
-```
- mvn clean package exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel <regex-pattern> --config <path-to-projectdir>/src/main/resources" -Dexec.workingdir="target"
-```
-(requires Maven 3.3.1 or later)
-
-## Run in IntelliJ (on Windows)
-1. Ensure, that the directory `src/main/resources` is configured as a resource directory in IntelliJ (File - Project Structure - Modules).
-1. Configure and run the following run configuration in IntelliJ IDEA:
-   - Main class: `io.smartdatalake.app.LocalSmartDataLakeBuilder`
-   - Program arguments: `--feed-sel <regex-feedname-selector> --config $ProjectFileDir$/src/main/resources`
-   - Working directory: `/path/to/sdl-examples/target` or just `target`
-   - Environment variables:
-      - `HADOOP_HOME=/path/to/hadoop` (see https://github.com/smart-data-lake/smart-data-lake)
+        (the started services will appear among your containers in docker desktop; for a next session, you can start the service set from there)
 
 
-------
+### Build sdl_run docker image
 
-in ~/.bashrc, define the following:
-export PRJ_PATH="/mnt/c/Users/..your..project..path/SmartDataLake"
+    put your project specific jar as project.jar in your run directory (lightweight version), and then:
 
-create the empty ./data directory
-
-
-docker-compose up
-
-docker build . --tag sdl_run:latest
+    ./run_dir> docker build . --tag sdl_run:latest
 
 
-docker run --rm -v ${PWD}/data:/mnt/data -v ${PRJ_PATH}/data/input:/mnt/data_input -v  ${PRJ_PATH}/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl_run:latest -c /mnt/config/application,/mnt/local_config --feed-sel .*myfeed.* --state-path /mnt/data/state --name myapp > log.log 2>&1
+### Run sdl_run image
+
+    docker run --rm -v ${PWD}/data:/mnt/data -v ${PRJ_PATH}/data/input:/mnt/data_input -v  ${PRJ_PATH}/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl_run:latest -c /mnt/config/application,/mnt/local_config --feed-sel .*myfeed.* --state-path /mnt/data/state --name myapp > log.log 2>&1
+

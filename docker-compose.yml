@@ -22,6 +22,7 @@ services:
     volumes:
       - "./polynote/config.yml:/opt/polynote/config.yml"
       - "./polynote/notebooks:/mnt/notebooks"
+      - "./data/spark-warehouse:/opt/polynote/spark-warehouse" # managed tables storage
       - "${PRJ_PATH}/data/input:/mnt/data_input" # input data provided by project (outside lake)
       - "./data:/mnt/data"  # lake storage
       - "${PRJ_PATH}/src/main/resources:/mnt/config" # SDL config to use DataObjects in notebooks

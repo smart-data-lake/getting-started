@@ -1,5 +1,5 @@
 metastore_db
-data/output
+data/*
 .cache-*
 target
 venv
