@@ -31,12 +31,12 @@ This configuration allows to run locally the Smart Data Lake Builder, including 
 
 ### Build sdl_run docker image
 
-    put your project specific jar as project.jar in your run directory (lightweight version), and then:
+    open another shell and put your project specific jar as project.jar in your ./run_dir> directory (lightweight version), and then:
 
     ./run_dir> docker build . --tag sdl_run:latest
 
 
 ### Run sdl_run image
 
-    docker run --rm -v ${PWD}/data:/mnt/data -v ${PRJ_PATH}/data/input:/mnt/data_input -v  ${PRJ_PATH}/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl_run:latest -c /mnt/config/application,/mnt/local_config --feed-sel .*myfeed.* --state-path /mnt/data/state --name myapp > log.log 2>&1
+    docker run --rm -v ${PWD}/data:/mnt/data -v ${PRJ_PATH}/data/input:/mnt/data_input -v  ${PRJ_PATH}/src/main/resources:/mnt/config -v ${PWD}/local_config:/mnt/local_config --network=spark sdl_run:latest -c /mnt/config/application,/mnt/local_config --feed-sel myfeed --state-path /mnt/data/state --name myapp > log.log 2>&1
 

@@ -39,7 +39,7 @@ ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
 # copy sdl libraries
-COPY --from=build /home/app/target/lib/*.jar $SPARK_HOME/jars      //    ??USEFUL??
+COPY --from=build /home/app/target/lib/*.jar $SPARK_HOME/jars
 
 # switch to non-root user
 USER ${NB_USER}
