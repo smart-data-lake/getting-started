@@ -3,10 +3,11 @@ services:
   metastore:
     build:
       context: ./metastore
+    user: root      
     ports:
       - "1527:1527"
     volumes:
-      - "./data/_metastore:/mnt/database"
+      - "./data/_metastore:/mnt/database:Z"
     environment:
       DB_DIR: "/mnt/database"
 
@@ -16,16 +17,17 @@ services:
     depends_on:
       - metastore
     command: ["--config", "/opt/polynote/config.yml"]
+    user: root
     ports:
       - "8080:8192"
       - "4040-4050:4040-4050"
     volumes:
-      - "./polynote/config.yml:/opt/polynote/config.yml"
-      - "./polynote/notebooks:/mnt/notebooks"
-      - "./data/spark-warehouse:/opt/polynote/spark-warehouse" # managed tables storage
-      - "${PRJ_PATH}/data/input:/mnt/data_input" # input data provided by project (outside lake)
-      - "./data:/mnt/data"  # lake storage
-      - "${PRJ_PATH}/src/main/resources:/mnt/config" # SDL config to use DataObjects in notebooks
+      - "./polynote/config.yml:/opt/polynote/config.yml:Z"
+      - "./polynote/notebooks:/mnt/notebooks:Z"
+      - "./data/spark-warehouse:/opt/polynote/spark-warehouse:Z" # managed tables storage
+      - "${PRJ_PATH}/data/input:/mnt/data_input:Z" # input data provided by project (outside lake)
+      - "./data:/mnt/data:Z"  # lake storage
+      - "${PRJ_PATH}/src/main/resources:/mnt/config:Z" # SDL config to use DataObjects in notebooks
 
 networks:
   default:

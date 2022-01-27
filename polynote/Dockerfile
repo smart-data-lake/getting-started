@@ -4,12 +4,13 @@
 # - SDL libraries (to use SDL in notebooks)
 
 ARG POLYNOTE_VERSION=0.4.2
-ARG SCALA_VERSION="2.12" // check available versions at https://spark.apache.org/downloads.html
+ARG SCALA_VERSION="2.12"
+                     # check available versions at https://spark.apache.org/downloads.html
 
 #
 # Build sdl-lib stage
 #
-FROM maven:3.6.0-jdk-11-slim AS build
+FROM docker.io/maven:3.6.0-jdk-11-slim AS build
 COPY sdl-lib-pom.xml /home/app/
 # profile fat-jar includes only sdl-libraries, but not spark-libraries.
 RUN mvn -f /home/app/sdl-lib-pom.xml -Pfat-jar package
@@ -17,7 +18,7 @@ RUN mvn -f /home/app/sdl-lib-pom.xml -Pfat-jar package
 #
 # Package stage
 #
-FROM polynote/polynote:${POLYNOTE_VERSION}-${SCALA_VERSION}
+FROM docker.io/polynote/polynote:${POLYNOTE_VERSION}-${SCALA_VERSION}
 
 # Arguments after `FROM` are reset
 ARG SCALA_VERSION="2.12"
