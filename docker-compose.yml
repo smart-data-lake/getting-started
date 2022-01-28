@@ -3,7 +3,7 @@ services:
   metastore:
     build:
       context: ./metastore
-    user: root      
+    user: root    # TODO: make it work with non-privileged user 
     ports:
       - "1527:1527"
     volumes:
@@ -17,7 +17,7 @@ services:
     depends_on:
       - metastore
     command: ["--config", "/opt/polynote/config.yml"]
-    user: root
+    user: root    # TODO: make it work with non-privileged user 
     ports:
       - "8080:8192"
       - "4040-4050:4040-4050"
