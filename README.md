@@ -22,6 +22,10 @@ It assumes you have installed podman and podman-compose on WSL2 Ubuntu (quite ea
 
 
 ## Run with Podman and Podman-Compose
+
+### grant necessary write accesses to polynote's polly user
+    ../run_dir> ./grant_access_to_shares.sh
+
 ### Start Polynote notebooks and Metastore database
 
     ./run_dir> podman-compose up
