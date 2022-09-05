@@ -378,14 +378,6 @@ Task: fix issue
                   └─────────────────┘
 ```
 > switch lecturer
-## Automatic Tests
-runSimulation -> unit with synthetical DataFrames
-[Unit Test in SDLB](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/scala/io/smartdatalake/workflow/action/ScalaClassSparkDsNTo1TransformerTest.scala#L325)
-and
-[Corresponding Config File](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/resources/configScalaClassSparkDsNto1Transformer/usingDataObjectIdWithPartitionAutoSelect.conf)
-
-If time, create one example for course, else use this one.
-
 ## Execution Phases
 > real execution: `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'airport'`
 * logs reveal the **execution phases**
@@ -449,7 +441,7 @@ If time, create one example for course, else use this one.
             │compute-distances CANCELLED│
             └───────────────────────────┘
      [main]
-Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException: Task download-deduplicate-departures failed. Root cause is 'AnalysisException: cannot resolve 'nonexisting' given input columns: [ext_departures_sdltemp.arrivalAirportCandidatesCount, ext_departures_sdltemp.callsign, ext_departures_sdltemp.created_at, ext_departures_sdltemp.departureAirportCandidatesCount, ext_departures_sdltemp.estArrivalAirport, ext_departures_sdltemp.estArrivalAirportHorizDistance, ext_departures_sdltemp.estArrivalAirportVertDistance, ext_departures_sdltemp.estDepartureAirport, ext_departures_sdltemp.estDepartureAirportHorizDistance, ext_departures_sdltemp.estDepartureAirportVertDistance, ext_departures_sdltemp.firstSeen, ext_departures_sdltemp.icao24, ext_departures_sdltemp.lastSeen]; line 1 pos 7;'
+Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException: Task download-deduplicate-departures failed. Root cause is 'AnalysisException: cannot resolve 'foobar' given input columns: [ext_departures_sdltemp.arrivalAirportCandidatesCount, ext_departures_sdltemp.callsign, ext_departures_sdltemp.created_at, ext_departures_sdltemp.departureAirportCandidatesCount, ext_departures_sdltemp.estArrivalAirport, ext_departures_sdltemp.estArrivalAirportHorizDistance, ext_departures_sdltemp.estArrivalAirportVertDistance, ext_departures_sdltemp.estDepartureAirport, ext_departures_sdltemp.estDepartureAirportHorizDistance, ext_departures_sdltemp.estDepartureAirportVertDistance, ext_departures_sdltemp.firstSeen, ext_departures_sdltemp.icao24, ext_departures_sdltemp.lastSeen]; line 1 pos 7;'
 ```
 
 * SDLB creates Schemata for all spark supported data objects: user defined or inference
@@ -471,32 +463,32 @@ Task: fix issue
     after the listing tables and schema, we monitor the amount of data in the tables and the latest value
     `departure table consists of 457 row and entries are of original date: 20210829 20210830`
 
+## Automatic Tests
+runSimulation -> unit with synthetical DataFrames
+[Unit Test in SDLB](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/scala/io/smartdatalake/workflow/action/ScalaClassSparkDsNTo1TransformerTest.scala#L325)
+and
+[Corresponding Config File](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/resources/configScalaClassSparkDsNto1Transformer/usingDataObjectIdWithPartitionAutoSelect.conf)
+
+If time, create one example for course, else use this one.
+
 ## Partitions
 First have a look at
 > ll data/btl-distances
 
-We see all data stored in various parquet files.
-Our goal of this chapter is to better organize the data so we can compute distances
-for just one departure airport. The column we want to partition by is estdepartureairport
-Let's use the Schema Viewer to find out how to do that.
+We see all data stored in two subdirectories, one for each partition
 
-Task: use partitioning for Action compute-distances
-
+Task: use partition `LSZB` for Action compute-distances 
+Hint: use CLI help
 > <details><summary>Solution: Click to expand!</summary>
-> In `config/distances.conf` add `partitions = [estdepartureairport]`
-> to dataObjects  btl_departures_arrivals_airports and btl_distances 
+> to specify a partion, the CLI option `--partition-value` need to be used. Here we need --partition-values estdepartureairport=LSZB
+> Execute
+> `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
+
 > </details>
 
-Since we change the format in which data is stored let's delete the data
+When you now look at data/btl-distances, you will only see an updated partition estdepartureairport=LSZB and in the logs you find: `start writing to DataObject~btl-distances, partitionValues estdepartureairport=LSZB [exec-compute-distances]`)
 
-> `rm -r data/btl-distances/ data/btl-departures-arrivals-airports/`
-
-Execute
-> `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel compute --partition-values estdepartureairport=LSZB`
-
-When you now look at data/btl-distances, you will only see partition estdepartureairport=LSZB in the files and in the data (can also be seen in the logs of SDLB: `start writing to DataObject~btl-distances, partitionValues estdepartureairport=LSZB [exec-compute-distances]`)
-
-Working with partitions forces to create the whole data pipeline around them -> everything needs to be partitioned by that key.
+Working with partitions forces to create the whole data pipeline around them -> **everything needs to be partitioned** by that key.
 The trend goes towards incremental processing (see next chapter).
 But batch processing with partitioning is still the most performant data processing method when dealing with large amounts of data.
 
