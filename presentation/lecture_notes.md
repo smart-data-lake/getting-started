@@ -5,16 +5,22 @@
 Tools: In Teams annotation can be used to point to specific aspects in the configs, SchemaViewer,...
 -->
 
+<!-- 
+- ice breaker, largest amount of data sources you used for a project
+- enphasize that this is and interactive course, motivate for questions
+- provide lecture afterwards
+-->
+
 ## Goal
-* train loving friend imagine to replace short distant flights with train rides
-* discover/count all flights which 
+* train loving friend imagine to **replace** short distant flights **with train** rides
+* discover/count all flights which
   - starting from a certain airport 
-  - <500km
+  - flight distance <500km
   - assume destination airport Bern (LSZB) or Frankfurt (EDDF)
 
 ![map about flights around Bern](images/flights_BE.png)
 
-* as data engineers we need to:
+* as data engineers -> provide elevated data for data scientists and business. **General steps**:
   - download data
   - combining/filter/transform data in a general manner
   - store processed data, thus it can be utilized for various use cases
@@ -49,7 +55,7 @@ Let's have a closer look.
   - :heavy_minus_sign: siloed initiatives, redundancy
   - :heavy_minus_sign: heavy data preparation for every use case
 
-### Smart Data Lake aka. Lakehouse
+### Smart Data Lake or Lakehouse
   - :heavy_plus_sign: value & semantic oriented
   - :heavy_plus_sign: known data quality
   - :heavy_plus_sign: secured, handled privacy
@@ -122,13 +128,14 @@ In our case we could think of the following structure:
 
 ![permission management from users utilizing role groups and technical groups to specify permissions](images/authorisationConcept.png)
 
-:warning: TODO
-
-
 ## Setup
 * clone repo
   ```
   git clone -b training https://github.com/smart-data-lake/getting-started.git SDLB_training
+  ```
+  OR update:
+  ```
+  git pull
   ```
 * build additional sources
   ```
@@ -142,6 +149,18 @@ In our case we could think of the following structure:
   ```
   podman-compose up -d
   ```
+
+## SDLB general aspects
+<!--
+  during building lets have a closer look to SDLB
+-->
+* [https://github.com/smart-data-lake](https://github.com/smart-data-lake)
+* Scala project, build with Maven
+* with different modules: beside the core we have modules for different plattforms, formats and other features
+* GPL-3 license 
+
+* we build SDLB core package with additional custom packages. Here we have 2 additional files (Scala classes) with custom web downloader and transformer
+* resuse of artifacts from mounted directoriy in mvn container
 
 ## Let's have a look to the actual implementation
 as a reminder, we want to implement:
@@ -200,12 +219,6 @@ Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or
 * structures and parameters, like *type*, *inputId*,...
 * **Transformer** will be handled later
 
-**Schema** A note to dataObjects: SDLB creates Schemata for all spark supported data objects: user defined or inference
-	- support for schema evolution 
-    + replaced or extended or extend (new column added, removed columns kept) schema 
-		+ for JDBC and DeltaLakeTable, need to be enabled
-
-
 <!--
 ## Excursion: env variables
 - usage of optional env variables
@@ -255,6 +268,7 @@ SDLB is designed to define/customize your own actions. Nevertheless, there are b
 	- SQL
 	- Python
 * transformers with additional logic, e.g.:
+	- `StandardizeColNamesTransformer` 
 	- `AdditionalColumnsTransformer` (in HistorizeAction), adding information from context or derived from input, for example, adding input file name
 	- `SparkRepartitionTransformer` for optimized file handling
 
@@ -273,17 +287,19 @@ What we have here:
 > Note: *transformer* is deprecated
 
 ## Feeds
-* start application with `--help`: `podman run --rm --hostname=localhost --pod SDLB_training sdl-spark:latest --help`
+* start application with `--help`: `podman run --rm --pod sdlb_training sdl-spark --help`
 
-> Note: `-rm` removes container after exit, `hostname` and `pod` for launching in same Network as metastore and Polynote, mounting data, target and config directory, container name, config directories/files
+> Note: `-rm` removes container after exit, `pod` for launching in same Network as metastore and Polynote
 
 * `feed-sel` always necessary 
 	- can be specified by metadata feed, name, or ids
 	- can be lists or regex, e.g. `--feed-sel '.*'`
 	- can also be `startWith...` or `endWith...`
 
+* diretories for mounting data, target and config directory, container name, config directories/files
+
 * try run feed everything: 
-`podman run --rm --hostname=localhost --pod SDLB_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*'`
+`podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*' --test config`
   - Note: data, target and config directories are mounted into the container:
 
 ## Environment Variables in HOCON
@@ -306,7 +322,7 @@ Task: What is the issue? -> fix issue
 ## Test Configuration
 since we realize there could be issues, let's first run a config test:
 
-`podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod SDLB_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'download' --test config` (fix bug together)
+`podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'airport' --test config` (fix bug together)
 
 * while running we get:
 `Exception in thread "main" io.smartdatalake.config.ConfigurationException: (DataObject~stg-airports) ClassNotFoundException: Implementation CsvDataObject of interface DataObject not found`
@@ -322,7 +338,7 @@ Task: fix issue
 
 ## Dry-run
 * run again (and then with) `--test dry-run` and feed `'.*'` to check all configs: 
-  `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod SDLB_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*' --test dry-run`
+  `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'airport' --test dry-run`
 
 ## DAG
 * (Directed acyclic graph)
@@ -361,7 +377,7 @@ Task: fix issue
                   │compute-distances│
                   └─────────────────┘
 ```
---- switch lecturer
+> switch lecturer
 ## Automatic Tests
 runSimulation -> unit with synthetical DataFrames
 [Unit Test in SDLB](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/scala/io/smartdatalake/workflow/action/ScalaClassSparkDsNTo1TransformerTest.scala#L325)
@@ -370,9 +386,8 @@ and
 
 If time, create one example for course, else use this one.
 
-
 ## Execution Phases
-> real execution: `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod SDLB_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*'`
+> real execution: `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'airport'`
 * logs reveal the **execution phases**
 * in general we have: 
     - configuration parsing
@@ -381,9 +396,37 @@ If time, create one example for course, else use this one.
     - DAG exec (not processed in dry-run mode)
 * early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
 * [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
-* Make execution fail in init phase by changing SQL of download-deduplicate-departures to something wrong and then re execute the same command.
-* Output should look like this:
-````
+
+## Inspect result
+* files in the file system: `stg-airport`: CSV files located at `data/stg-airports/`
+
+> <details><summary>Example content</summary>
+  
+> ```
+> $ head data/stg-airports/result.csv
+> "id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","gps_code","iata_code","local_code","home_link","wikipedia_link","keywords"
+> : 6523,"00A","heliport","Total Rf Heliport",40.07080078125,-74.93360137939453,11,"NA","US","US-PA","Bensalem","no","00A",,"00A",,,
+> 323361,"00AA","small_airport","Aero B Ranch Airport",38.704022,-101.473911,3435,"NA","US","US-KS","Leoti","no","00AA",,"00AA",,,
+> 6524,"00AK","small_airport","Lowell Field",59.947733,-151.692524,450,"NA","US","US-AK","Anchor Point","no","00AK",,"00AK",,,
+> 6525,"00AL","small_airport","Epps Airpark",34.86479949951172,-86.77030181884766,820,"NA","US","US-AL","Harvest","no","00AL",,"00AL",,,
+> 6526,"00AR","closed","Newport Hospital & Clinic Heliport",35.6087,-91.254898,237,"NA","US","US-AR","Newport","no",,,,,,"00AR"
+> 322127,"00AS","small_airport","Fulton Airport",34.9428028,-97.8180194,1100,"NA","US","US-OK","Alex","no","00AS",,"00AS",,,
+> 6527,"00AZ","small_airport","Cordes Airport",34.305599212646484,-112.16500091552734,3810,"NA","US","US-AZ","Cordes","no","00AZ",,"00AZ",,,
+> 6528,"00CA","small_airport","Goldstone (GTS) Airport",35.35474,-116.885329,3038,"NA","US","US-CA","Barstow","no","00CA",,"00CA",,,
+> 324424,"00CL","small_airport","Williams Ag Airport",39.427188,-121.763427,87,"NA","US","US-CA","Biggs","no","00CL",,"00CL",,,
+> ```
+
+> </details>
+
+### Polynote
+* Polynote: tables in the DataLake
+  - open [Polynote at localhost:8192](http://localhost:8192/notebook/inspectData.ipynb)
+  
+## Schema handling
+* test the whole pipeling `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*'  --test dry-run `
+* execution fail in init phase by because of not finding "foobar" column in `download-deduplicate-departures`:
+
+```
 2022-08-05 07:51:14 INFO  ActionDAGRun$ - Init FAILED for sdlb_training :
                        ┌─────┐
                        │start│
@@ -407,36 +450,26 @@ If time, create one example for course, else use this one.
             └───────────────────────────┘
      [main]
 Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException: Task download-deduplicate-departures failed. Root cause is 'AnalysisException: cannot resolve 'nonexisting' given input columns: [ext_departures_sdltemp.arrivalAirportCandidatesCount, ext_departures_sdltemp.callsign, ext_departures_sdltemp.created_at, ext_departures_sdltemp.departureAirportCandidatesCount, ext_departures_sdltemp.estArrivalAirport, ext_departures_sdltemp.estArrivalAirportHorizDistance, ext_departures_sdltemp.estArrivalAirportVertDistance, ext_departures_sdltemp.estDepartureAirport, ext_departures_sdltemp.estDepartureAirportHorizDistance, ext_departures_sdltemp.estDepartureAirportVertDistance, ext_departures_sdltemp.firstSeen, ext_departures_sdltemp.icao24, ext_departures_sdltemp.lastSeen]; line 1 pos 7;'
-````
+```
 
-## Inspect result
-* files in the file system: `stg-airport`: CSV files located at `data/stg-airports/`
+* SDLB creates Schemata for all spark supported data objects: user defined or inference
+    - support for schema evolution 
+      + replaced or extended or extend (new column added, removed columns kept) schema 
+		+ for JDBC and DeltaLakeTable, need to be enabled
 
-> <details><summary>Example content</summary>
+Task: fix issue 
+<!-- A collapsible section with markdown -->
+> <details><summary>Solution: Click to expand!</summary>
   
-> ```
-> $ head data/stg-airports/result.csv
-> "id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","gps_code","iata_code","local_code","home_link","wikipedia_link","keywords"
-> : 6523,"00A","heliport","Total Rf Heliport",40.07080078125,-74.93360137939453,11,"NA","US","US-PA","Bensalem","no","00A",,"00A",,,
-> 323361,"00AA","small_airport","Aero B Ranch Airport",38.704022,-101.473911,3435,"NA","US","US-KS","Leoti","no","00AA",,"00AA",,,
-> 6524,"00AK","small_airport","Lowell Field",59.947733,-151.692524,450,"NA","US","US-AK","Anchor Point","no","00AK",,"00AK",,,
-> 6525,"00AL","small_airport","Epps Airpark",34.86479949951172,-86.77030181884766,820,"NA","US","US-AL","Harvest","no","00AL",,"00AL",,,
-> 6526,"00AR","closed","Newport Hospital & Clinic Heliport",35.6087,-91.254898,237,"NA","US","US-AR","Newport","no",,,,,,"00AR"
-> 322127,"00AS","small_airport","Fulton Airport",34.9428028,-97.8180194,1100,"NA","US","US-OK","Alex","no","00AS",,"00AS",,,
-> 6527,"00AZ","small_airport","Cordes Airport",34.305599212646484,-112.16500091552734,3810,"NA","US","US-AZ","Cordes","no","00AZ",,"00AZ",,,
-> 6528,"00CA","small_airport","Goldstone (GTS) Airport",35.35474,-116.885329,3038,"NA","US","US-CA","Barstow","no","00CA",,"00CA",,,
-> 324424,"00CL","small_airport","Williams Ag Airport",39.427188,-121.763427,87,"NA","US","US-CA","Biggs","no","00CL",,"00CL",,,
-> ```
+> In `config/departures.conf` correct the data object download-deduplicate-departures to not select foobar
 
 > </details>
 
-  
-* Polynote: tables in the DataLake
-  - open [Polynote at localhost:8192](http://localhost:8192/notebook/inspectData.ipynb)
+
+* run whole pipeline `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*' `
+* show results in Polynote
     after the listing tables and schema, we monitor the amount of data in the tables and the latest value
     `departure table consists of 457 row and entries are of original date: 20210829 20210830`
-
-<!-- TODO When we have Ilias frontend ready, use it as Data Catalog Viewer -->
 
 ## Partitions
 First have a look at
@@ -450,16 +483,16 @@ Let's use the Schema Viewer to find out how to do that.
 Task: use partitioning for Action compute-distances
 
 > <details><summary>Solution: Click to expand!</summary>
-> In `config/distances.conf` add partitions = [estdepartureairport] 
+> In `config/distances.conf` add `partitions = [estdepartureairport]`
 > to dataObjects  btl_departures_arrivals_airports and btl_distances 
 > </details>
 
 Since we change the format in which data is stored let's delete the data
 
-> rm -r data/btl-distances/ data/btl-departures-arrivals-airports/
+> `rm -r data/btl-distances/ data/btl-departures-arrivals-airports/`
 
 Execute
-> podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod SDLB_training sdl-spark:latest --config /mnt/config/ --feed-sel compute --partition-values estdepartureairport=LSZB
+> `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel compute --partition-values estdepartureairport=LSZB`
 
 When you now look at data/btl-distances, you will only see partition estdepartureairport=LSZB in the files and in the data (can also be seen in the logs of SDLB: `start writing to DataObject~btl-distances, partitionValues estdepartureairport=LSZB [exec-compute-distances]`)
 
@@ -498,10 +531,10 @@ These Requirements are already met.
   ```
 
 After changing our config, try to execute the concerned action
-  - `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod SDLB_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel download`
+  - `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel download`
 Now it will fail because we need to provide a path for the state-path, so we add
   - add `--state-path /mnt/data/state -n SDLB_training` to the command line arguments
-  - `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod SDLB_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel download --state-path /mnt/data/state -n SDLB_training`
+  - `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel download --state-path /mnt/data/state -n SDLB_training`
 
 
 * **first run** creates `less data/state/succeeded/SDLB_training.1.1.json` 
@@ -522,15 +555,15 @@ Now it will fail because we need to provide a path for the state-path, so we add
 ### Command Line
 * command line option `-s` or `--streaming`, streaming all selected actions
   - requires `--state-path` to be set
-* just start `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod SDLB_training sdl-spark:latest --config /mnt/config/  --feed-sel download --state-path /mnt/data/state -n SDLB_training -s` and see the action running again and again
+* just start `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/  --feed-sel download --state-path /mnt/data/state -n SDLB_training -s` and see the action running again and again
   - > notice the recurring of both actions, here in our case we could limit the feed to the specific action
-    `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod SDLB_training sdl-spark:latest --config /mnt/config/  --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training -s`
+    `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/  --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training -s`
   We could also Use SparkStreamingMode here. TODO Example?
   - > monitor the growth of the table
   - > see streaming trigger interval of 48s in output: `LocalSmartDataLakeBuilder$ - sleeping 48 seconds for synchronous streaming trigger interval [main]`
     + change it: search stream in Schema Viewer -> `global`->`synchronousStreamingTriggerIntervalSec = 10` -> interval between 2 starts (not end to start)
     + Now output looks like this :
-    ````
+    ```
       2022-08-04 10:56:28 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec succeeded [dag-24-651]
       2022-08-04 10:56:28 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.24.1.json [dag-24-651]
       2022-08-04 10:56:28 INFO  ActionDAGRun$ - exec SUCCEEDED for dag 24:
@@ -545,7 +578,7 @@ Now it will fail because we need to provide a path for the state-path, so we add
       [main]
       2022-08-04 10:56:28 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/succeeded/SDLB_training.24.1.json [main]
       2022-08-04 10:56:28 INFO  LocalSmartDataLakeBuilder$ - sleeping 5 seconds for synchronous streaming trigger interval [main]
-    ````
+    ```
     - Quickly mention other streming modes in IntelliJ or link to Execution Modes when ready
     
 
@@ -556,14 +589,14 @@ Now it will fail because we need to provide a path for the state-path, so we add
   - parallel running DAG actions of SDLB, by default serial, one by one action
     + see `Action~download-airports[FileTransferAction]: Exec started` and `Action~download-deduplicate-departures[DeduplicateAction]`
     + use command line option `--parallelism 2` to run both tasks in parallel
-    ``
-      podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod SDLB_training sdl-spark:latest --config /mnt/config/ --feed-sel download --state-path /mnt/data/state -n SDLB_training -s
-    ``
-    + ``
-        podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod SDLB_training sdl-spark:latest --config /mnt/config/ --feed-sel download --state-path /mnt/data/state -n SDLB_training -s --parallelism 2
-      ``
+    ```
+      podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel download --state-path /mnt/data/state -n SDLB_training -s
+    ```
+    ```
+        podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel download --state-path /mnt/data/state -n SDLB_training -s --parallelism 2
+    ```
   + With parallelsim: Action2 starts while Action1 is still running
-  ````    
+  ```    
        2022-08-04 12:23:08 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec started [dag-29-93]
        2022-08-04 12:23:08 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec started [dag-29-94]
        2022-08-04 12:23:08 INFO  DeduplicateAction - (Action~download-deduplicate-departures) getting DataFrame for DataObject~ext-departures [exec-download-deduplicate-departures]
@@ -574,9 +607,9 @@ Now it will fail because we need to provide a path for the state-path, so we add
        2022-08-04 12:23:09 INFO  FileTransferAction - (Action~download-airports) finished writing DataFrame to stg-airports: jobDuration=PT1.699S files_written=1 [exec-download-airports]
        2022-08-04 12:23:09 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec succeeded [dag-29-93]
        2022-08-04 12:23:09 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.29.1.json [dag-29-93]
-  ````
+  ```
   + Without parallelsim: Action2 starts only after Action1 is finished
-  ````    
+  ```    
        2022-08-04 12:24:18 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec started [dag-30-109]
        2022-08-04 12:24:18 INFO  FileTransferAction - (Action~download-airports) start writing to DataObject~stg-airports [exec-download-airports]
        2022-08-04 12:24:18 INFO  CsvFileDataObject - (DataObject~stg-airports) deleteAll stg-airports [exec-download-airports]
@@ -586,12 +619,12 @@ Now it will fail because we need to provide a path for the state-path, so we add
        2022-08-04 12:24:19 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.30.1.json [dag-30-109]
        2022-08-04 12:24:19 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec started [dag-30-109]
        2022-08-04 12:24:19 INFO  DeduplicateAction - (Action~download-deduplicate-departures) getting DataFrame for DataObject~ext-departures [exec-download-deduplicate-departures]
-  ````
+  ```
     + :warning: parallel actions are more difficult to debug
     
 ## Checkpoint / Restart
 * requires states (`--state-path`)
-  - `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod SDLB_training sdl-spark:latest --config /mnt/config/ --feed-sel '.*' --state-path /mnt/data/state -n SDLB_training` 
+  - `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel '.*' --state-path /mnt/data/state -n SDLB_training` 
   -> cancel run to simulate crash (after download phase when seeing in the logs 
   - `(Action~download-airports) finished writing DataFrame to stg-airports: jobDuration=PT0.871S files_written=1 [exec-download-airports]` and
   - `ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec succeeded [dag-1-191]`
@@ -601,19 +634,17 @@ Now it will fail because we need to provide a path for the state-path, so we add
   - notice line at the beginning: `LocalSmartDataLakeBuilder$ - recovering application SDLB_training runId=1 lastAttemptId=1 [main]`
   - notice the changed DAG, no download
 
-## SDL Viewer
-There is a new extension of SDLB which visualize the configuration and its documentation. This acts as an data catalog and presents beside the dependencies (DAG) all metadata information of dataObject and Actions. 
-The viewer runs in a seperate container and can be launched browsing to [localhost:5000](http://localhost:5000).
-> Note: there is still an issue with parsing "unresolved" variables. If you see just "Loading", uncomment out the `$METASTOREPW` in `config/global.conf`.
-
-:warning: TODO
-
 ## Execution Engines vs Execution Environments
 [Go through documentation](https://smartdatalake.ch/docs/reference/executionEngines)
 > Look at diagram and explain when which Engine is running: 
 > When copying Files, when copying Data from a File to a Spark Table,
 > When Transforming Data with Snowflake via Snowpark
 > When Transforming Data between Spark and Snowflake
+
+## SDL Viewer
+There is a new extension of SDLB which visualize the configuration and its documentation. This acts as an data catalog and presents beside the dependencies (DAG) all metadata information of dataObject and Actions. 
+The viewer runs in a seperate container and can be launched browsing to [localhost:5000](http://localhost:5000).
+> Note: there is still an issue with parsing "unresolved" variables. If you see just "Loading", uncomment out the `$METASTOREPW` in `config/global.conf`.
 
 If you are interested in trying out SDLB with Snowflake, you can follow this [Blog Post](https://smartdatalake.ch/blog/sdl-snowpark/)
 
