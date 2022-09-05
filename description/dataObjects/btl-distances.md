@@ -14,8 +14,8 @@ The goal is to identify the amount of flight and all the locations, which are cl
 # Properties
 
 @column `distance` The computed distance between the departure and arrival airports. The distance is computed as length of on an sphere with radius 6371km using the geographic latitutes and longitudes of both airports.
-
 @column `could_be_done_by_rail` Boolean describing if the distance is less than 500km (than true)
+@endColumn
 
 # Structure
 
