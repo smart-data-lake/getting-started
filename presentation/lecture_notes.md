@@ -184,15 +184,14 @@ config
 ```
 
 Let's have a look into a configuration file:
-> `nano config/airports.conf`
-Note: 
+> `less config/airports.conf`
+Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or Intellij in Windows using `\\wsl$\Ubuntu\home\<username>\...`
 
 * 3 **data objects** for 3 different layers: **ext**, **stg**, **int**
-* here each data object has a different type: WebserviceFileDataObject, CsvFileDataObject, DeltaLakeTableDataObject
+  - here each data object has a different type: WebserviceFileDataObject, CsvFileDataObject, DeltaLakeTableDataObject
   - `ext-airports`: specifies the location of a file to be downloaded 
   - `stg-airports`: a staging CSV file to be downloaded into (raw data)
   - `int-airports`: filtered and written into `DeltaLakeTable`
-
 
 * 2 **actions** defining the connection between the data objects
   - first simple download
@@ -201,7 +200,7 @@ Note:
 * structures and parameters, like *type*, *inputId*,...
 * **Transformer** will be handled later
 
-Schema: A note to data Objects: SDLB creates Schemata for all spark supported data objects: user defined or inference
+**Schema** A note to dataObjects: SDLB creates Schemata for all spark supported data objects: user defined or inference
 	- support for schema evolution 
     + replaced or extended or extend (new column added, removed columns kept) schema 
 		+ for JDBC and DeltaLakeTable, need to be enabled
@@ -240,13 +239,13 @@ To mention **a few** dataObjects:
 ### Actions
 SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
  
-* **FileTransferAction**: pure file transfer
-* **CopyAction**: basic generic action. Converts to DataFrame and to target data object. Provides opportunity to add **transformer(s)**
-* **CostumDataFrameAction**: can handle **multiple inputs/outputs** 
+* ``FileTransferAction``: pure file transfer
+* ``CopyAction``: basic generic action. Converts to DataFrame and to target data object. Provides opportunity to add **transformer(s)**
+* ``CostumDataFrameAction``: can handle **multiple inputs/outputs** 
 * ...
 * actions with additional logic, e.g.
-  - **DeduplicateAction**: verifies to not have duplicates between input and output, keeps last record and history when *captured*
-  - **HistorizeAction**: technical historization using **valid-from/to** columns
+  - ``DeduplicateAction``: verifies to not have duplicates between input and output, keeps last record and history when *captured*
+  - ``HistorizeAction``: technical historization using **valid-from/to** columns
 
 #### Transformations
 * distinguish between **1to1** (CopyAction, Dedup/Hist) and **many-to-many** (CustomDataFrame) transformations
@@ -255,7 +254,7 @@ SDLB is designed to define/customize your own actions. Nevertheless, there are b
 	- ScalaCode
 	- SQL
 	- Python
-* more specific transformers, e.g.:
+* transformers with additional logic, e.g.:
 	- `AdditionalColumnsTransformer` (in HistorizeAction), adding information from context or derived from input, for example, adding input file name
 	- `SparkRepartitionTransformer` for optimized file handling
 
@@ -276,7 +275,7 @@ What we have here:
 ## Feeds
 * start application with `--help`: `podman run --rm --hostname=localhost --pod SDLB_training sdl-spark:latest --help`
 
-> Note: `-rm` removes container after exit, `hostname` and `pod` for lauching in same Network as metastore and Polynote, mounting data, target and config directory, container name, config directories/files
+> Note: `-rm` removes container after exit, `hostname` and `pod` for launching in same Network as metastore and Polynote, mounting data, target and config directory, container name, config directories/files
 
 * `feed-sel` always necessary 
 	- can be specified by metadata feed, name, or ids
@@ -455,7 +454,7 @@ Task: use partitioning for Action compute-distances
 > to dataObjects  btl_departures_arrivals_airports and btl_distances 
 > </details>
 
-Since we change the format in which data is stored let s delete the data
+Since we change the format in which data is stored let's delete the data
 
 > rm -r data/btl-distances/ data/btl-departures-arrivals-airports/
 
@@ -602,6 +601,11 @@ Now it will fail because we need to provide a path for the state-path, so we add
   - notice line at the beginning: `LocalSmartDataLakeBuilder$ - recovering application SDLB_training runId=1 lastAttemptId=1 [main]`
   - notice the changed DAG, no download
 
+## SDL Viewer
+There is a new extension of SDLB which visualize the configuration and its documentation. This acts as an data catalog and presents beside the dependencies (DAG) all metadata information of dataObject and Actions. 
+The viewer runs in a seperate container and can be launched browsing to [localhost:5000](http://localhost:5000).
+> Note: there is still an issue with parsing "unresolved" variables. If you see just "Loading", uncomment out the `$METASTOREPW` in `config/global.conf`.
+
 :warning: TODO
 
 ## Execution Engines vs Execution Environments
@@ -747,7 +751,7 @@ SDLB allows you to break the DAG into smaller pieces with the option `breakDataF
 With the above config, SDLB will always read from whatever was written in table2 without considering results that were cached in-memory.
 [This is an example of what a typical DAG in Spark may look like](https://stackoverflow.com/questions/41169873/spark-dynamic-dag-is-a-lot-slower-and-different-from-hard-coded-dag)
 
-## Planned 
+## Planned
 * Monitoring
   - metrics in logs, e.g. size of written DataFrame
 * Constrains

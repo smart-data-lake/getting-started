@@ -20,6 +20,7 @@ Assuming you have no Windows Store available you need to follow the following st
 
 * enable WSL: Admin-Powershell -> `dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart`
 * enable VM feature: Admin-Powershell -> `dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart`
+* ARM64 Linux kernel update: download and install [https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
 * set WSL2 as default: `wsl --set-default-version 2`
 * get Ubuntu: PowerShell:
 	- `Invoke-WebRequest -Uri https://aka.ms/wslubuntu2004 -OutFile Ubuntu.appx -UseBasicParsing` OR
@@ -76,16 +77,20 @@ sudo apt-get -y install podman
 sudo apt install python3-pip
 sudo pip3 install podman-compose==0.1.11
 ```
-> :warning: podman-compose with major 1 (tested up to 1.0.3) do not create pods automatically. Therewith, the used commands results in networking issues between the containers. Thus, we recommend to use the latest version with automatic pod creation, version 0.1.11. The behaviour may change in future versions. 
+
+> <details><summary>Note: Why not use latest podman-compose: Click to expand!</summary>
+> podman-compose with major 1 (tested up to 1.0.3) do not create pods automatically. Therewith, the used commands results in networking issues between the containers. Thus, we recommend to use the latest version with automatic pod creation, version 0.1.11, as we did above. The behaviour may change in future versions. 
+> </details>
 
 ## SDLB preparation and testing
 * download example case: `git clone -b training https://github.com/smart-data-lake/getting-started.git SDLB_training`
 * build SDLB: `podman build -t sdl-spark .`
 	- this takes ~5-10 min
 * podman-compose test: `podman-compose up -d`
-
-* podman-compose: `podman run --rm sdl-spark:latest --config /mnt/config --feed-sel launchTask --help`
+	- The first time this will take a few minutes, due to fetching all container information. 
+* SDLB test: `podman run --rm sdl-spark:latest --config /mnt/config --feed-sel launchTask --help`
 	- when you see the SDL help the test was successful.
+* stop containers: `podman-compose down`
 
 # Additional hints:
 ## Git ports
