@@ -86,6 +86,7 @@ sudo pip3 install podman-compose==0.1.11
 * download example case: `git clone -b training https://github.com/smart-data-lake/getting-started.git SDLB_training`
 * build SDLB: `podman build -t sdl-spark .`
 	- this takes ~5-10 min
+* change into directory: `cd SDLB_training`
 * podman-compose test: `podman-compose up -d`
 	- The first time this will take a few minutes, due to fetching all container information. 
 * SDLB test: `podman run --rm sdl-spark:latest --config /mnt/config --feed-sel launchTask --help`
