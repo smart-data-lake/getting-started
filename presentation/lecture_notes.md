@@ -6,8 +6,8 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 -->
 
 <!-- 
-- ice breaker, largest amount of data sources you used for a project
-- enphasize that this is and interactive course, motivate for questions
+- emphasize that this is and interactive course, motivate for questions
+- ice breaker, largest amount of data sources or tables you worked with in a single project
 - provide lecture afterwards
 -->
 
@@ -469,16 +469,15 @@ runSimulation -> unit with synthetical DataFrames
 and
 [Corresponding Config File](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/resources/configScalaClassSparkDsNto1Transformer/usingDataObjectIdWithPartitionAutoSelect.conf)
 
-If time, create one example for course, else use this one.
-
 ## Partitions
 First have a look at
 > ll data/btl-distances
 
-We see all data stored in two subdirectories, one for each partition
+We see all data stored in two subdirectories named with the partition name and value.
 
-Task: use partition `LSZB` for Action compute-distances 
+Task: recompute *compute-distances* only with/for partition `LSZB` 
 Hint: use CLI help
+
 > <details><summary>Solution: Click to expand!</summary>
 > to specify a partion, the CLI option `--partition-value` need to be used. Here we need --partition-values estdepartureairport=LSZB
 > Execute
@@ -550,11 +549,20 @@ Now it will fail because we need to provide a path for the state-path, so we add
 * just start `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/  --feed-sel download --state-path /mnt/data/state -n SDLB_training -s` and see the action running again and again
   - > notice the recurring of both actions, here in our case we could limit the feed to the specific action
     `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/  --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training -s`
-  We could also Use SparkStreamingMode here. TODO Example?
+
   - > monitor the growth of the table
   - > see streaming trigger interval of 48s in output: `LocalSmartDataLakeBuilder$ - sleeping 48 seconds for synchronous streaming trigger interval [main]`
-    + change it: search stream in Schema Viewer -> `global`->`synchronousStreamingTriggerIntervalSec = 10` -> interval between 2 starts (not end to start)
-    + Now output looks like this :
+
+Task: change the streaming trigger interval to 10s
+Hint: use Schema Viewer
+
+> <details><summary>Solution: Click to expand!</summary>
+> search stream in Schema Viewer 
+> and add to the `config/global.conf` -> `global`->`synchronousStreamingTriggerIntervalSec = 10` 
+> This defines the interval between 2 starts (not end to start)
+> </details>
+ 
+  * Now output looks like this :
     ```
       2022-08-04 10:56:28 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec succeeded [dag-24-651]
       2022-08-04 10:56:28 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.24.1.json [dag-24-651]
@@ -571,23 +579,42 @@ Now it will fail because we need to provide a path for the state-path, so we add
       2022-08-04 10:56:28 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/succeeded/SDLB_training.24.1.json [main]
       2022-08-04 10:56:28 INFO  LocalSmartDataLakeBuilder$ - sleeping 5 seconds for synchronous streaming trigger interval [main]
     ```
-    - Quickly mention other streming modes in IntelliJ or link to Execution Modes when ready
-    
 
+## Execution Modes
+  * SparkStreamingMode
+    - single action streaming
+      + action -> executionMode -> SparkStreamingMode
+  * there are more execution modes ... explore in the SDL code 
+    - PartitionDiffMode, FailNoPartitionValuesMode, ...
 
 ## Parallelism
+    ```
+    podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel airport,download --state-path /mnt/data/state -n SDLB_training >& out.serial
+    ```
+
+    ```
+    podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel airport,download --state-path /mnt/data/state -n SDLB_training --parallelism 2 >& out.parallel
+    ```
+
 * distinguish 2 types of parallelism
   - within a spark job: the amount of Spark tasks, controlled by global option `    "spark.sql.shuffle.partitions" = 2`
   - parallel running DAG actions of SDLB, by default serial, one by one action
     + see `Action~download-airports[FileTransferAction]: Exec started` and `Action~download-deduplicate-departures[DeduplicateAction]`
-    + use command line option `--parallelism 2` to run both tasks in parallel
-    ```
-      podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel download --state-path /mnt/data/state -n SDLB_training -s
-    ```
-    ```
-        podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel download --state-path /mnt/data/state -n SDLB_training -s --parallelism 2
-    ```
-  + With parallelsim: Action2 starts while Action1 is still running
+    + use command line option `--parallelism 2` to run both tasks in parallel. compare: 
+* Without parallelsim (out.serial): Action2 starts only after Action1 is finished
+  ```    
+       2022-08-04 12:24:18 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec started [dag-30-109]
+       2022-08-04 12:24:18 INFO  FileTransferAction - (Action~download-airports) start writing to DataObject~stg-airports [exec-download-airports]
+       2022-08-04 12:24:18 INFO  CsvFileDataObject - (DataObject~stg-airports) deleteAll stg-airports [exec-download-airports]
+       2022-08-04 12:24:18 INFO  StreamFileTransfer - Copy DataObject~ext-airports:result -> DataObject~stg-airports:stg-airports/result.csv [exec-download-airports]
+       2022-08-04 12:24:19 INFO  FileTransferAction - (Action~download-airports) finished writing DataFrame to stg-airports: jobDuration=PT0.984S files_written=1 [exec-download-airports]
+       2022-08-04 12:24:19 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec succeeded [dag-30-109]
+       2022-08-04 12:24:19 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.30.1.json [dag-30-109]
+       2022-08-04 12:24:19 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec started [dag-30-109]
+       2022-08-04 12:24:19 INFO  DeduplicateAction - (Action~download-deduplicate-departures) getting DataFrame for DataObject~ext-departures [exec-download-deduplicate-departures]
+  ```
+
+* With parallelsim (out.parallel): Action2 starts while Action1 is still running
   ```    
        2022-08-04 12:23:08 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec started [dag-29-93]
        2022-08-04 12:23:08 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec started [dag-29-94]
@@ -600,19 +627,7 @@ Now it will fail because we need to provide a path for the state-path, so we add
        2022-08-04 12:23:09 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec succeeded [dag-29-93]
        2022-08-04 12:23:09 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.29.1.json [dag-29-93]
   ```
-  + Without parallelsim: Action2 starts only after Action1 is finished
-  ```    
-       2022-08-04 12:24:18 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec started [dag-30-109]
-       2022-08-04 12:24:18 INFO  FileTransferAction - (Action~download-airports) start writing to DataObject~stg-airports [exec-download-airports]
-       2022-08-04 12:24:18 INFO  CsvFileDataObject - (DataObject~stg-airports) deleteAll stg-airports [exec-download-airports]
-       2022-08-04 12:24:18 INFO  StreamFileTransfer - Copy DataObject~ext-airports:result -> DataObject~stg-airports:stg-airports/result.csv [exec-download-airports]
-       2022-08-04 12:24:19 INFO  FileTransferAction - (Action~download-airports) finished writing DataFrame to stg-airports: jobDuration=PT0.984S files_written=1 [exec-download-airports]
-       2022-08-04 12:24:19 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec succeeded [dag-30-109]
-       2022-08-04 12:24:19 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.30.1.json [dag-30-109]
-       2022-08-04 12:24:19 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec started [dag-30-109]
-       2022-08-04 12:24:19 INFO  DeduplicateAction - (Action~download-deduplicate-departures) getting DataFrame for DataObject~ext-departures [exec-download-deduplicate-departures]
-  ```
-    + :warning: parallel actions are more difficult to debug
+- :warning: parallel actions are more difficult to **debug**
     
 ## Checkpoint / Restart
 * requires states (`--state-path`)
@@ -633,12 +648,13 @@ Now it will fail because we need to provide a path for the state-path, so we add
 > When Transforming Data with Snowflake via Snowpark
 > When Transforming Data between Spark and Snowflake
 
+If you are interested in trying out SDLB with Snowflake, you can follow this [Blog Post](https://smartdatalake.ch/blog/sdl-snowpark/)
+
 ## SDL Viewer
 There is a new extension of SDLB which visualize the configuration and its documentation. This acts as an data catalog and presents beside the dependencies (DAG) all metadata information of dataObject and Actions. 
 The viewer runs in a seperate container and can be launched browsing to [localhost:5000](http://localhost:5000).
 > Note: there is still an issue with parsing "unresolved" variables. If you see just "Loading", uncomment out the `$METASTOREPW` in `config/global.conf`.
 
-If you are interested in trying out SDLB with Snowflake, you can follow this [Blog Post](https://smartdatalake.ch/blog/sdl-snowpark/)
 
 # Deployment methods
 * SDLB can be deployed in various ways on various platforms
@@ -686,18 +702,40 @@ The following setup is already prepared in the elca-dev tenant:
 
 * configure job, using the uploaded jar and 
   - parameters: `["-c","file:///dbfs/databricks/config/","--feed-sel","ids:download-deduplicate-departures", "--state-path", "file:///dbfs/databricks/data/state", "-n", "SDLB_training"]`
+
+## Further points
+* cluster modification/swap possible (scalability)
+* recurring schedule
+* easy maintainable metastore
+
   
 ### Show case
 * Workspace -> workflow -> SDLB-train job -> run job
 * after finished, show Data -> int-departures table
 * show notebook in Workspace
 
-### Further points
-* cluster modification/swap possible (scalability)
-* recurring schedule
-* easy maintainable metastore
+# Homework
+* split into groups of **2** or 3
+* find use case you implement next week in a 4h session
+  - input: data sources (webservice or file or (local) database)
+  - output: targets (simplest: CSV, or DeltaLake, or other)
+  - multiple dataObjects and actions
+  - suggestion: at least one transformation (more than data copy)
+  - sketch dataObjects and actions with main properties/operations
+  - see https://smartdatalake.ch/JsonSchemaViewer/ for inspiration
 
-## Further features
+* next week: 
+  - first present and discuss ideas and analyze feasibility, methods to implement
+  - you work together on the implementation and SDLB experts will assist you
+
+* beside the online and onside training you have a budget of 8h
+  - including preparation (done)
+  - self-paced playing around with SDLB
+    + lecture notes: https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md
+  - development of use case
+
+
+## Additional features
 
 * HousekeepingMode
   * When working with many partitions, SDLB offers two modes to perform Housekeeping activities:
