@@ -746,23 +746,30 @@ The following setup is already prepared in the elca-dev tenant:
     * PartitionArchiveCompactionMode: Archive and compact old partitions -> Is now already covered by Deltalake
 * Spark Specific Features: BreakDataFrameLineage and Autocaching
 
+### BreakDataFrameLineage and Autocaching
+* By default spark creates a plan of operations and process them if the target element needs to be realized
+  - computation is performed again even if the data is written to a dataObject (file, or table,...)
+* Spark provides an option called *cache* to keep the created data in memory
+* SDLB uses this option by default for all defined dataObjects, thus during the execution of a pipeline each dataFrame is computed only once, even when used multiple times
+
 Let's consider the scenario illustrated in this figure:
 ![Data linage from JDBC to DeltaLake table to CSV file](images/lineageExample.png)
  
-This can also be illustrated by these lines of Spark Code (e.g. in Polynote):
+Assuming an implemtation in Spark, e.g. in our Notebook, the code would look like:
 
-  ````
-  val dataFrame2 = spark.table("table1").transform(doSomeComplexStuff1)
+```
+  val dataFrame2 = spark.table("table1").transform( <doSomeComplexStuff1> )
   dataFrame2.write.saveAsTable("table2")
-  val dataFrame3 = dataFrame2.transform(doSomeComplexStuff2)
-  dataFrame3.write.format("csv").save("/path/of/csv")
+  val dataFrame3 = dataFrame2.transform( <doSomeComplexStuff2> )
+  dataFrame3.write.format("csv").save("/path/of/csv") // computing starting from table1
   
-  dataFrame3.show() // Restarts from table 1
-  dataFrame3.show() // Restarts from table 1
-  ````
-  The same Scenario as Config with SDLB would look like this:
+  dataFrame3.show() // Restarts computation from table1
+  dataFrame3.show() // Restarts computation from table1
+```
+
+Implementing this pipeline in SDLB would look as config:
  
-````
+```
 dataObjects {
   object1 {
     type = JdbcTableDataObject
@@ -778,7 +785,7 @@ dataObjects {
       db = "default"
       name = "table2"
     }
-    object3 {
+  object3 {
     type = CsvFileDataObject
     path = "~{id}"
   }
@@ -788,22 +795,22 @@ actions {
     type = CustomDataFrameAction
     inputId = object1
     outputId = object2
-    ...
+    ... <transformation doSomeComplexStuff1>
   }
     A2 {
     type = CustomDataFrameAction
     inputId = object2
     outputId = object3
-    ...
+    ... <transformation doSomeComplexStuff2>
   }
-````
-SDLB automatically caches all DataFrames of DataObjects.
-In spark you would write `dataFrame2.cache`
-Therefore, if Action A2 has to be re-run, it will be able to start from object2.
+```
+
+SDLB automatically caches all DataFrames of dataObjects. (But not intermediate dataFrames defined in an transformer). Thus, Action A2 uses the DataFrame from memory belonging to table3. But table 3 does not need to be re-read, nor recomputed from table1. In spark you would write `dataFrame2.cache`.
+
 However it will still keep the original Spark-Execution DAG, go over it and then realize that some steps are already cached.
 When chaining lots of transformations together, Spark's Execution DAG can get very large and this can cause performance issue and weird bugs.
 SDLB allows you to break the DAG into smaller pieces with the option `breakDataFrameLineage=true` set on the desired action.
-````
+```
     A2 {
     type = CustomDataFrameAction
     inputId = object2
