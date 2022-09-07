@@ -7,8 +7,11 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 
 <!-- 
 - emphasize that this is and interactive course, motivate for questions
-- ice breaker, largest amount of data sources or tables you worked with in a single project
 - provide lecture afterwards
+- largest commands we past in the chat
+- ask to follow along and try yourself, no intensive development today, but goal to use the framework by yourself
+
+- ice breaker, largest amount of data sources or tables you worked with in a single project
 -->
 
 ## Goal
@@ -160,7 +163,7 @@ In our case we could think of the following structure:
 * GPL-3 license 
 
 * we build SDLB core package with additional custom packages. Here we have 2 additional files (Scala classes) with custom web downloader and transformer
-* resuse of artifacts from mounted directoriy in mvn container
+* reuse of artifacts from mounted directory in mvn container
 
 ## Let's have a look to the actual implementation
 as a reminder, we want to implement:
@@ -415,7 +418,7 @@ Task: fix issue
   - open [Polynote at localhost:8192](http://localhost:8192/notebook/inspectData.ipynb)
   
 ## Schema handling
-* test the whole pipeling `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*'  --test dry-run `
+* test the whole pipeline `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*'  --test dry-run `
 * execution fail in init phase by because of not finding "foobar" column in `download-deduplicate-departures`:
 
 ```
@@ -473,7 +476,7 @@ and
 First have a look at
 > ll data/btl-distances
 
-We see all data stored in two subdirectories named with the partition name and value.
+We see all data stored in two sub-directories named with the partition name and value.
 
 Task: recompute *compute-distances* only with/for partition `LSZB` 
 Hint: use CLI help
@@ -652,7 +655,7 @@ If you are interested in trying out SDLB with Snowflake, you can follow this [Bl
 
 ## SDL Viewer
 There is a new extension of SDLB which visualize the configuration and its documentation. This acts as an data catalog and presents beside the dependencies (DAG) all metadata information of dataObject and Actions. 
-The viewer runs in a seperate container and can be launched browsing to [localhost:5000](http://localhost:5000).
+The viewer runs in a separate container and can be launched browsing to [localhost:5000](http://localhost:5000).
 > Note: there is still an issue with parsing "unresolved" variables. If you see just "Loading", uncomment out the `$METASTOREPW` in `config/global.conf`.
 
 
@@ -744,12 +747,12 @@ The following setup is already prepared in the elca-dev tenant:
 * Spark Specific Features: BreakDataFrameLineage and Autocaching
 
 Let's consider the scenario illustrated in this figure:
-![img.png](images/lineageExample.png)
+![Data linage from JDBC to DeltaLake table to CSV file](images/lineageExample.png)
  
-This can also be illustrated by these lines of Spark Code:
+This can also be illustrated by these lines of Spark Code (e.g. in Polynote):
 
   ````
-  val dataFrame2 = spark.table("table1).transform(doSomeComplexStuff1)
+  val dataFrame2 = spark.table("table1").transform(doSomeComplexStuff1)
   dataFrame2.write.saveAsTable("table2")
   val dataFrame3 = dataFrame2.transform(doSomeComplexStuff2)
   dataFrame3.write.format("csv").save("/path/of/csv")
@@ -809,7 +812,7 @@ SDLB allows you to break the DAG into smaller pieces with the option `breakDataF
     ...
   }
 ````
-With the above config, SDLB will always read from whatever was written in table2 without considering results that were cached in-memory.
+With the above config, SDLB will always read from whatever was written in table2 (object2) without considering results that were cached in-memory.
 [This is an example of what a typical DAG in Spark may look like](https://stackoverflow.com/questions/41169873/spark-dynamic-dag-is-a-lot-slower-and-different-from-hard-coded-dag)
 
 ## Planned
