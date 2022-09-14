@@ -37,8 +37,8 @@
 calculate 5G antenna density instide zip code (PLZ) areas
 
 ### Data
-[5g antenna positions and metadata](https://opendata.swiss/dataset/5g-mobilfunknetze-nr-antennenstandorteþtps://data.geo.admin.ch/ch.bakom.mobil-antennenstandorte-5g/data/ch.bakom.mobil-antennenstandorte-5g_en.json)
-[PLZ directory](https://opendata.swiss/dataset/plz_verzeichnisþtps://swisspost.opendatasoft.com/api/v2/catalog/datasets/plz_verzeichnis_v2/exports/csv)
+* [5g antenna positions and metadata](https://opendata.swiss/dataset/5g-mobilfunknetze-nr-antennenstandorteþtps://data.geo.admin.ch/ch.bakom.mobil-antennenstandorte-5g/data/ch.bakom.mobil-antennenstandorte-5g_en.json)
+* [PLZ directory](https://opendata.swiss/dataset/plz_verzeichnisþtps://swisspost.opendatasoft.com/api/v2/catalog/datasets/plz_verzeichnis_v2/exports/csv)
 
 ### Target pipeline
 ![target pipeline for 5G use case](images/5G_case_pipeline.png)
