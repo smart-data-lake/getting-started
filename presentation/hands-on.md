@@ -17,14 +17,14 @@
 * Expectations for 2nd half-day?
 * Infos: 
   - SDLB Open Source - get involved!
-		+ Create tickets for bugs and suggestions
-			- Developer Circle?
-			- Teams channel?
-			-Weekly sync…
-		+ Create a blogpost from your use case?
-		+ create SDLB github tickets
-	- Databricks partnership
-	- Goals 2023: Saas solution like DBT? Databricks marketplace?
+    + Create tickets for bugs and suggestions
+      - Developer Circle?
+      - Teams channel?
+      - Weekly sync…
+        + Create a blogpost from your use case?
+        + create SDLB github tickets
+      - Databricks partnership
+      - Goals 2023: Saas solution like DBT? Databricks marketplace?
 * 13:15 Similar to Hackathon
 	- Presentation use cases (5mins each) + discuss methods, feasability etc. (5mins)
 	- Backup cases when needed
