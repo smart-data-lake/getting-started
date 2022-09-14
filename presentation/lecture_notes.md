@@ -1,6 +1,14 @@
 
 # Smart Data Lake Builder Hands-On Training
 
+## Houskeeping
+* beside the online and onside training you have a budget of 8h
+  - including preparation (done)
+  - self-paced playing around with SDLB
+    + lecture notes: https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md
+  - development of use case
+
+
 <!-- 
 Tools: In Teams annotation can be used to point to specific aspects in the configs, SchemaViewer,...
 -->
@@ -730,13 +738,6 @@ The following setup is already prepared in the elca-dev tenant:
 * next week: 
   - first present and discuss ideas and analyze feasibility, methods to implement
   - you work together on the implementation and SDLB experts will assist you
-
-* beside the online and onside training you have a budget of 8h
-  - including preparation (done)
-  - self-paced playing around with SDLB
-    + lecture notes: https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md
-  - development of use case
-
 
 ## Additional features
 
