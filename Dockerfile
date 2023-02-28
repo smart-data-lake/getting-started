@@ -12,5 +12,5 @@ RUN mvn --quiet -f /home/app/pom.xml -Pcopy-libs package
 #
 FROM docker.io/openjdk:11-jre-slim
 COPY --from=build /home/app/target/lib/*.jar /opt/app/lib/
-COPY --from=build /home/app/src/main/resources/log4j.properties /home/app/lib/
-ENTRYPOINT ["java","-Duser.dir=/mnt/data","-Dlog4j.configuration=file:/home/app/lib/log4j.properties","-cp","/opt/app/lib/*:/mnt/lib/*","io.smartdatalake.app.LocalSmartDataLakeBuilder"]
+COPY --from=build /home/app/src/main/resources/log4j2.yml /home/app/lib/
+ENTRYPOINT ["java","-Duser.dir=/mnt/data","-Dlog4j2.configurationFile=file:/home/app/lib/log4j2.yml","-cp","/opt/app/lib/*:/mnt/lib/*","io.smartdatalake.app.LocalSmartDataLakeBuilder"]
