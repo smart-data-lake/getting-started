@@ -68,6 +68,53 @@
 				</plugins>
 			</build>
 		</profile>
+
+		<profile>
+			<id>generate-catalog</id>
+			<build>
+				<plugins>
+					<!-- generate catalog scala code. -->
+					<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>exec-maven-plugin</artifactId>
+							<version>3.1.0</version>
+							<executions>
+									<execution>
+											<id>generate-catalog</id>
+											<phase>prepare-package</phase>
+											<goals><goal>java</goal></goals>
+											<configuration>
+													<mainClass>io.smartdatalake.lab.LabCatalogGenerator</mainClass>
+													<arguments>
+															<argument>--config</argument><argument>./config,./envConfig/ci.conf</argument>
+															<argument>--srcDirectory</argument><argument>./src/main/scala-generated</argument>
+															<argument>--packageName</argument><argument>io.smartdatalake.generated</argument>
+															<argument>--className</argument><argument>DataObjectCatalog</argument>
+													</arguments>
+													<classpathScope>compile</classpathScope>
+											</configuration>
+									</execution>
+							</executions>
+					</plugin>
+					<!-- Compiles Scala sources incl. generated catalog -->
+					<plugin>
+							<groupId>net.alchim31.maven</groupId>
+							<artifactId>scala-maven-plugin</artifactId>
+							<executions>
+									<!-- add additional execution to compile generated catalog (see id generate-catalog) -->
+									<execution>
+											<id>compile-catalog</id>
+											<phase>prepare-package</phase>
+											<goals><goal>compile</goal></goals>
+											<configuration>
+													<sourceDir>./src/main/scala-generated</sourceDir>
+											</configuration>
+									</execution>
+							</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<repositories>
@@ -114,7 +161,7 @@
 						</manifestEntries>
 					</archive>
 					<excludes>
-						<exclude>log4j.properties</exclude> <!-- Logging configuration should be left to user. -->
+						<exclude>log4j2.yml</exclude> <!-- Logging configuration should be left to user. -->
 						<exclude>${project.artifactId}*.jar</exclude> <!-- avoid "Error assembling JAR" because of already existing artifact jar -->
 						<exclude>*.conf</exclude> <!-- no SDL configuration files - they must be provided by the user separately -->
 					</excludes>
@@ -143,6 +190,12 @@
 			<artifactId>sdl-deltalake_${scala.minor.version}</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-lang_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>		
 
 		<!-- override scope for spark dependencies to include/exclude them correctly for the fat-jar -->
 		<!-- note that the corresponding profile defining spark.deps.scope is inherited from sdl-parent -->
