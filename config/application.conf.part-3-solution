@@ -105,7 +105,7 @@ actions {
       type = SQLDfTransformer
       code = "select ext_departures.*, date_format(from_unixtime(firstseen),'yyyyMMdd') dt from ext_departures"
     },{
-      type = ScalaCodeDfTransformer
+      type = ScalaCodeSparkDfTransformer
       code = """
       import org.apache.spark.sql.{DataFrame, SparkSession}
       def transform(session: SparkSession, options: Map[String,String], df: DataFrame, dataObjectId: String) : DataFrame = {
