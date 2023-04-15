@@ -1,5 +1,5 @@
 metastore_db
-data/output
+data
 .cache-*
 .mvnrepo
 target
@@ -7,6 +7,7 @@ venv
 /.externalToolBuilders/
 derby.log
 *.log
+src/main/scala-generated
 
 # User-specific stuff
 .idea/**/workspace.xml
