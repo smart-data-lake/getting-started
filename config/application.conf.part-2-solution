@@ -20,7 +20,7 @@ dataObjects {
   }
   stg-departures {
     type = JsonFileDataObject
-    path = stg-departures
+    path = stg-departures  # can be replaced by the DataObject ID by using "~{id}"
   }
   int-departures {
     type = DeltaLakeTableDataObject
