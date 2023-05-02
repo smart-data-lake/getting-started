@@ -15,7 +15,9 @@
 	+ without docker/podman, only Intellij
 		* lecture Notes -> SCHM
 		  + significantly shorten theory part at the beginning
+          + local_WSL, local_IntelliJ
 		* HandsOn -> TBB
 			- no docker -> parquet, ...
 			+ config / envConfig separation
+              + in IntelliJ select output path via env Variable
 	+ add short exercises for more HandsOn

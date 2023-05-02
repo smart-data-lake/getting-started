@@ -85,11 +85,14 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 
 
 ## Hocon - Pipeline Description
-* **H**uman-**O**ptimized **C**onfig **O**bject **N**otation
+* [**H**uman-**O**ptimized **C**onfig **O**bject **N**otation](https://github.com/lightbend/config/blob/main/HOCON.md)
 * originating from JSON
 
 Let's have a look to the present implementation:
-> list config directory: `ls config` -> see multiple configuration files
+
+> **WSL**: `less config` 
+> <br>
+> **IntelliJ**: show directory structure especially `config` -> see multiple configuration files
 
 * specification of the pipeline can be split in **multiple files** and even **directories**
   - -> directories can be used to manage different environments e.g. 
@@ -97,29 +100,19 @@ Let's have a look to the present implementation:
 ```
 config
 +-- global.conf
-+-- prod
-│   +-- injection.conf
-│   +-- transform.conf
-+-- test
-    +-- injection.conf
-    +-- transform.conf
-```
-OR
-```
-config
-+-- env_dev.conf
-+-- env_prod.conf
-+-- inject
-│   +-- dataABC.conf
-│   +-- dataXYZ.conf
-+-- transform
-│   +-- dataABC.conf
-│   +-- dataXYZ.conf
++-- sourceA.conf
++-- sourceB.conf
++-- app1.conf
+envConfig
++-- local.conf
++-- awsDev.conf
++-- azureDev.conf
 ```
 
 Let's have a look into a configuration file:
-> `less config/airports.conf`
-Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or Intellij in Windows using `\\wsl$\Ubuntu\home\<username>\...`
+> `config/airports.conf` 
+> <br>
+> Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or Intellij in Windows using `\\wsl$\Ubuntu\home\<username>\...`
 
 * 3 **data objects** for 3 different layers: **ext**, **stg**, **int**
   - here each data object has a different type: WebserviceFileDataObject, CsvFileDataObject, DeltaLakeTableDataObject
@@ -152,23 +145,24 @@ Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or
 -->
 
 ### Schema Viewer - What is supported?
-> open [SDLB Schema Viewer](http://smartdatalake.ch/json-schema-viewer/index.html#viewer-page&version=sdl-schema-2.3.0-SNAPSHOT.json)
+> open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
 * distinguish `global`, `dataObjects`, `actions`, and `connections`
 
 ### DataObjects
 There are data objects different types: files, database connections, and table formats. 
 To mention **a few** dataObjects: 
 
-* `AirbyteDataObject` provides access to a growing list of [Airbyte](https://docs.airbyte.com/integrations/) connectors to various sources and sinks e.g. Facebook, Google {Ads,Analytics,Search,Sheets,...}, Greenhouse, Instagram, Jira,...
 * `JdbcTableDataObject` to connect to a database e.g. MS SQL or Oracle SQL
+* `KafkaTopicDataObject` to read from Kafka Topics
 * `DeltaLakeTableDataObject` tables in delta format (based on parquet), including schema registered in metastore and transaction logs enables time travel (a common destination)
 * `SnowflakeTableDataObject` access to Snowflake tables 
+* `AirbyteDataObject` provides access to a growing list of [Airbyte](https://docs.airbyte.com/integrations/) connectors to various sources and sinks e.g. Facebook, Google {Ads,Analytics,Search,Sheets,...}, Greenhouse, Instagram, Jira,...
 
 ### Actions
 SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
  
 * ``FileTransferAction``: pure file transfer
-* ``CopyAction``: basic generic action. Converts to DataFrame and to target data object. Provides opportunity to add **transformer(s)**
+* ``CopyAction``: basic generic action. Reads source into DataFrame and and then writes DataFrame to target data object. Provides opportunity to add **transformer(s)**
 * ``CostumDataFrameAction``: can handle **multiple inputs/outputs** 
 * ...
 * actions with additional logic, e.g.
@@ -202,9 +196,13 @@ What we have here:
 > Note: *transformer* is deprecated
 
 ## Feeds
-* start application with `--help`: `podman run --rm --pod sdlb_training sdl-spark --help`
-
-> Note: `-rm` removes container after exit, `pod` for launching in same Network as metastore and Polynote
+* start application with `--help`: 
+> **WSL**: `podman run --rm --pod sdlb_training sdl-spark --help`
+> - Note: `--rm` removes container after execution, `--pod` specifies the pod to run in, with supporting containers
+> 
+> **IntelliJ**: configure Run with parameters `--help`
+> Note: configure: Java 1?, main class `io.smartdatalake.app.LocalSmartDataLakeBuilder`
+<!-- TODO -->
 
 * `feed-sel` always necessary 
 	- can be specified by metadata feed, name, or ids
@@ -214,12 +212,16 @@ What we have here:
 * diretories for mounting data, target and config directory, container name, config directories/files
 
 * try run feed everything: 
-`podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*' --test config`
-  - Note: data, target and config directories are mounted into the container:
+> **WSL**: `podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*' --test config`
+>  - Note: data, target and config directories are mounted into the container
+> 
+> **IntelliJ**: 
+<!-- TODO -->
 
 ## Environment Variables in HOCON
 
 * error: `Could not resolve substitution to a value: ${METASTOREPW}`
+<!-- TODO -->
   - in `config/global.conf` we defined `"spark.hadoop.javax.jdo.option.ConnectionPassword" = ${METASTOREPW}`
 
 Task: What is the issue? -> fix issue 
@@ -325,7 +327,7 @@ Task: fix issue
 
 > </details>
 
-### Polynote
+### [only on WSL] Polynote
 * Polynote: tables in the DataLake
   - open [Polynote at localhost:8192](http://localhost:8192/notebook/inspectData.ipynb)
   
