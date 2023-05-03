@@ -20,8 +20,8 @@
           + exercise: add new DO and Action where columns are name and elevation in m  
 		* HandsOn -> TBB
  			+ [x] config / envConfig separation
-			- no docker -> parquet, ...
+			- [x] no docker -> parquet, ...
               + [x] new case for env Variable usage  
                 + [x] in IntelliJ select output path via env Variable
-            + fix deduplicate action 
+            + [x] fix deduplicate action 
 	+ add short exercises for more HandsOn
