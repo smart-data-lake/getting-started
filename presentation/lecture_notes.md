@@ -116,9 +116,9 @@ Let's have a look into a configuration file:
 
 * 3 **data objects** for 3 different layers: **ext**, **stg**, **int**
   - here each data object has a different type: WebserviceFileDataObject, CsvFileDataObject, DeltaLakeTableDataObject
-  - `ext-airports`: specifies the location of a file to be downloaded 
-  - `stg-airports`: a staging CSV file to be downloaded into (raw data)
-  - `int-airports`: filtered and written into `DeltaLakeTable`
+  - `ext_airports`: specifies the location of a file to be downloaded 
+  - `stg_airports`: a staging CSV file to be downloaded into (raw data)
+  - `int_airports`: filtered and written into `DeltaLakeTable`
 
 * 2 **actions** defining the connection between the data objects
   - first simple download
@@ -212,17 +212,21 @@ What we have here:
 * diretories for mounting data, target and config directory, container name, config directories/files
 
 * try run feed everything: 
-> **WSL**: `podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*' --test config`
+> **WSL**: `podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf --feed-sel '.*' --test config`
 >  - Note: data, target and config directories are mounted into the container
 > 
 > **IntelliJ**: 
+> work to where we want to be, start with `--feed-sel download --test config`
+> run parameters: `--feed-sel download --test config -c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf`
 <!-- TODO -->
 
 ## Environment Variables in HOCON
 
+<!-- TODO Intellij case-->
+
 * error: `Could not resolve substitution to a value: ${METASTOREPW}`
-<!-- TODO -->
-  - in `config/global.conf` we defined `"spark.hadoop.javax.jdo.option.ConnectionPassword" = ${METASTOREPW}`
+
+  - in `envConfig/local_WSL.conf` we defined `"spark.hadoop.javax.jdo.option.ConnectionPassword" = ${METASTOREPW}`
 
 Task: What is the issue? -> fix issue 
 <!-- A collapsible section with markdown -->
@@ -242,14 +246,14 @@ since we realize there could be issues, let's first run a config test:
 `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'airport' --test config` (fix bug together)
 
 * while running we get:
-`Exception in thread "main" io.smartdatalake.config.ConfigurationException: (DataObject~stg-airports) ClassNotFoundException: Implementation CsvDataObject of interface DataObject not found`
+`Exception in thread "main" io.smartdatalake.config.ConfigurationException: (DataObject~stg_airports) ClassNotFoundException: Implementation CsvDataObject of interface DataObject not found`
 let us double check what DataObjects there are available... [SDLB Schema Viewer](http://smartdatalake.ch/json-schema-viewer/index.html#viewer-page&version=sdl-schema-2.3.0-SNAPSHOT.json)
 
 Task: fix issue 
 <!-- A collapsible section with markdown -->
 > <details><summary>Solution: Click to expand!</summary>
   
-> In `config/airports.conf` correct the data object type of stg-airports to *CvsFileDataObject*
+> In `config/airports.conf` correct the data object type of stg_airports to *CvsFileDataObject*
 
 > </details>
 
@@ -307,12 +311,12 @@ Task: fix issue
 * [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
 
 ## Inspect result
-* files in the file system: `stg-airport`: CSV files located at `data/stg-airports/`
+* files in the file system: `stg_airport`: CSV files located at `data/stg_airports/`
 
 > <details><summary>Example content</summary>
   
 > ```
-> $ head data/stg-airports/result.csv
+> $ head data/stg_airports/result.csv
 > "id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","gps_code","iata_code","local_code","home_link","wikipedia_link","keywords"
 > : 6523,"00A","heliport","Total Rf Heliport",40.07080078125,-74.93360137939453,11,"NA","US","US-PA","Bensalem","no","00A",,"00A",,,
 > 323361,"00AA","small_airport","Aero B Ranch Airport",38.704022,-101.473911,3435,"NA","US","US-KS","Leoti","no","00AA",,"00AA",,,
@@ -388,7 +392,7 @@ and
 
 ## Partitions
 First have a look at
-> ll data/btl-distances
+> ll data/btl_distances
 
 We see all data stored in two sub-directories named with the partition name and value.
 
@@ -402,7 +406,7 @@ Hint: use CLI help
 
 > </details>
 
-When you now look at data/btl-distances, you will only see an updated partition estdepartureairport=LSZB and in the logs you find: `start writing to DataObject~btl-distances, partitionValues estdepartureairport=LSZB [exec-compute-distances]`)
+When you now look at data/btl_distances, you will only see an updated partition estdepartureairport=LSZB and in the logs you find: `start writing to DataObject~btl_distances, partitionValues estdepartureairport=LSZB [exec-compute-distances]`)
 
 Working with partitions forces to create the whole data pipeline around them -> **everything needs to be partitioned** by that key.
 The trend goes towards incremental processing (see next chapter).
@@ -521,26 +525,26 @@ Hint: use Schema Viewer
 * Without parallelsim (out.serial): Action2 starts only after Action1 is finished
   ```    
        2022-08-04 12:24:18 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec started [dag-30-109]
-       2022-08-04 12:24:18 INFO  FileTransferAction - (Action~download-airports) start writing to DataObject~stg-airports [exec-download-airports]
-       2022-08-04 12:24:18 INFO  CsvFileDataObject - (DataObject~stg-airports) deleteAll stg-airports [exec-download-airports]
-       2022-08-04 12:24:18 INFO  StreamFileTransfer - Copy DataObject~ext-airports:result -> DataObject~stg-airports:stg-airports/result.csv [exec-download-airports]
-       2022-08-04 12:24:19 INFO  FileTransferAction - (Action~download-airports) finished writing DataFrame to stg-airports: jobDuration=PT0.984S files_written=1 [exec-download-airports]
+       2022-08-04 12:24:18 INFO  FileTransferAction - (Action~download-airports) start writing to DataObject~stg_airports [exec-download-airports]
+       2022-08-04 12:24:18 INFO  CsvFileDataObject - (DataObject~stg_airports) deleteAll stg_airports [exec-download-airports]
+       2022-08-04 12:24:18 INFO  StreamFileTransfer - Copy DataObject~ext_airports:result -> DataObject~stg_airports:stg_airports/result.csv [exec-download-airports]
+       2022-08-04 12:24:19 INFO  FileTransferAction - (Action~download-airports) finished writing DataFrame to stg_airports: jobDuration=PT0.984S files_written=1 [exec-download-airports]
        2022-08-04 12:24:19 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec succeeded [dag-30-109]
        2022-08-04 12:24:19 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.30.1.json [dag-30-109]
        2022-08-04 12:24:19 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec started [dag-30-109]
-       2022-08-04 12:24:19 INFO  DeduplicateAction - (Action~download-deduplicate-departures) getting DataFrame for DataObject~ext-departures [exec-download-deduplicate-departures]
+       2022-08-04 12:24:19 INFO  DeduplicateAction - (Action~download-deduplicate-departures) getting DataFrame for DataObject~ext_departures [exec-download-deduplicate-departures]
   ```
 
 * With parallelsim (out.parallel): Action2 starts while Action1 is still running
   ```    
        2022-08-04 12:23:08 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec started [dag-29-93]
        2022-08-04 12:23:08 INFO  ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec started [dag-29-94]
-       2022-08-04 12:23:08 INFO  DeduplicateAction - (Action~download-deduplicate-departures) getting DataFrame for DataObject~ext-departures [exec-download-deduplicate-departures]
-       2022-08-04 12:23:08 INFO  FileTransferAction - (Action~download-airports) start writing to DataObject~stg-airports [exec-download-airports]
-       2022-08-04 12:23:08 INFO  CsvFileDataObject - (DataObject~stg-airports) deleteAll stg-airports [exec-download-airports]
-       2022-08-04 12:23:08 INFO  StreamFileTransfer - Copy DataObject~ext-airports:result -> DataObject~stg-airports:stg-airports/result.csv [exec-download-airports]
+       2022-08-04 12:23:08 INFO  DeduplicateAction - (Action~download-deduplicate-departures) getting DataFrame for DataObject~ext_departures [exec-download-deduplicate-departures]
+       2022-08-04 12:23:08 INFO  FileTransferAction - (Action~download-airports) start writing to DataObject~stg_airports [exec-download-airports]
+       2022-08-04 12:23:08 INFO  CsvFileDataObject - (DataObject~stg_airports) deleteAll stg_airports [exec-download-airports]
+       2022-08-04 12:23:08 INFO  StreamFileTransfer - Copy DataObject~ext_airports:result -> DataObject~stg_airports:stg_airports/result.csv [exec-download-airports]
        2022-08-04 12:23:09 INFO  CustomWebserviceDataObject - Success for request https://opensky-network.org/api/flights/departure?airport=LSZB&begin=1630310979&end=1630656579 [exec-download-deduplicate-departures]
-       2022-08-04 12:23:09 INFO  FileTransferAction - (Action~download-airports) finished writing DataFrame to stg-airports: jobDuration=PT1.699S files_written=1 [exec-download-airports]
+       2022-08-04 12:23:09 INFO  FileTransferAction - (Action~download-airports) finished writing DataFrame to stg_airports: jobDuration=PT1.699S files_written=1 [exec-download-airports]
        2022-08-04 12:23:09 INFO  ActionDAGRun$ActionEventListener - Action~download-airports[FileTransferAction]: Exec succeeded [dag-29-93]
        2022-08-04 12:23:09 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.29.1.json [dag-29-93]
   ```
@@ -550,7 +554,7 @@ Hint: use Schema Viewer
 * requires states (`--state-path`)
   - `podman run -e METASTOREPW=1234 --rm -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config --hostname=localhost --pod sdlb_training sdl-spark:latest --config /mnt/config/ --feed-sel '.*' --state-path /mnt/data/state -n SDLB_training` 
   -> cancel run to simulate crash (after download phase when seeing in the logs 
-  - `(Action~download-airports) finished writing DataFrame to stg-airports: jobDuration=PT0.871S files_written=1 [exec-download-airports]` and
+  - `(Action~download-airports) finished writing DataFrame to stg_airports: jobDuration=PT0.871S files_written=1 [exec-download-airports]` and
   - `ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec succeeded [dag-1-191]`
 * stored current state in file: `data/state/current/SDLB_training.1.1.json`
   - see the SUCCESS and CANCELED statements
@@ -628,7 +632,7 @@ The following setup is already prepared in the elca-dev tenant:
   
 ### Show case
 * Workspace -> workflow -> SDLB-train job -> run job
-* after finished, show Data -> int-departures table
+* after finished, show Data -> int_departures table
 * show notebook in Workspace
 
 # Homework
