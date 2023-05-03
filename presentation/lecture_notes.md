@@ -201,65 +201,62 @@ What we have here:
 > - Note: `--rm` removes container after execution, `--pod` specifies the pod to run in, with supporting containers
 > 
 > **IntelliJ**: configure Run with parameters `--help`
-> Note: configure: Java 1?, main class `io.smartdatalake.app.LocalSmartDataLakeBuilder`
-<!-- TODO -->
+> Note: configure: Java 11?, main class `io.smartdatalake.app.LocalSmartDataLakeBuilder`
+
 
 * `feed-sel` always necessary 
 	- can be specified by metadata feed, name, or ids
-	- can be lists or regex, e.g. `--feed-sel '.*'`
+	- can be lists or regex, e.g. `--feed-sel '.*airport.*'` **Note**: on CLI we need `'.*'` in IntelliJ we can directly use `.*`
 	- can also be `startWith...` or `endWith...`
 
 * diretories for mounting data, target and config directory, container name, config directories/files
 
 * try run feed everything: 
-> **WSL**: `podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf --feed-sel '.*' --test config`
+> **WSL**: `podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf --feed-sel '.*airport.*'`
 >  - Note: data, target and config directories are mounted into the container
 > 
 > **IntelliJ**: 
-> work to where we want to be, start with `--feed-sel download --test config`
-> run parameters: `--feed-sel download --test config -c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf`
-<!-- TODO -->
+> work to where we want to be, start with `--feed-sel .*airport.* --test config`
+> run parameters: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
 
 ## Environment Variables in HOCON
 
-<!-- TODO Intellij case-->
-
-* error: `Could not resolve substitution to a value: ${METASTOREPW}`
-
-  - in `envConfig/local_WSL.conf` we defined `"spark.hadoop.javax.jdo.option.ConnectionPassword" = ${METASTOREPW}`
+Note error: 
+* WSL error: `Could not resolve substitution to a value: ${METASTOREPW}`
+* Intellij error: `Could not resolve substitution to a value: ${DATALAKEPREFIX}`
 
 Task: What is the issue? -> fix issue 
 <!-- A collapsible section with markdown -->
 > <details><summary>Solution: Click to expand!</summary>
-  
+> WSL: in `envConfig/local_WSL.conf` we defined `"spark.hadoop.javax.jdo.option.ConnectionPassword" = ${METASTOREPW}` <br>
 > the Metastore password is set while configuring the metastore. In the Metastore Dockerfile the `metastore/entrypoint.sh` is specified. In this file the Password is specified as 1234
-
-> Thus, set environment variable in the container using the podman option: `-e METASTOREPW=1234`
-
-> Note: better not to use clear test passwords anywhere. In cloud environment use password stores and its handling. There passwords should also not appear in logs as plain text. 
-
+> Thus, set environment variable in the container using the podman option: `-e METASTOREPW=1234` <br>
+> Note: better not to use clear test passwords anywhere. In cloud environment use password stores and its handling. Avoid passwords being exposed in repos and logs. 
+> <br>
+> Intellij: In the env config file the variable DATALAKEPREFIX is used to control the location of data.
+> Here, setting an environment variable DATALAKEPREFIX is necessary. Let's go with `data`
 > </details>
 
 ## Test Configuration
 since we realize there could be issues, let's first run a config test:
 
-`podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'airport' --test config` (fix bug together)
+> WSL: `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*airport.*' --test config` (fix bug together)
+> <br>
+> Intellij: add `--test config`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test config`
 
 * while running we get:
-`Exception in thread "main" io.smartdatalake.config.ConfigurationException: (DataObject~stg_airports) ClassNotFoundException: Implementation CsvDataObject of interface DataObject not found`
-let us double check what DataObjects there are available... [SDLB Schema Viewer](http://smartdatalake.ch/json-schema-viewer/index.html#viewer-page&version=sdl-schema-2.3.0-SNAPSHOT.json)
+`Exception in thread "main" io.smartdatalake.config.ConfigurationException: (DataObject~stg_airports) ClassNotFoundException: Implementation CsvFoobarDataObject of interface DataObject not found`
+let us double-check what DataObjects there are available... [SDLB Schema Viewer](http://smartdatalake.ch/json-schema-viewer/index.html#viewer-page&version=sdl-schema-2.3.0-SNAPSHOT.json)
 
 Task: fix issue 
 <!-- A collapsible section with markdown -->
 > <details><summary>Solution: Click to expand!</summary>
-  
 > In `config/airports.conf` correct the data object type of stg_airports to *CvsFileDataObject*
-
 > </details>
 
 ## Dry-run
 * run again (and then with) `--test dry-run` and feed `'.*'` to check all configs: 
-  `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'airport' --test dry-run`
+  `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel '.*airport.*' --test dry-run`
 
 ## DAG
 * (Directed acyclic graph)
@@ -298,7 +295,7 @@ Task: fix issue
                   │compute-distances│
                   └─────────────────┘
 ```
-> switch lecturer
+<!--TODO continue here-->
 ## Execution Phases
 > real execution: `podman run -e METASTOREPW=1234 --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config sdl-spark:latest --config /mnt/config --feed-sel 'airport'`
 * logs reveal the **execution phases**
