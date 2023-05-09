@@ -4,7 +4,7 @@
     <envs>
       <env name="DATALAKEPREFIX" value="data" />
     </envs>
-    <output_file path="C:\Users\tbb\WORK\sdl\sdl-training\out.serial" is_save="true" />
+    <output_file path="$ProjectFileDir$\out.serial" is_save="true" />
     <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
     <option name="MAIN_CLASS_NAME" value="io.smartdatalake.app.LocalSmartDataLakeBuilder" />
     <module name="getting-started" />
