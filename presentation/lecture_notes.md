@@ -1,7 +1,7 @@
 
 # Smart Data Lake Builder Hands-On Training
 
-## Houskeeping
+## Housekeeping
 * beside the online and onside training you have a participants are entitled to use 8h for:
   - preparation
   - self-paced exercises with SDLB
@@ -18,7 +18,7 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 - long commands should be pasted in the chat
 - ask to follow along and try yourself, no intensive development today, but goal to use the framework by yourself
 
-- ice breaker, largest amount of data sources or tables you worked with in a single project
+- icebreaker, the largest amount of data sources or tables you worked with in a single project
 -->
 
 ## Goal
@@ -44,12 +44,12 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 
 ## Smart Data Lake vs. Smart Data Lake Builder
 
-| Smart Data Lake (similar to Lakehouse)                       | Smart Data Lake Builder |
-|--------------------------------------------------------------|-------------------------|
-| **Concept**                                                  | **Tool**                |
-| combines advantages of Data Warehouse and Data Lakes         | ELCA's tool to build Data Pipelines efficiently |
-| structured data / schema evolution                           | portable and automated |
-| layer (here stg/int/btl) approach / processes / technologies | features like historization, incremental load, partition wise |
+| Smart Data Lake (similar to Lakehouse)                       | Smart Data Lake Builder                                                       |
+|--------------------------------------------------------------|-------------------------------------------------------------------------------|
+| **Concept**                                                  | **Tool**                                                                      |
+| combines advantages of Data Warehouse and Data Lakes         | ELCA's tool to build Data Pipelines efficiently                               |
+| structured data / schema evolution                           | portable and automated                                                        |
+| layer (here stg/int/btl) approach / processes / technologies | features like historization, incremental load, partition wise                 |
 | Similar to Lakehouse                                         | Open Source on Github: [smart-data-lake](https://github.com/smart-data-lake/) |
 
 ### Why Smart Data Lake Builder (SDLB)?
@@ -77,7 +77,7 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 -->
 * [https://github.com/smart-data-lake](https://github.com/smart-data-lake)
 * Scala project, build with Maven
-* with different modules: beside the core we have modules for different plattforms, formats and other features
+* with different modules: beside the core we have modules for different platforms, formats and other features
 * GPL-3 license 
 
 * we build SDLB core package with additional custom packages. Here we have 2 additional files (Scala classes) with *custom web downloader* and *transformer*
@@ -112,7 +112,7 @@ envConfig
 Let's have a look into a configuration file:
 > `config/airports.conf` 
 > <br>
-> Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or Intellij in Windows using `\\wsl$\Ubuntu\home\<username>\...`
+> Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or IntelliJ in Windows using `\\wsl$\Ubuntu\home\<username>\...`
 
 * 3 **data objects** for 3 different layers: **ext**, **stg**, **int**
   - here each data object has a different type: WebserviceFileDataObject, CsvFileDataObject, DeltaLakeTableDataObject
@@ -162,7 +162,7 @@ To mention **a few** dataObjects:
 SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
  
 * ``FileTransferAction``: pure file transfer
-* ``CopyAction``: basic generic action. Reads source into DataFrame and and then writes DataFrame to target data object. Provides opportunity to add **transformer(s)**
+* ``CopyAction``: basic generic action. Reads source into DataFrame and then writes DataFrame to target data object. Provides opportunity to add **transformer(s)**
 * ``CostumDataFrameAction``: can handle **multiple inputs/outputs** 
 * ...
 * actions with additional logic, e.g.
@@ -208,7 +208,7 @@ What we have here:
 	- can be lists or regex, e.g. `--feed-sel '.*airport.*'` **Note**: on CLI we need `'.*'` in IntelliJ we can directly use `.*`
 	- can also be `startWith...` or `endWith...`
 
-* diretories for mounting data, target and config directory, container name, config directories/files
+* directories for mounting data, target and config directory, container name, config directories/files
 
 * try run feed everything: 
 > * **WSL**: `podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf --feed-sel '.*airport.*'`
@@ -221,7 +221,7 @@ What we have here:
 
 Note error: 
 * **WSL** error: `Could not resolve substitution to a value: ${METASTOREPW}`
-* **Intellij** error: `Could not resolve substitution to a value: ${DATALAKEPREFIX}`
+* **IntelliJ** error: `Could not resolve substitution to a value: ${DATALAKEPREFIX}`
 
 Task: What is the issue? -> fix issue 
 <!-- A collapsible section with markdown -->
@@ -235,12 +235,12 @@ Task: What is the issue? -> fix issue
 > In cloud environment use password stores and its handling. 
 > Avoid passwords being exposed in repos and logs. 
 > <br>
-> Intellij: In the env config file the variable DATALAKEPREFIX is used to control the location of data.
+> IntelliJ: In the env config file the variable DATALAKEPREFIX is used to control the location of data.
 > Here, setting an environment variable DATALAKEPREFIX is necessary. Let's go with `data`
 > </details>
 
 > **WSL**
-> define an alias thus we do not specify the core arguments again and again and it get's more clear:
+> define an alias thus we do not specify the core arguments again and again and it gets more clear:
 > - Let's define a command: <br>
 >   `alias sdlb_cmd="podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf"`
 
@@ -249,7 +249,7 @@ Task: What is the issue? -> fix issue
 since we realize there could be issues, let's first run a config test using `--test config`:
 
 > * **WSL**: `sdlb_cmd --feed-sel '.*airport.*' --test config` (fix bug together)
-> * **Intellij**: add `--test config`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test config`
+> * **IntelliJ**: add `--test config`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test config`
 
 * while running we get:
 `Exception in thread "main" io.smartdatalake.config.ConfigurationException: (DataObject~stg_airports) ClassNotFoundException: Implementation CsvFoobarDataObject of interface DataObject not found`
@@ -265,7 +265,7 @@ Task: fix issue
 * run again (and then with) `--test dry-run` and feed `'.*'` to check all configs: 
 
 > * **WSL**:  `sdlb_cmd --feed-sel '.*airport.*' --test dry-run`
-> * **Intelij**: add `--test dry-run`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test dry-run`
+> * **IntelliJ**: add `--test dry-run`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test dry-run`
 
 ## DAG
 * (Directed acyclic graph)
@@ -308,7 +308,7 @@ Task: fix issue
 ## Execution Phases
 let's run without `dry-run`
 > * **WSL**: real execution: `sdlb_cmd --feed-sel 'airport'`
-> * **Intelij**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
+> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
 
 * logs reveal the **execution phases**
 * in general, we have: 
@@ -324,7 +324,7 @@ let's run without `dry-run`
 
 > * **WSL**: Polynote: tables in the DataLake
 >  - open [Polynote at localhost:8192](http://localhost:8192/notebook/inspectData.ipynb)
-> * **Intelij**: open Avro/Parquet Viewer and Drag and drop file into 
+> * **IntelliJ**: open Avro/Parquet Viewer and Drag and drop file into 
 
 > <details><summary>Example content</summary>
 > ```
@@ -347,7 +347,7 @@ now we have tested and executed the part for airport, let's go for the whole pip
 ## Schema handling
 * test the whole pipeline using `.*` and `--test dry-run`
 > * **WSL**: `sdlb_cmd --feed-sel '.*'  --test dry-run `
-> * **Intellij**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --test dry-run`
+> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --test dry-run`
 * execution fail in init phase by because of not finding "foobar" column in `download-deduplicate-departures`:
 
 ```
@@ -404,7 +404,7 @@ Task: fix issue
 * show results
     after the listing tables and schema, we monitor the amount of data in the tables and the latest value
 > * **WSL**: `departure table consists of 457 row and entries are of original date: 20210829 20210830`
-> * **Intellij**: 224+233 rows in 2 parquet files and `dt` dates of `20210829` and `20210830`
+> * **IntelliJ**: 224+233 rows in 2 parquet files and `dt` dates of `20210829` and `20210830`
 
 ## Unit Tests
 not only during runtime we want to have our code tested. When we develop new dataObjects, transformers etc., 
@@ -418,7 +418,7 @@ and
 ## Partitions
 First have a look at `data/btl_distances`.
 
-There are two sub-directories named with the partition name and value.
+There are two subdirectories named with the partition name and value.
 
 **Task**: recompute *compute-distances* only with/for partition `LSZB` <br>
 **Hint**: use CLI help
@@ -428,7 +428,7 @@ There are two sub-directories named with the partition name and value.
 > Here we need `--partition-values estdepartureairport=LSZB`
 > Execute <br>
 > * **WSL**: `sdlb_cmd --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
-> * **Intellij**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
+> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
 ></details>
 
 When you now look at data/btl_distances, you will only see an updated partition estdepartureairport=LSZB 
@@ -491,7 +491,7 @@ Add state path and name:
 > run a couple of times
   - check the increasing amount of lines collected in table
 >* **WSL**: [Polynote](http://localhost:8192/notebook/inspectData.ipynb#Cell4)
->* **Intellij**: Parquet Viewer
+>* **IntelliJ**: Parquet Viewer
 
 > Note: When get result/error: `Webservice Request failed with error <404>`, if there are no new data available. 
 
@@ -502,7 +502,7 @@ Add state path and name:
 * command line option `-s` or `--streaming`, streaming all selected actions
   - requires `--state-path` to be set
 > * **WSL**: `sdlb_cmd  --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training -s` 
-> * **Intellij**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures --state-path $ProjectFileDir$/data/state -n SDLB_training -s`
+> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures --state-path $ProjectFileDir$/data/state -n SDLB_training -s`
 * and see the action running again and again
 
 -> notice the recurring of the action
@@ -553,13 +553,13 @@ Distinguish 2 types of parallelism:
 
 First, measure serial run: 
 > * **WSL**: `sdlb_cmd --feed-sel .* --state-path /mnt/data/state -n SDLB_training >& out.serial`
-> * **Intellij**: 
+> * **IntelliJ**: 
 >   * CLI arguments `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --state-path $ProjectFileDir$/data/state -n SDLB_training`
 >   * Save console output file: `$ProjectFileDir$\out.serial`
 
 Then run in parallel: adding `--parallelism 2` and change output file name
 > * **WSL**: `sdlb_cmd --feed-sel .* --state-path /mnt/data/state -n SDLB_training --parallelism 2 >& out.parallel`
-> * **Intellij**:
+> * **IntelliJ**:
     >   * CLI arguments `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --state-path $ProjectFileDir$/data/state -n SDLB_training --parallelism 2`
 >   * Save console output file: `$ProjectFileDir$\out.prarallel`
 
@@ -598,7 +598,7 @@ When the run crashes we want to restart from where we left and only run remainin
 Let's try.
 > Since we use states already, just run again (**serial**, no log file necessary) and cancel inbetween
 > * **WSL**: `sdlb_cmd --feed-sel .* --state-path /mnt/data/state -n SDLB_training`
-> * **Intellij**: CLI arguments `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --state-path $ProjectFileDir$/data/state -n SDLB_training`
+> * **IntelliJ**: CLI arguments `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --state-path $ProjectFileDir$/data/state -n SDLB_training`
 
 -> cancel run to simulate crash (**after download** phase when seeing in the logs):
 ```
@@ -699,7 +699,7 @@ The viewer runs separately
 * on-prem or in the cloud
 
 * here we saw containerized locally
-* during development we often run the java directly using Intellij in Windows
+* during development, we often run the java directly using IntelliJ in Windows
 * in the cloud we have also various options: 
   - jar in Databricks 
   - Containers in Kubernetes (AKS)
@@ -744,7 +744,7 @@ The following setup is already prepared in the elca-dev tenant:
 * easy maintainable metastore
 
   
-#### Show case
+#### Showcase
 * Workspace -> workflow -> SDLB-train job -> run job
 * after finished, show Data -> int_departures table
 * show notebook in Workspace
@@ -758,7 +758,7 @@ The following setup is already prepared in the elca-dev tenant:
 * Spark Specific Features: BreakDataFrameLineage and Autocaching
 
 ### BreakDataFrameLineage and Autocaching
-* By default spark creates a plan of operations and process them if the target element needs to be realized
+* By default, spark creates a plan of operations and process them if the target element needs to be realized
   - computation is performed again even if the data is written to a dataObject (file, or table,...)
 * Spark provides an option called *cache* to keep the created data in memory
 * SDLB uses this option by default for all defined dataObjects, thus during the execution of a pipeline each dataFrame is computed only once, even when used multiple times
@@ -766,7 +766,7 @@ The following setup is already prepared in the elca-dev tenant:
 Let's consider the scenario illustrated in this figure:
 ![Data linage from JDBC to DeltaLake table to CSV file](images/lineageExample.png)
  
-Assuming an implemtation in Spark, e.g. in our Notebook, the code would look like:
+Assuming an implementation in Spark, e.g. in our Notebook, the code would look like:
 
 ```
   val dataFrame2 = spark.table("table1").transform( <doSomeComplexStuff1> )
@@ -816,9 +816,13 @@ actions {
   }
 ```
 
-SDLB automatically caches all DataFrames of dataObjects. (But not intermediate dataFrames defined in an transformer). Thus, Action A2 uses the DataFrame from memory belonging to table3. But table 3 does not need to be re-read, nor recomputed from table1. In spark you would write `dataFrame2.cache`.
+SDLB automatically caches all DataFrames of dataObjects. 
+(But not intermediate dataFrames defined in a transformer). 
+Thus, Action A2 uses the DataFrame from memory belonging to table3. 
+But table 3 does not need to be re-read, nor recomputed from table1. 
+In spark, you would write `dataFrame2.cache`.
 
-However it will still keep the original Spark-Execution DAG, go over it and then realize that some steps are already cached.
+However, it will still keep the original Spark-Execution DAG, go over it and then realize that some steps are already cached.
 When chaining lots of transformations together, Spark's Execution DAG can get very large and this can cause performance issue and weird bugs.
 SDLB allows you to break the DAG into smaller pieces with the option `breakDataFrameLineage=true` set on the desired action.
 ```
