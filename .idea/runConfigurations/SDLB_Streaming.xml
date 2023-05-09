@@ -7,7 +7,7 @@
     <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
     <option name="MAIN_CLASS_NAME" value="io.smartdatalake.app.LocalSmartDataLakeBuilder" />
     <module name="getting-started" />
-    <option name="PROGRAM_PARAMETERS" value="-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-historize-departures --state-path $ProjectFileDir$/data/state -n SDLB_training -s" />
+    <option name="PROGRAM_PARAMETERS" value="-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures --state-path $ProjectFileDir$/data/state -n SDLB_training -s" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
