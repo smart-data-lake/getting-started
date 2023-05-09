@@ -613,7 +613,6 @@ ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[Dedupl
   - notice line at the beginning: `LocalSmartDataLakeBuilder$ - recovering application SDLB_training runId=1 lastAttemptId=1 [main]`
   - notice the changed DAG, no download
 
-<!--TODO continue here-->
 ## Execution Engines vs Execution Environments
 [Go through documentation](https://smartdatalake.ch/docs/reference/executionEngines)
 > Look at plot at bottom and explain when which Engine is running (see also table on top): 
@@ -632,8 +631,67 @@ The viewer runs separately
 > Note: there is still an issue with parsing "unresolved" variables. If you see just "Loading", 
 > uncomment out the `$METASTOREPW` or `DATALAKEPREFIX` in `envConfig/local*.conf`.
 
+# Exercise
+> **Task**: create a new table provided in CSV format:
+> * airports name
+> * elevation in ft
+> * and elevation in m 
 
-# Deployment methods
+> <details><summary>Solution: Click to expand!</summary>
+> 
+> * create a dataObject like
+> ```
+>  btl_airports_elevation { ### TODO remove for training
+>    type = CsvFileDataObject
+>    path = ${env.datalakeprefix}"/~{id}"
+>    metadata {
+>      name = "Calculated Airport elevation in meters"
+>      description = "contains beside GPS coordiantes, elevation, continent, country, region"
+>      layer = "staging"
+>      subjectArea = "airports"
+>      tags = ["aviation", "airport", "location"]
+>    }
+>  }
+> ```
+> * create an action using stg_airports as input and the above dataObject as output
+> * e.g. with `SQLDfTransformer`: `code = "select name, elevation_ft, (elevation_ft / 3.281) as elevation_meters from stg_airports"`
+> ```
+> export-airport-elevations { ### TODO remove for training
+>   type = CopyAction
+>   inputId = stg_airports
+>   outputId = btl_airports_elevation
+>   transformers = [{
+>     type = SQLDfTransformer
+>     code = "select name, elevation_ft, (elevation_ft / 3.281) as elevation_meters from stg_airports" #Tricky, do not use comma but decimal point ;-)
+>   }]
+>   metadata {
+>     name = "Airport elevation"
+>     description = "Write airport elevation in meters to Parquet file"
+>     feed = download-airport
+>   }
+>  }
+> ```
+> </details>
+
+
+
+# Homework
+* split into groups of 2 or **3**
+* find use case you implement next week in a 4h session
+  - input: data sources (webservice or file or (local) database)
+  - output: targets (simplest: CSV, or DeltaLake, or other)
+  - multiple dataObjects and actions
+  - suggestion: at least one transformation (more than data copy)
+  - sketch dataObjects and actions with main properties/operations
+  - see https://smartdatalake.ch/JsonSchemaViewer/ for inspiration
+
+* next week:
+  - first present and discuss ideas and analyze feasibility, methods to implement
+  - you work together on the implementation and SDLB experts will assist you
+
+<!--TODO continue here-->
+# Additional Topics
+## Deployment methods
 * SDLB can be deployed in various ways on various platforms
 * distinguish running SDLB as:
   - java application
@@ -649,10 +707,10 @@ The viewer runs separately
 
 Here, we want to briefly show the Databricks deployment.
 
-## Databricks
+### Databricks
 Here we have the Databricks setup already prepared, and briefly present the setup, just to give you an idea.
 
-### Preparation steps (not part of the demonstration)
+#### Preparation steps (not part of the demonstration)
 For reference see also: [SDL Deployment on Databricks](https://smartdatalake.ch/blog/sdl-databricks/).
 The following setup is already prepared in the elca-dev tenant:
 
@@ -680,30 +738,16 @@ The following setup is already prepared in the elca-dev tenant:
 * configure job, using the uploaded jar and 
   - parameters: `["-c","file:///dbfs/databricks/config/","--feed-sel","ids:download-deduplicate-departures", "--state-path", "file:///dbfs/databricks/data/state", "-n", "SDLB_training"]`
 
-## Further points
+### Further points
 * cluster modification/swap possible (scalability)
 * recurring schedule
 * easy maintainable metastore
 
   
-### Show case
+#### Show case
 * Workspace -> workflow -> SDLB-train job -> run job
 * after finished, show Data -> int_departures table
 * show notebook in Workspace
-
-# Homework
-* split into groups of **2** or 3
-* find use case you implement next week in a 4h session
-  - input: data sources (webservice or file or (local) database)
-  - output: targets (simplest: CSV, or DeltaLake, or other)
-  - multiple dataObjects and actions
-  - suggestion: at least one transformation (more than data copy)
-  - sketch dataObjects and actions with main properties/operations
-  - see https://smartdatalake.ch/JsonSchemaViewer/ for inspiration
-
-* next week: 
-  - first present and discuss ideas and analyze feasibility, methods to implement
-  - you work together on the implementation and SDLB experts will assist you
 
 ## Additional features
 
