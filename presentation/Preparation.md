@@ -6,12 +6,13 @@ Welcome! Please follow the steps outlined in this document to complete the techn
 
 The following technical requirements are needed in order to participate in the training. Your system may already have some of these installed:
 - Java / JDK 11 (or newer) --> The SDLB is a framework programmed in Scala and it runs on the Java Virtual Machine.
-- Maven --> Used to build the application with all its dependencies
-- Hadoop --> Framework for distributed storage (needs to be separately installed)
-- Intellij (with some plugins) --> Integrated Development Environment (IDE) where you will develop, build and run your data pipelines. Scala Plugin (2.12), bigdata plugin / oder AVRO Parquet Viewer (für Parquet). 
-- Node --> A backend JavaScript runtime environment that you will use to visualize your work
+- Hadoop --> A framework for distributed storage (needs to be separately installed). 
+- Intellij (with some plugins) --> Integrated Development Environment (IDE) where you will develop, build and run your data pipelines. In this guide we will install IntelliJ and its add-ons and will make sure that the project can build correctly.
+
 
 This guide assumes that you're working on a Windows machine. The setup for Linux or MacOS generally comprises the same steps. 
+
+IMPORTANT: Please make sure that the three main 
 
 ### Installing Java
 Most Windows machines come with Java already installed. In order to check if you have Java installed on your machine, open your PowerShell and type `java --version` and then ENTER. The output should look similar to this:
