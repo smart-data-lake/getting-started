@@ -4,6 +4,8 @@ data/output
 .mvnrepo
 target
 venv
+.metals
+.vscode
 /.externalToolBuilders/
 derby.log
 *.log
