@@ -68,7 +68,9 @@ IntelliJ is the Integrated Development Environment (IDE) where we are going to d
 2. Run IntelliJ and install the following plugins:
    1. Scala
    2. Avro and Parquet Viewer
-3. Do not create a new project. Instead, click on *Get from VSC* and paste the following github URL from the training. 
+3. Do not create a new project. Instead, click on *Get from VSC* and paste the following github URL from the training:
+
+`https://github.com/smart-data-lake/getting-started.git`
 
 <img src="/presentation/images/get_from_vcs.png" width="30%" height="30%">
 
