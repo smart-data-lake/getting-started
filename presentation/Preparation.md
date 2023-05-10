@@ -32,7 +32,7 @@ In the case above, the machine is running Java 11 per default. If you see a simi
 
 **If your Java version is lower than 11**, you have to install a newer version (as described above) and update the default version being used by your OS. For this, please refer to the guide on [this link](https://www.happycoders.eu/java/how-to-switch-multiple-java-versions-windows/).
 
-Type `java --version` again to double-check that you have the correct libraries installed.
+Type `java --version` again to double-check that the installation was carried out successfully.
 
 ### Installing Hadoop
 
