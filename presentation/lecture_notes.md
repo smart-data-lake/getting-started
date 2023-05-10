@@ -689,73 +689,47 @@ The viewer runs separately
   - first present and discuss ideas and analyze feasibility, methods to implement
   - you work together on the implementation and SDLB experts will assist you
 
-<!--TODO continue here-->
+# SDLB feature summary
+* [ ] Run **anywhere**
+* [ ] Integrations for major public **clouds** (as jar in Databricks, AWS Glue; container e.g. in Kubernetes; in VM)
+* [ ] Support for different **Execution Engines** (Files, Spark, Snowflake for now)
+* [ ] **Open-source**
+* [ ] **easily-extendable** (Scala & Python)
+* [ ] **reusable** generic transformations (SQL, Python, Scala)
+* [ ] Automated, optimized **DAG** execution
+* [ ] **Batch** and near-realtime **Streaming**
+* [ ] **Automation Tool** with declarative, reusable configuration approach
+* [ ] **Early Validation** of configuration and data pipeline schema problems
+* [ ] **Large Connectivity**: Spark connectors (incl. Iceberg & Deltalake), Kafka, Files, SFTP, Webservice + Airbyte Connectors
+* [ ] **Data Quality** checks, expectations & metrics integrated
+* [ ] Support for Unit/Integration/Smoke **Testing**
+* [ ] Integrated **MLOps** with MFLow (train & predict)
+* [ ] Monitoring: metrics in logs, e.g. size of written DataFrame
+* [ ] Constrains: specify limitations, error/warning when exceeding
+* [ ] Expectations: notifications if diverging from specified expectation, e.g. number of partitions
+* [ ] Housekeeping: 
+  * PartitionRetentionMode:  Keep partitions while retention condition is fulfilled, delete other partitions
+  * PartitionArchiveCompactionMode: Archive and compact old partitions -> Is now already covered by Deltalake
+* [ ] Spark Specific Features: BreakDataFrameLineage and Autocaching
+
+## RoadMap
+Q1:
+* Catalog support in Notebook (Scala)
+* Integrated MLOps with MFLow (train & predict)
+* Remote Agent support (Preview)
+  Q2
+* Extended Metrics Collection for Iceberg and Delta Lake
+* Operations UI for visualizing Runtime Information
+  H2:
+* Language Server: Code completion for configuration files in Visual Studio Code and IntelliJ
+
+2024:
+* SaaS User Interface / Rebranding?
+
+
+------
+
 # Additional Topics
-## Deployment methods
-* SDLB can be deployed in various ways on various platforms
-* distinguish running SDLB as:
-  - java application
-  - containerized
-* on-prem or in the cloud
-
-* here we saw containerized locally
-* during development, we often run the java directly using IntelliJ in Windows
-* in the cloud we have also various options: 
-  - jar in Databricks 
-  - Containers in Kubernetes (AKS)
-  - in Virtual Machines
-
-Here, we want to briefly show the Databricks deployment.
-
-### Databricks
-Here we have the Databricks setup already prepared, and briefly present the setup, just to give you an idea.
-
-#### Preparation steps (not part of the demonstration)
-For reference see also: [SDL Deployment on Databricks](https://smartdatalake.ch/blog/sdl-databricks/).
-The following setup is already prepared in the elca-dev tenant:
-
-* uploading files
-  - upload jar
-    + first build fat-jar: `podman run -v ${PWD}:/mnt/project -v ${PWD}/.mvnrepo:/mnt/.mvnrepo maven:3.6.0-jdk-11-slim -- mvn -DskipTests  -P fat-jar -f /mnt/project/pom.xml "-Dmaven.repo.local=/mnt/.mvnrepo" package`
-    + upload Databricks `Workspace`->`User`->`<Username>`->`Import`-> link in `(To import a library, such as a jar or egg, click here)`
-  - create typesafe fix:
-    ```BASH
-    cat << EOF >> ./config-install.sh
-    #!/bin/bash
-    wget -O /databricks/jars/-----config-1.4.1.jar https://repo1.maven.org/maven2/com/typesafe/config/1.4.1/config-1.4.1.jar
-    EOF
-    databricks fs mkdirs dbfs:/databricks/scripts
-    databricks fs cp ./config-install.sh dbfs:/databricks/scripts/
-    ```
-  - create compute resource:
-    + use the uploaded jar
-    + use init script: `dbfs:/databricks/scripts/config-install.sh` (uploaded above)
-  - upload configs
-    + use Linux Databricks CLI: 
-    `datbricks fs mkdirs dbfs:/config`
-    `databricks fs cp config/departures.conf dbfs:/databricks/config/departures.conf`
-
-* configure job, using the uploaded jar and 
-  - parameters: `["-c","file:///dbfs/databricks/config/","--feed-sel","ids:download-deduplicate-departures", "--state-path", "file:///dbfs/databricks/data/state", "-n", "SDLB_training"]`
-
-### Further points
-* cluster modification/swap possible (scalability)
-* recurring schedule
-* easy maintainable metastore
-
-  
-#### Showcase
-* Workspace -> workflow -> SDLB-train job -> run job
-* after finished, show Data -> int_departures table
-* show notebook in Workspace
-
-## Additional features
-
-* HousekeepingMode
-  * When working with many partitions, SDLB offers two modes to perform Housekeeping activities:
-    * PartitionRetentionMode:  Keep partitions while retention condition is fulfilled, delete other partitions
-    * PartitionArchiveCompactionMode: Archive and compact old partitions -> Is now already covered by Deltalake
-* Spark Specific Features: BreakDataFrameLineage and Autocaching
 
 ### BreakDataFrameLineage and Autocaching
 * By default, spark creates a plan of operations and process them if the target element needs to be realized
@@ -837,10 +811,45 @@ SDLB allows you to break the DAG into smaller pieces with the option `breakDataF
 With the above config, SDLB will always read from whatever was written in table2 (object2) without considering results that were cached in-memory.
 [This is an example of what a typical DAG in Spark may look like](https://stackoverflow.com/questions/41169873/spark-dynamic-dag-is-a-lot-slower-and-different-from-hard-coded-dag)
 
-## Planned
-* Monitoring
-  - metrics in logs, e.g. size of written DataFrame
-* Constrains
-  - specify limitations, error/warning when exceeding
-* Expectations
-  - notifications if diverging from specified expectation, e.g. number of partitions
+----
+# Databricks
+Here we have the Databricks setup already prepared, and briefly present the setup, just to give you an idea.
+
+#### Preparation steps (not part of the demonstration)
+For reference see also: [SDL Deployment on Databricks](https://smartdatalake.ch/blog/sdl-databricks/).
+The following setup is already prepared in the elca-dev tenant:
+
+* uploading files
+  - upload jar
+    + first build fat-jar: `podman run -v ${PWD}:/mnt/project -v ${PWD}/.mvnrepo:/mnt/.mvnrepo maven:3.6.0-jdk-11-slim -- mvn -DskipTests  -P fat-jar -f /mnt/project/pom.xml "-Dmaven.repo.local=/mnt/.mvnrepo" package`
+    + upload Databricks `Workspace`->`User`->`<Username>`->`Import`-> link in `(To import a library, such as a jar or egg, click here)`
+  - create typesafe fix:
+    ```BASH
+    cat << EOF >> ./config-install.sh
+    #!/bin/bash
+    wget -O /databricks/jars/-----config-1.4.1.jar https://repo1.maven.org/maven2/com/typesafe/config/1.4.1/config-1.4.1.jar
+    EOF
+    databricks fs mkdirs dbfs:/databricks/scripts
+    databricks fs cp ./config-install.sh dbfs:/databricks/scripts/
+    ```
+  - create compute resource:
+    + use the uploaded jar
+    + use init script: `dbfs:/databricks/scripts/config-install.sh` (uploaded above)
+  - upload configs
+    + use Linux Databricks CLI:
+      `datbricks fs mkdirs dbfs:/config`
+      `databricks fs cp config/departures.conf dbfs:/databricks/config/departures.conf`
+
+* configure job, using the uploaded jar and
+  - parameters: `["-c","file:///dbfs/databricks/config/","--feed-sel","ids:download-deduplicate-departures", "--state-path", "file:///dbfs/databricks/data/state", "-n", "SDLB_training"]`
+
+### Further points
+* cluster modification/swap possible (scalability)
+* recurring schedule
+* easy maintainable metastore
+
+
+#### Showcase
+* Workspace -> workflow -> SDLB-train job -> run job
+* after finished, show Data -> int_departures table
+* show notebook in Workspace
