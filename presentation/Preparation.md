@@ -27,9 +27,10 @@ In the case above, the machine is running Java 11 per default. If you see a simi
 
 **If the command above wasn't found by your machine**, you'll have to install Java. To do this, click on [this link](https://learn.microsoft.com/en-us/java/openjdk/download) and install Java, for example using the Windows installer as shown in the screenshot:
 
+<img src="/presentation/images/install_java.png" width="50%" height="50%">
 ![](/presentation/images/install_java.png)
 
-**If your Java version is lower than 11**, you have to install a newer version (as described above) and update the default version being used by your OS. For this, please referr to the guide on [this link](https://www.happycoders.eu/java/how-to-switch-multiple-java-versions-windows/).
+**If your Java version is lower than 11**, you have to install a newer version (as described above) and update the default version being used by your OS. For this, please refer to the guide on [this link](https://www.happycoders.eu/java/how-to-switch-multiple-java-versions-windows/).
 
 Type java --version again to double-check that you have the correct libraries installed.
 
