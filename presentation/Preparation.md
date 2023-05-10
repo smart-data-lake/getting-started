@@ -12,7 +12,7 @@ The following technical requirements are needed in order to participate in the t
 
 This guide assumes that you're working on a Windows machine. The setup for Linux or MacOS generally comprises the same steps. 
 
-IMPORTANT: Please make sure that the three steps are carried out in the order outlined below, i.e. install Java before installing Hadoop, and install Hadoop before installing and opening IntelliJ.
+*IMPORTANT: Please make sure that the three steps are carried out in the order outlined below, i.e. install Java before installing Hadoop, and install Hadoop before installing and opening IntelliJ.*
 
 ### Installing Java
 Most Windows machines come with Java already installed. In order to check if you have Java installed on your machine, open your PowerShell and type `java --version` and then ENTER. The output should look similar to this:
@@ -32,7 +32,7 @@ In the case above, the machine is running Java 11 per default. If you see a simi
 
 **If your Java version is lower than 11**, you have to install a newer version (as described above) and update the default version being used by your OS. For this, please refer to the guide on [this link](https://www.happycoders.eu/java/how-to-switch-multiple-java-versions-windows/).
 
-Type java --version again to double-check that you have the correct libraries installed.
+Type `java --version` again to double-check that you have the correct libraries installed.
 
 ### Installing Hadoop
 
