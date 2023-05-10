@@ -58,7 +58,7 @@ If you already have Hadoop installed, you should be able to see its version with
 4. Test the results with `hadoop version` in your terminal. You may have to restart your computer for the changes to take place.
 
 
-### Installing IntelliJ
+### Installing IntelliJ and building the project
 
 IntelliJ is the Integrated Development Environment (IDE) where we are going to do most of the work. It provides a very intuitve graphical interface for developing, building and running Java applications and it comes with lots of useful plugins.
 
@@ -69,6 +69,23 @@ IntelliJ is the Integrated Development Environment (IDE) where we are going to d
 3. Do not create a new project. Instead, click on *Get from VSC* and paste the following github URL from the training. 
 
 ![](/presentation/images/get_from_vcs.png)
+
+4. Checkout the *training* branch from the cloned repository. For this, go the git tab, right-click on the *training* branch, and click on *checkout*.
+
+![](/presentation/images/checkout_branch.png)
+
+5. Add the module as a Maven project by right-clicking on the *pom.xml* file and selecting *Add Maven as a Project*. 
+
+![](/presentation/images/addmaven.png)
+
+6. Build your project by clicking on the little green hammer. Check that the project was build correctly by opening the output on the "Build" tab.
+
+![](/presentation/images/buildproj.png)
+
+
+That's it! You're all set up and ready!
+
+
 
 
 
