@@ -69,6 +69,7 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
   OR update:
   ```
   git pull
+  git checkout training
   ```
 
 ## SDLB general aspects
@@ -414,6 +415,9 @@ runSimulation -> unit with synthetical DataFrames
 [Unit Test in SDLB](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/scala/io/smartdatalake/workflow/action/ScalaClassSparkDsNTo1TransformerTest.scala#L325)
 and
 [Corresponding Config File](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/resources/configScalaClassSparkDsNto1Transformer/usingDataObjectIdWithPartitionAutoSelect.conf)
+
+<! probably change presenters here>
+
 
 ## Partitions
 First have a look at `data/btl_distances`.
