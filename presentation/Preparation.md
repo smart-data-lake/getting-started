@@ -28,7 +28,7 @@ In the case above, the machine is running Java 11 per default. If you see a simi
 **If the command above wasn't found by your machine**, you'll have to install Java. To do this, click on [this link](https://learn.microsoft.com/en-us/java/openjdk/download) and install Java, for example using the Windows installer as shown in the screenshot:
 
 <img src="/presentation/images/install_java.png" width="50%" height="50%">
-![](/presentation/images/install_java.png)
+
 
 **If your Java version is lower than 11**, you have to install a newer version (as described above) and update the default version being used by your OS. For this, please refer to the guide on [this link](https://www.happycoders.eu/java/how-to-switch-multiple-java-versions-windows/).
 
@@ -42,22 +42,22 @@ If you already have Hadoop installed, you should be able to see its version with
 
 2. Choose the version that you like best and extract it into a folder on wour machine. For example, you can extract the version 3.2.2 into the root of the C:/ directory as shown in the screenshot.
 
-![](/presentation/images/hadoop_binaries.png)
+<img src="/presentation/images/hadoop_binaries.png" width="50%" height="50%">
 
-3. Change the PATH and HADOOP_HOME environment variables:
+1. Change the PATH and HADOOP_HOME environment variables:
    1. Go to System Properties --> Advanced System Settings --> Environment Variables
 
-   ![](/presentation/images/advanced_system_settings.png)
+  <img src="/presentation/images/advanced_system_settings.png" width="60%" height="60%">
 
    2. Create a new user variable HADOOP_HOME and set its value to the path of where you stored the Hadoop binaries in the previous step.
 
-   ![](/presentation/images/hadoop_home_var.png)
+<img src="/presentation/images/hadoop_home_var.png" width="60%" height="60%">
    
    3. Add the same folder to the PATH variable including the */bin* suffix.
 
    ![](/presentation/images/hadoop_bins_1.png)
 
-4. Test the results with `hadoop version` in your terminal. You may have to restart your computer for the changes to take place.
+2. Test the results with `hadoop version` in your terminal. You may have to restart your computer for the changes to take place.
 
 
 ### Installing IntelliJ and building the project
@@ -70,15 +70,15 @@ IntelliJ is the Integrated Development Environment (IDE) where we are going to d
    2. Avro and Parquet Viewer
 3. Do not create a new project. Instead, click on *Get from VSC* and paste the following github URL from the training. 
 
-![](/presentation/images/get_from_vcs.png)
+<img src="/presentation/images/get_from_vcs.png" width="30%" height="30%">
 
 4. Checkout the *training* branch from the cloned repository. For this, go the git tab, right-click on the *training* branch, and click on *checkout*.
 
-![](/presentation/images/checkout_branch.png)
+<img src="/presentation/images/checkout_branch.png" width="40%" height="40%">
 
 5. Add the module as a Maven project by right-clicking on the *pom.xml* file and selecting *Add Maven as a Project*. 
 
-![](/presentation/images/addmaven.png)
+<img src="/presentation/images/addmaven.png" width="40%" height="40%">
 
 6. Build your project by clicking on the little green hammer. Check that the project was build correctly by opening the output on the "Build" tab.
 
