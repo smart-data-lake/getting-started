@@ -673,22 +673,6 @@ The viewer runs separately
 > ```
 > </details>
 
-
-
-# Homework
-* split into groups of 2 or **3**
-* find use case you implement next week in a 4h session
-  - input: data sources (webservice or file or (local) database)
-  - output: targets (simplest: CSV, or DeltaLake, or other)
-  - multiple dataObjects and actions
-  - suggestion: at least one transformation (more than data copy)
-  - sketch dataObjects and actions with main properties/operations
-  - see https://smartdatalake.ch/JsonSchemaViewer/ for inspiration
-
-* next week:
-  - first present and discuss ideas and analyze feasibility, methods to implement
-  - you work together on the implementation and SDLB experts will assist you
-
 # SDLB feature summary
 * [ ] Run **anywhere**
 * [ ] Integrations for major public **clouds** (as jar in Databricks, AWS Glue; container e.g. in Kubernetes; in VM)
@@ -726,6 +710,27 @@ Q1:
 2024:
 * SaaS User Interface / Rebranding?
 
+-----
+# References
+* SDLB source [github.com/smart-data-lake/smart-data-lake](https://github.com/smart-data-lake/smart-data-lake)
+* Documentation [smartdatalake.ch/docs](https://smartdatalake.ch/docs/)
+* Schema Viewer [smartdatalake.ch/json-schema-viewer/](https://smartdatalake.ch/json-schema-viewer/)
+* getting started [github.com/smart-data-lake/getting-started](https://github.com/smart-data-lake/getting-started)
+
+-----
+# Homework
+* split into groups of 2 or **3**
+* find use case you implement next week in a 4h session
+  - input: data sources (webservice or file or (local) database)
+  - output: targets (simplest: CSV, or DeltaLake, or other)
+  - multiple dataObjects and actions
+  - suggestion: at least one transformation (more than data copy)
+  - sketch dataObjects and actions with main properties/operations
+  - see https://smartdatalake.ch/JsonSchemaViewer/ for inspiration
+
+* next week:
+  - first present and discuss ideas and analyze feasibility, methods to implement
+  - you work together on the implementation and SDLB experts will assist you
 
 ------
 
