@@ -37,4 +37,5 @@ services:
     volumes:
       - "./config:/config" # SDL config to visualize
       - "./envConfig:/envConfig" # SDL config to visualize
+      - "./envConfig/sdlbViewer.conf:/config/sdlbViewer.conf"
       - "./description:/description" # SDL descriptions to visualize

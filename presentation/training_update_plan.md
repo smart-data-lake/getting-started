@@ -26,6 +26,8 @@
                 + [x] in IntelliJ select output path via env Variable
             + [x] fix deduplicate action 
 	+ add short exercises for more HandsOn
+    + [ ] secret handling
+    + expectations monitoring
 
 - create a build script to automatically create the version with failures/tasks to fix 
 - merge back improved structure to getting-started

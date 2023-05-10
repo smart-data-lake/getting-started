@@ -4,4 +4,5 @@ RUN \
 wget https://github.com/smart-data-lake/sdl-visualization/releases/download/0.9.3/sdl-visualizer.zip && \
 unzip sdl-visualizer.zip && \
 cp lighttpd.conf /etc/lighttpd/lighttpd.conf
+COPY manifest.json .
 
