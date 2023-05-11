@@ -80,9 +80,9 @@ IntelliJ is the Integrated Development Environment (IDE) where we are going to d
 
 <img src="/presentation/images/addmaven.png" width="40%" height="40%">
 
-6. Build your project by clicking on the little green hammer. Check that the project was build correctly by opening the output on the "Build" tab.
+6. Make a test run by changing the runConfigurations to *SDLB_test* and clicking on the *Play* button. A successful build and run should show you the SDLB options and end with an exit code 0 as shown in the screenshot.
 
-![](/presentation/images/buildproj.png)
+![](/presentation/images/runtest.png)
 
 
 That's it! Now you're all set up for the upcoming training.
