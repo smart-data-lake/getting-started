@@ -65,9 +65,10 @@ If you already have Hadoop installed, you should be able to see its version with
 IntelliJ is the Integrated Development Environment (IDE) where we are going to do most of the work. It provides a very intuitve graphical interface for developing, building and running Java applications and it comes with lots of useful plugins.
 
 1. Please download and install IntelliJ from the [official website](https://www.jetbrains.com/idea/download). The free Community Edition is more than enough for performing th tasks in this course.
-2. Run IntelliJ and install the following plugins:
+2. Run IntelliJ and install the following plugins (you can do this either directly after opening IntelliJ or by going to File --> Settings --> Plugins)
    1. Scala
    2. Avro and Parquet Viewer
+   
 3. Do not create a new project. Instead, click on *Get from VSC* and paste the following github URL from the training. 
 
 <img src="/presentation/images/get_from_vcs.png" width="30%" height="30%">
