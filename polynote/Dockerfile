@@ -19,22 +19,24 @@ RUN mvn -f /home/app/sdl-lib-pom.xml package
 #
 FROM polynote/polynote:${POLYNOTE_VERSION}-${SCALA_VERSION}
 
+USER root
+
 # Arguments after `FROM` are reset
 ARG SCALA_VERSION="2.12"
 # check available versions at https://spark.apache.org/downloads.html
-ARG SPARK_VERSION="3.2.2"
+RUN apt-get -y update; apt-get -y install curl
+RUN curl --silent https://dlcdn.apache.org/spark/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//' | grep "spark-3.2" | sed 's/spark-//' > /opt/spark.version
+RUN bash -l -c 'echo export SPARK_VERSION="$(cat /opt/spark.version)" >> /etc/bash.bashrc'
 ARG HADOOP_VERSION="3.2"
 # derby version used by this spark version - we need to load additional derbyclient jar to connect to remote metastore
 ARG DERBY_VERSION="10.12.1.1"
-
-USER root
 
 WORKDIR /opt
 
 # install spark distribution (polynote needs spark-submit command)
 COPY install_spark.sh .
 # convert line-endings to unix format and start script to install spark
-RUN sed -i 's/\r$//' install_spark.sh && chmod +x install_spark.sh && ./install_spark.sh
+RUN sed -i 's/\r$//' install_spark.sh && chmod +x install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) ./install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
