@@ -59,6 +59,8 @@ If you already have Hadoop installed, you should be able to see its version with
 
 2. Test the results with `hadoop version` in your terminal. You may have to restart your computer for the changes to take place.
 
+*NOTE: If `hadoop version` still causes some issues, don't worry and keep going with the next part. We don't actually use the terminal command but the Hadoop binaries, which are called differently within the SDLB application.*
+
 
 ### Installing IntelliJ and building the project
 
