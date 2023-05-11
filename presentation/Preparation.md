@@ -32,7 +32,7 @@ In the case above, the machine is running Java 11 per default. If you see a simi
 
 **If your Java version is lower than 11**, you have to install a newer version (as described above) and update the default version being used by your OS. For this, please refer to the guide on [this link](https://www.happycoders.eu/java/how-to-switch-multiple-java-versions-windows/).
 
-Type `java --version` again to double-check that you have the correct libraries installed.
+Type `java --version` again to double-check that the installation was carried out successfully.
 
 ### Installing Hadoop
 
@@ -69,7 +69,9 @@ IntelliJ is the Integrated Development Environment (IDE) where we are going to d
    1. Scala
    2. Avro and Parquet Viewer
    
-3. Do not create a new project. Instead, click on *Get from VSC* and paste the following github URL from the training. 
+3. Do not create a new project. Instead, click on *Get from VSC* and paste the following github URL from the training:
+
+`https://github.com/smart-data-lake/getting-started.git`
 
 <img src="/presentation/images/get_from_vcs.png" width="30%" height="30%">
 
