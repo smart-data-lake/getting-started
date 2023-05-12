@@ -89,9 +89,68 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 * [**H**uman-**O**ptimized **C**onfig **O**bject **N**otation](https://github.com/lightbend/config/blob/main/HOCON.md)
 * originating from JSON
 
+Let's start writing a config
+> open new file `test_config.conf` <br>
+> what to write? -> Schema viewer
+
+### Schema Viewer - What is supported?
+> open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
+* distinguish `global`, `dataObjects`, `actions`, and `connections`
+
+> write sections `dataObjects { }` and `actions { }` in our new config file.
+
+### DataObjects
+There are data objects different types: files, database connections, and table formats.
+To mention **a few** dataObjects:
+
+* `JdbcTableDataObject` to connect to a database e.g. MS SQL or Oracle SQL
+* `KafkaTopicDataObject` to read from Kafka Topics
+* `DeltaLakeTableDataObject` tables in delta format (based on parquet), including schema registered in metastore and transaction logs enables time travel (a common destination)
+* `SnowflakeTableDataObject` access to Snowflake tables
+* `AirbyteDataObject` provides access to a growing list of [Airbyte](https://docs.airbyte.com/integrations/) connectors to various sources and sinks e.g. Facebook, Google {Ads,Analytics,Search,Sheets,...}, Greenhouse, Instagram, Jira,...
+
+### Actions
+SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
+
+* ``FileTransferAction``: pure file transfer
+* ``CopyAction``: basic generic action. Reads source into DataFrame and then writes DataFrame to target data object. Provides opportunity to add **transformer(s)**
+* ``CostumDataFrameAction``: can handle **multiple inputs/outputs**
+* ...
+* actions with additional logic, e.g.
+  - ``DeduplicateAction``: verifies to not have duplicates between input and output, keeps last record and history when *captured*
+  - ``HistorizeAction``: technical historization using **valid-from/to** columns
+
+#### Transformations
+* distinguish between **1to1** (CopyAction, Dedup/Hist) and **many-to-many** (CustomDataFrame) transformations
+* transformers supports languages:
+  - ScalaClass
+  - ScalaCode
+  - SQL
+  - Python
+* transformers with additional logic, e.g.:
+  - `StandardizeColNamesTransformer`
+  - `AdditionalColumnsTransformer` (in HistorizeAction), adding information from context or derived from input, for example, adding input file name
+  - `SparkRepartitionTransformer` for optimized file handling
+
+What we have here:
+* in `config/airports.conf` we already saw an SQL transformer
+* in `config/departures.conf` look at `download-deduplicate-departures`
+  - **chained** transformers
+  - first **SQL** query, to convert UnixTime to dateTime format
+  - then **Scala Code** for deduplication
+    + the deduplication action does compare input and target
+    + the transformation verifies that there are no duplicated in the input
+* in `config/distances.conf` a Scala class is called
+  - see `src/main/scala/com/sample/ComputeDistanceTransformer.scala`
+    + definition and usage of distance calculation
+
+> Note: *transformer* is deprecated
+
+### config Structure
+
 Let's have a look to the present implementation:
 
-> **WSL**: `less config` 
+> **WSL**: `ls config ; ls envConfig` 
 > <br>
 > **IntelliJ**: show directory structure especially `config` -> see multiple configuration files
 
@@ -144,57 +203,6 @@ Let's have a look into a configuration file:
     * triple underscore(`___`) is converted into a single underscore(`_`)
 :warning: TODO overwrite not working'
 -->
-
-### Schema Viewer - What is supported?
-> open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
-* distinguish `global`, `dataObjects`, `actions`, and `connections`
-
-### DataObjects
-There are data objects different types: files, database connections, and table formats. 
-To mention **a few** dataObjects: 
-
-* `JdbcTableDataObject` to connect to a database e.g. MS SQL or Oracle SQL
-* `KafkaTopicDataObject` to read from Kafka Topics
-* `DeltaLakeTableDataObject` tables in delta format (based on parquet), including schema registered in metastore and transaction logs enables time travel (a common destination)
-* `SnowflakeTableDataObject` access to Snowflake tables 
-* `AirbyteDataObject` provides access to a growing list of [Airbyte](https://docs.airbyte.com/integrations/) connectors to various sources and sinks e.g. Facebook, Google {Ads,Analytics,Search,Sheets,...}, Greenhouse, Instagram, Jira,...
-
-### Actions
-SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
- 
-* ``FileTransferAction``: pure file transfer
-* ``CopyAction``: basic generic action. Reads source into DataFrame and then writes DataFrame to target data object. Provides opportunity to add **transformer(s)**
-* ``CostumDataFrameAction``: can handle **multiple inputs/outputs** 
-* ...
-* actions with additional logic, e.g.
-  - ``DeduplicateAction``: verifies to not have duplicates between input and output, keeps last record and history when *captured*
-  - ``HistorizeAction``: technical historization using **valid-from/to** columns
-
-#### Transformations
-* distinguish between **1to1** (CopyAction, Dedup/Hist) and **many-to-many** (CustomDataFrame) transformations
-* transformers supports languages:
-	- ScalaClass
-	- ScalaCode
-	- SQL
-	- Python
-* transformers with additional logic, e.g.:
-	- `StandardizeColNamesTransformer` 
-	- `AdditionalColumnsTransformer` (in HistorizeAction), adding information from context or derived from input, for example, adding input file name
-	- `SparkRepartitionTransformer` for optimized file handling
-
-What we have here: 
-* in `config/airports.conf` we already saw an SQL transformer
-* in `config/departures.conf` look at `download-deduplicate-departures`
-  - **chained** transformers
-  - first **SQL** query, to convert UnixTime to dateTime format
-  - then **Scala Code** for deduplication
-    + the deduplication action does compare input and target
-    + the transformation verifies that there are no duplicated in the input
-* in `config/distances.conf` a Scala class is called
-  - see `src/main/scala/com/sample/ComputeDistanceTransformer.scala`
-    + definition and usage of distance calculation
-
-> Note: *transformer* is deprecated
 
 ## Feeds
 * start application with `--help`: 

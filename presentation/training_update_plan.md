@@ -30,6 +30,8 @@
 	+ find more short exercises for more HandsOn
 
 Backlog:
++ [ ] advertise also via LinkedIn
++ [ ] scala file for analyzing tables like notebook
 + [ ] secret handling
 + [ ] expectations monitoring
 - [ ] create a build script to automatically create the version with failures/tasks to fix 
