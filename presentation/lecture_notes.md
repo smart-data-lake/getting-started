@@ -1,12 +1,21 @@
 
 # Smart Data Lake Builder Hands-On Training
 
-## Housekeeping for ELCA internal colleagues
-* beside the online and onside training you have a participants are entitled to use 8h for:
-  - preparation
-  - self-paced exercises with SDLB
-    + lecture notes: https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md
-  - development of use case
+## Organization 
+
+Welcome! We are very happy to have you here today! Before starting, there are two organizational points to clear up:
+
+- **Training agenda:** The training is divided into two parts / days. 
+	1. The first part of the training focuses on the theoretical concepts of the framework. The goal of this session is to arm you with the necessary knowledge for you to build your own pipelines and prepare for the second session. 
+	2. The second part is almost only hands-on: you will be divided into groups and will build a data pipeline. At the end of the session you will present your solution to the group.
+
+- **For ELCA colleagues:** beside the on-site training time, participants are entitled to use additional 8h for:
+	- Setup preparation
+  	- Self-paced exercises with SDLB
+    	+ lecture notes: https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md
+  	- Preparation of use case
+
+
 
 <!-- 
 Tools: In Teams annotation can be used to point to specific aspects in the configs, SchemaViewer,...
@@ -30,7 +39,7 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 
 ![map about flights around Bern](images/flights_BE.png)
 
-* as data engineers -> provide elevated data for data scientists and business. **General steps**:
+* Let's try to abstract this use case... As data engineers, we want to provide elevated data for data scientists and business. **General steps to be followed**:
   - download data
   - combining/filter/transform data in a general manner
   - store processed data, thus it can be utilized for various use cases
@@ -41,6 +50,8 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
     - business transformation layer (ready for data analysts/scientists to run/develop their applications)
 
 ![data layer structure for the use case](images/dataLayers.png)
+
+The Smart Data Lake Builder (SDLB) is the tool we will use to accomplish these steps. Let us take a step back for the moment. We will come back to our use-case in a couple of minutes.
 
 ## Smart Data Lake vs. Smart Data Lake Builder
 
