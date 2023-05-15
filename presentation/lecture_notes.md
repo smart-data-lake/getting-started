@@ -8,31 +8,31 @@ Groups for Exercizes
 
 **Group 1**
 
-Philippe 
-Robert 
-Andreas 
+- Philippe 
+- Robert 
+- Andreas 
 
 **Group 2**
 
-Gilles  
-Katharina 
+- Gilles  
+- Katharina 
 
 **Group 3**
 
- Ludwig (LWS)
- Luc (LCS)
- Nicolas (NWI)
+ - Ludwig (LWS)
+ - Luc (LCS)
+ - Nicolas (NWI)
 
 **Group 4**
 
- John Carlos  (JCG)
- David (DSA)
+ - John Carlos  (JCG)
+ - David (DSA)
  
 **Group 5**
 
-Bettina 
-Fabiana 
-Florian 
+- Bettina 
+- Fabiana 
+- Florian 
 
 
 - **Training agenda:** The training is divided into two parts / days. 
