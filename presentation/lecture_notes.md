@@ -1,7 +1,7 @@
 
 # Smart Data Lake Builder Hands-On Training
 
-## Housekeeping
+## Housekeeping for ELCA internal colleagues
 * beside the online and onside training you have a participants are entitled to use 8h for:
   - preparation
   - self-paced exercises with SDLB
