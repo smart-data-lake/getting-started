@@ -1,7 +1,8 @@
 - SDLB-Training customers: 
-	+ GEAG -> SOTI
-	+ VBZ -> SOTI 
-	+ SBB Datenlabor -> ZKU
+	+ GEAK -> SOTI
+    + [ ] PF -> DDB
+	+ [x] VBZ -> SOTI 
+	+ [x] SBB Datenlabor -> ZKU
 - Update:
 	+ preparation document with Intellij -> SOTI
 		* setup Intellij with its Plugin, Scala, ..., Parquet, (DBeaver)
@@ -14,8 +15,25 @@
 			- script ro start Viz
 	+ without docker/podman, only Intellij
 		* lecture Notes -> SCHM
-		  + significantly shorten theory part at the beginning
+		  + [x] significantly shorten theory part at the beginning
+          + [x] new env var error case
+          + [x] local_WSL, local_IntelliJ
+          + [x] exercise: add new DO and Action where columns are name and elevation in m
+          + [ ] update "further SDLB features"
+          + [ ] update roadmap
 		* HandsOn -> TBB
-			- no docker -> parquet, ...
-			+ config / envConfig separation
-	+ add short exercises for more HandsOn
+ 			+ [x] config / envConfig separation
+			- [x] no docker -> parquet, ...
+              + [x] new case for env Variable usage  
+                + [x] in IntelliJ select output path via env Variable
+            + [x] fix deduplicate action 
+	+ find more short exercises for more HandsOn
+
+Backlog:
++ [ ] advertise also via LinkedIn
++ [ ] scala file for analyzing tables like notebook
++ [ ] secret handling
++ [ ] expectations monitoring
+- [ ] create a build script to automatically create the version with failures/tasks to fix 
+- [ ] merge back improved structure to getting-started
+- [ ] create build script, to create the training version 

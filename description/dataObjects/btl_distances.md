@@ -1,6 +1,6 @@
 
 # Table with computed distances
-The data is derived from [Airport locations](#/dataObjects/int-airports) and flight information
+The data is derived from [Airport locations](#/dataObjects/int_airports) and flight information
 
 
 # Description
@@ -9,7 +9,7 @@ Further, flights with a travel distance <500km are tagged.
 
 The goal is to identify the amount of flight and all the locations, which are closer than 500km and therewith may be replaced by train travels. 
 
-![less flights more ...](#/dataObjects/train.png)
+![less flights more ...](description/dataObjects/train.png)
 
 # Properties
 
