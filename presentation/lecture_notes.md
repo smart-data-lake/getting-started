@@ -32,7 +32,7 @@ Groups for Exercizes
 
 - Nicolas 
 - Fabiana 
-- John Carlos 
+- Guy Merlin 
 
 
 **Training agenda:** The training is divided into two parts / days. 
