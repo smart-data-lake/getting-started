@@ -9,33 +9,33 @@ Groups for Exercizes
 **Group 1**
 
 - Philippe 
-- Robert 
-- Andreas 
+- Katharina
+- Ludwig 
 
 **Group 2**
 
 - Gilles  
-- Katharina 
+- Robert 
 
 **Group 3**
 
- - Ludwig (LWS)
- - Luc (LCS)
- - Nicolas (NWI)
+ - Andreas
+ - Luc
+ - Bettina
 
 **Group 4**
-
- - John Carlos  (JCG)
- - David (DSA)
+ - Florian
+ - John Carlos
+ - David
  
 **Group 5**
 
-- Bettina 
+- Nicolas 
 - Fabiana 
-- Florian 
+- John Carlos 
 
 
-- **Training agenda:** The training is divided into two parts / days. 
+**Training agenda:** The training is divided into two parts / days. 
 	1. The first part of the training focuses on the theoretical concepts of the framework. The goal of this session is to arm you with the necessary knowledge for you to build your own pipelines and prepare for the second session. 
 	2. The second part is almost only hands-on: you will be divided into groups and will build a data pipeline. At the end of the session you will present your solution to the group.
 
