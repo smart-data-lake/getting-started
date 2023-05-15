@@ -1,5 +1,7 @@
 
 # Smart Data Lake Builder Hands-On Training
+Welcome! We are very happy to have you here today! Before starting, there are two organizational points to clear up:
+
 
 ## Organization 
 Groups for Exercizes
@@ -32,7 +34,6 @@ Bettina
 Fabiana 
 Florian 
 
-Welcome! We are very happy to have you here today! Before starting, there are two organizational points to clear up:
 
 - **Training agenda:** The training is divided into two parts / days. 
 	1. The first part of the training focuses on the theoretical concepts of the framework. The goal of this session is to arm you with the necessary knowledge for you to build your own pipelines and prepare for the second session. 
