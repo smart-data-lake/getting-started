@@ -278,7 +278,7 @@ let us double-check what DataObjects there are available... [SDLB Schema Viewer]
 Task: fix issue 
 <!-- A collapsible section with markdown -->
 > <details><summary>Solution: Click to expand!</summary>
-> In `config/airports.conf` correct the data object type of stg_airports to *CvsFileDataObject*
+> In `config/airports.conf` correct the data object type of stg_airports to *CsvFileDataObject*
 > </details>
 
 ## Dry-run
