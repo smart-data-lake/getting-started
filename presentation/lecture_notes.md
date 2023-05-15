@@ -2,6 +2,31 @@
 # Smart Data Lake Builder Hands-On Training
 
 ## Organization 
+Groups for Exercizes
+
+**Group 1**
+Philippe 
+Robert 
+Andreas 
+
+**Group 2**
+Gilles  
+Katharina 
+
+**Group 3**
+ Ludwig (LWS)
+ Luc (LCS)
+ Nicolas (NWI)
+
+**Group 4**
+ John Carlos  (JCG)
+ David (DSA)
+ 
+**Group 5**
+
+Bettina 
+Fabiana 
+Florian 
 
 Welcome! We are very happy to have you here today! Before starting, there are two organizational points to clear up:
 
