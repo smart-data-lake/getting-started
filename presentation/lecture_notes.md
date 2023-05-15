@@ -44,13 +44,13 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 
 ## Smart Data Lake vs. Smart Data Lake Builder
 
-| Smart Data Lake (similar to Lakehouse)                       | Smart Data Lake Builder                                                       |
+| Smart Data Lake                       | Smart Data Lake Builder                                                       |
 |--------------------------------------------------------------|-------------------------------------------------------------------------------|
 | **Concept**                                                  | **Tool**                                                                      |
 | combines advantages of Data Warehouse and Data Lakes         | ELCA's tool to build Data Pipelines efficiently                               |
 | structured data / schema evolution                           | portable and automated                                                        |
 | layer (here stg/int/btl) approach / processes / technologies | features like historization, incremental load, partition wise                 |
-| Similar to Lakehouse                                         | Open Source on Github: [smart-data-lake](https://github.com/smart-data-lake/) |
+| Similar to Lakehouse (for more details see [this paper](https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf)) | Open Source on Github: [smart-data-lake](https://github.com/smart-data-lake/) |
 
 ### Why Smart Data Lake Builder (SDLB)?
 * defining dataObjets and relation instead of dependency in whole tree -> well suited for complex data pipelines
