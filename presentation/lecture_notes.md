@@ -99,6 +99,7 @@ The Smart Data Lake Builder (SDLB) is the tool we will use to accomplish these s
 ## Hocon - Pipeline Description
 * [**H**uman-**O**ptimized **C**onfig **O**bject **N**otation](https://github.com/lightbend/config/blob/main/HOCON.md)
 * originating from JSON
+* great features, like variables/references
 
 Let's start writing a config
 > open new file `test_config.conf` <br>
@@ -163,7 +164,7 @@ Let's have a look to the present implementation:
 
 > **WSL**: `ls config ; ls envConfig` 
 > <br>
-> **IntelliJ**: show directory structure especially `config` -> see multiple configuration files
+> **IntelliJ**: show directory structure especially `config` and `envConfig` -> see multiple configuration files
 
 * specification of the pipeline can be split in **multiple files** and even **directories**
   - -> directories can be used to manage different environments e.g. 
@@ -183,7 +184,7 @@ envConfig
 Let's have a look into a configuration file:
 > `config/airports.conf` 
 > <br>
-> Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or IntelliJ in Windows using `\\wsl$\Ubuntu\home\<username>\...`
+> WSL tipp: There are a bunch of viewers and editors. Simplest may be `nano`. From Windows, you can SublimeText or IntelliJ using `\\wsl$\Ubuntu\home\<username>\...`
 
 * 3 **data objects** for 3 different layers: **ext**, **stg**, **int**
   - here each data object has a different type: WebserviceFileDataObject, CsvFileDataObject, DeltaLakeTableDataObject
@@ -216,6 +217,9 @@ Let's have a look into a configuration file:
 -->
 
 ## Feeds
+Often we do not want to run all defined pipelines. Esp. during development, debugging or in various use case, 
+we rely on running only parts. This may be just a single action/transformation, or downloading everything.  
+
 * start application with `--help`: 
 > * **WSL**: `podman run --rm --pod sdlb_training sdl-spark --help`
 >   * Note: `--rm` removes container after execution, `--pod` specifies the pod to run in, with supporting containers
@@ -413,7 +417,8 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 Task: fix issue 
 <!-- A collapsible section with markdown -->
 > <details><summary>Solution: Click to expand!</summary>
-> In `config/departures.conf` correct the data object download-deduplicate-departures to not select foobar
+>
+> * In `config/departures.conf` correct the data object download-deduplicate-departures to not select foobar
 > </details>
 
 
@@ -435,23 +440,24 @@ runSimulation -> unit with synthetical DataFrames
 and
 [Corresponding Config File](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/resources/configScalaClassSparkDsNto1Transformer/usingDataObjectIdWithPartitionAutoSelect.conf)
 
-<! probably change presenters here>
 
+<! probably change presenters here>
 
 ## Partitions
 First have a look at `data/btl_distances`.
 
 There are two subdirectories named with the partition name and value.
 
-**Task**: recompute *compute-distances* only with/for partition `LSZB` <br>
+**Task**: recompute `compute-distances` only with/for partition `LSZB` <br>
 **Hint**: use CLI help
 
 ><details><summary>Solution: Click to expand!</summary>
-> to specify a partion, the CLI option `--partition-value` need to be used. 
-> Here we need `--partition-values estdepartureairport=LSZB`
-> Execute <br>
-> * **WSL**: `sdlb_cmd --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
-> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
+> 
+> * specify a partion: CLI option `--partition-value`
+> * Here we need: `--partition-values estdepartureairport=LSZB` with `--feed-sel ids:compute-distances` since other dataObjects are not implemented with partitions
+> * Execute <br>
+>   * **WSL**: `sdlb_cmd --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
+>   * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
 ></details>
 
 When you now look at data/btl_distances, you will only see an updated partition estdepartureairport=LSZB 
@@ -464,18 +470,18 @@ But batch processing with partitioning is still the most performant data process
 when dealing with large amounts of data.
 
 ## Incremental Load
-* desire to **not read all** data from input at every run -> incrementally
+* desire to **not read** (and write) **all** data from input at every run -> incrementally
 * or **here**: departure source **restricted request** to <7 days
   - initial request 2 days 29.-20.08.2021
 
 ### General aspects
 * in general, we often want an initial load and then regular updates
-* distinguish between
-* **StateIncremental** 
-  - stores a state, utilized during request submission, e.g. WebService or DB request
-* **SparkIncremental**
-  - uses max values from **compareCol**
-  - *DataFrameIncrementalMode* and *FileIncrementalMode*
+* we distinguish between:
+  * **StateIncremental** 
+    - stores a state, utilized during request submission, e.g. WebService or DB request
+  * **SparkIncremental**
+    - uses max values from **compareCol**
+    - *DataFrameIncrementalMode* and *FileIncrementalMode*
  
 ### Current Example
 Let's try out StateIncremental with the action `download-deduplicate-departures`
@@ -485,8 +491,17 @@ Let's try out StateIncremental with the action `download-deduplicate-departures`
     + instantiating state variables 
     + see also [getting-started example](https://smartdatalake.ch/docs/getting-started/part-3/incremental-mode)
 
-These Requirements are already met.
+These Requirements are already met. &#10004;
 
+## Execution Modes
+for Actions there are different execution modes, including various incremental modes, e.g.:
+* `SparkStreamingMode`
+  - single action streaming
+    + action -> executionMode -> SparkStreamingMode
+* see other execution modes ... explore Schema Viewer and explore the SDL code
+  - PartitionDiffMode, FailNoPartitionValuesMode, ...
+
+Here we use `DataObjectStateIncrementalMode`: 
 * To enable stateIncremental we need to change the action `download-deduplicate-departures` and set these parameters of the DeduplicateAction:
   ```
     executionMode = { type = DataObjectStateIncrementalMode }
@@ -536,6 +551,7 @@ Task: change the streaming trigger interval to 10s (or alternatively to 120s)
 Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-schema-viewer/)
 
 > <details><summary>Solution: Click to expand!</summary>
+>
 > search stream in Schema Viewer 
 > and add to the `config/global.conf` -> `global`->`synchronousStreamingTriggerIntervalSec = 10` 
 > This defines the interval between 2 starts (not end to start)
@@ -558,19 +574,13 @@ Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-sche
       2022-08-04 10:56:28 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/succeeded/SDLB_training.24.1.json [main]
       2022-08-04 10:56:28 INFO  LocalSmartDataLakeBuilder$ - sleeping 5 seconds for synchronous streaming trigger interval [main]
     ```
-
-## Execution Modes
-for Actions there are different execution modes, including various incremental modes, e.g.:
-  * `SparkStreamingMode`
-    - single action streaming
-      + action -> executionMode -> SparkStreamingMode
-  * see other execution modes ... explore Schema Viewer and explore the SDL code 
-    - PartitionDiffMode, FailNoPartitionValuesMode, ...
+    
+**Note**: there is also the `SparkStreamingMode` you may want to use for the action
 
 ## Parallelism
 Distinguish 2 types of parallelism:
   - within a spark job: the amount of Spark tasks, controlled by global option `    "spark.sql.shuffle.partitions" = 2`
-  - parallel running DAG actions of SDLB, by default serial, one by one action
+  - parallel running DAG actions of SDLB, by default serial, *one by one* action
     + see `Action~download-airports[FileTransferAction]: Exec started` and `Action~download-deduplicate-departures[DeduplicateAction]`
     + use command line option `--parallelism 2` to run both tasks in parallel. compare:
 
@@ -698,7 +708,7 @@ The viewer runs separately
 
 # SDLB feature summary
 * [ ] Run **anywhere**
-* [ ] Integrations for major public **clouds** (as jar in Databricks, AWS Glue; container e.g. in Kubernetes; in VM)
+  * [ ] Integrations for major public **clouds** (as jar in Databricks, AWS Glue; container e.g. in Kubernetes; in VM)
 * [ ] Support for different **Execution Engines** (Files, Spark, Snowflake for now)
 * [ ] **Open-source**
 * [ ] **easily-extendable** (Scala & Python)

@@ -30,6 +30,7 @@
 	+ find more short exercises for more HandsOn
 
 Backlog:
++ [ ] fix partition issue when rerun, better incremental process than overwrite
 + [ ] advertise also via LinkedIn
 + [ ] scala file for analyzing tables like notebook
 + [ ] secret handling
