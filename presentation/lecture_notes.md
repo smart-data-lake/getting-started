@@ -112,7 +112,7 @@ Let's start writing a config
 > write sections `dataObjects { }` and `actions { }` in our new config file.
 
 ### DataObjects
-There are data objects different types: files, database connections, and table formats.
+There are data objects different types: files, database connections, and table formats. In other words, dataObjects define data entities and how they can be accessed by properties including location, type and others.
 To mention **a few** dataObjects:
 
 * `JdbcTableDataObject` to connect to a database e.g. MS SQL or Oracle SQL
@@ -122,7 +122,7 @@ To mention **a few** dataObjects:
 * `AirbyteDataObject` provides access to a growing list of [Airbyte](https://docs.airbyte.com/integrations/) connectors to various sources and sinks e.g. Facebook, Google {Ads,Analytics,Search,Sheets,...}, Greenhouse, Instagram, Jira,...
 
 ### Actions
-SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
+Actions describe dependencies between input and output DataObjects and necessary transformation to connect them. SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
 
 * ``FileTransferAction``: pure file transfer
 * ``CopyAction``: basic generic action. Reads source into DataFrame and then writes DataFrame to target data object. Provides opportunity to add **transformer(s)**
@@ -268,6 +268,18 @@ Task: What is the issue? -> fix issue
 > - Let's define a command: <br>
 >   `alias sdlb_cmd="podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf"`
 
+## Exectuion phases
+
+The SDLB executes the following phases on each run:
+
+   - **Configuration parsing**
+   - **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
+   - **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
+   - **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode. 
+   - 
+* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
+* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
+
 
 ## Test Configuration
 since we realize there could be issues, let's first run a config test using `--test config`:
@@ -329,13 +341,13 @@ Task: fix issue
                   └─────────────────┘
 ```
 
-## Execution Phases
+## Execution Phases in practice
 let's run without `dry-run`
 > * **WSL**: real execution: `sdlb_cmd --feed-sel 'airport'`
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
 
 * logs reveal the **execution phases**
-* in general, we have: 
+* **Remember**: in general, we have: 
     - configuration parsing
     - DAG preparation
     - DAG init
