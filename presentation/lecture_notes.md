@@ -5,20 +5,24 @@
 Groups for Exercizes
 
 **Group 1**
+
 Philippe 
 Robert 
 Andreas 
 
 **Group 2**
+
 Gilles  
 Katharina 
 
 **Group 3**
+
  Ludwig (LWS)
  Luc (LCS)
  Nicolas (NWI)
 
 **Group 4**
+
  John Carlos  (JCG)
  David (DSA)
  
