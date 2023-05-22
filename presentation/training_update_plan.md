@@ -1,8 +1,3 @@
-- SDLB-Training customers: 
-	+ GEAK -> SOTI
-    + [ ] PF -> DDB
-	+ [x] VBZ -> SOTI 
-	+ [x] SBB Datenlabor -> ZKU
 - Update:
 	+ preparation document with Intellij -> SOTI
 		* setup Intellij with its Plugin, Scala, ..., Parquet, (DBeaver)
@@ -30,6 +25,10 @@
 	+ find more short exercises for more HandsOn
 
 Backlog:
++ [ ] preparation:
+  + requires Java 11, Java 17 has issue with the selected Hadoop version
+  + better test for setup, including a simple copy of a dataFrame
+  + better enforce the run through of the preparation
 + [ ] fix partition issue when rerun, better incremental process than overwrite
 + [ ] advertise also via LinkedIn
 + [ ] scala file for analyzing tables like notebook
@@ -38,3 +37,4 @@ Backlog:
 - [ ] create a build script to automatically create the version with failures/tasks to fix 
 - [ ] merge back improved structure to getting-started
 - [ ] create build script, to create the training version 
+- [ ] data frame incremental
