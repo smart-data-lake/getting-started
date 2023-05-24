@@ -9,6 +9,8 @@ venv
 /.externalToolBuilders/
 derby.log
 *.log
+.metals
+.vscode
 
 # User-specific stuff
 .idea/**/workspace.xml

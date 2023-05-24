@@ -1,12 +1,18 @@
 
 # Smart Data Lake Builder Hands-On Training
+Welcome! We are very happy to have you here today! Before starting, there are two organizational points to clear up:
 
-## Housekeeping
-* beside the online and onside training you have a participants are entitled to use 8h for:
-  - preparation
-  - self-paced exercises with SDLB
-    + lecture notes: https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md
-  - development of use case
+**Training agenda:** The training is divided into two parts / days. 
+	1. The first part of the training focuses on the theoretical concepts of the framework. The goal of this session is to arm you with the necessary knowledge for you to build your own pipelines and prepare for the second session. 
+	2. The second part is almost only hands-on: you will be divided into groups and will build a data pipeline. At the end of the session you will present your solution to the group.
+
+- **For ELCA colleagues:** beside the on-site training time, participants are entitled to use additional 8h for:
+	- Setup preparation
+  	- Self-paced exercises with SDLB
+    	+ lecture notes: https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md
+  	- Preparation of use case
+
+
 
 <!-- 
 Tools: In Teams annotation can be used to point to specific aspects in the configs, SchemaViewer,...
@@ -30,7 +36,7 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 
 ![map about flights around Bern](images/flights_BE.png)
 
-* as data engineers -> provide elevated data for data scientists and business. **General steps**:
+* Let's try to abstract this use case... As data engineers, we want to provide elevated data for data scientists and business. **General steps to be followed**:
   - download data
   - combining/filter/transform data in a general manner
   - store processed data, thus it can be utilized for various use cases
@@ -42,15 +48,17 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 
 ![data layer structure for the use case](images/dataLayers.png)
 
+The Smart Data Lake Builder (SDLB) is the tool we will use to accomplish these steps. Let us take a step back for the moment. We will come back to our use-case in a couple of minutes.
+
 ## Smart Data Lake vs. Smart Data Lake Builder
 
-| Smart Data Lake (similar to Lakehouse)                       | Smart Data Lake Builder                                                       |
+| Smart Data Lake                       | Smart Data Lake Builder                                                       |
 |--------------------------------------------------------------|-------------------------------------------------------------------------------|
 | **Concept**                                                  | **Tool**                                                                      |
 | combines advantages of Data Warehouse and Data Lakes         | ELCA's tool to build Data Pipelines efficiently                               |
 | structured data / schema evolution                           | portable and automated                                                        |
 | layer (here stg/int/btl) approach / processes / technologies | features like historization, incremental load, partition wise                 |
-| Similar to Lakehouse                                         | Open Source on Github: [smart-data-lake](https://github.com/smart-data-lake/) |
+| Similar to Lakehouse (for more details see [this paper](https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf)) | Open Source on Github: [smart-data-lake](https://github.com/smart-data-lake/) |
 
 ### Why Smart Data Lake Builder (SDLB)?
 * defining dataObjets and relation instead of dependency in whole tree -> well suited for complex data pipelines
@@ -88,12 +96,72 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 ## Hocon - Pipeline Description
 * [**H**uman-**O**ptimized **C**onfig **O**bject **N**otation](https://github.com/lightbend/config/blob/main/HOCON.md)
 * originating from JSON
+* great features, like variables/references
+
+Let's start writing a config
+> open new file `test_config.conf` <br>
+> what to write? -> Schema viewer
+
+### Schema Viewer - What is supported?
+> open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
+* distinguish `global`, `dataObjects`, `actions`, and `connections`
+
+> write sections `dataObjects { }` and `actions { }` in our new config file.
+
+### DataObjects
+There are data objects different types: files, database connections, and table formats. In other words, dataObjects define data entities and how they can be accessed by properties including location, type and others.
+To mention **a few** dataObjects:
+
+* `JdbcTableDataObject` to connect to a database e.g. MS SQL or Oracle SQL
+* `KafkaTopicDataObject` to read from Kafka Topics
+* `DeltaLakeTableDataObject` tables in delta format (based on parquet), including schema registered in metastore and transaction logs enables time travel (a common destination)
+* `SnowflakeTableDataObject` access to Snowflake tables
+* `AirbyteDataObject` provides access to a growing list of [Airbyte](https://docs.airbyte.com/integrations/) connectors to various sources and sinks e.g. Facebook, Google {Ads,Analytics,Search,Sheets,...}, Greenhouse, Instagram, Jira,...
+
+### Actions
+Actions describe dependencies between input and output DataObjects and necessary transformation to connect them. SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
+
+* ``FileTransferAction``: pure file transfer
+* ``CopyAction``: basic generic action. Reads source into DataFrame and then writes DataFrame to target data object. Provides opportunity to add **transformer(s)**
+* ``CostumDataFrameAction``: can handle **multiple inputs/outputs**
+* ...
+* actions with additional logic, e.g.
+  - ``DeduplicateAction``: verifies to not have duplicates between input and output, keeps last record and history when *captured*
+  - ``HistorizeAction``: technical historization using **valid-from/to** columns
+
+#### Transformations
+* distinguish between **1to1** (CopyAction, Dedup/Hist) and **many-to-many** (CustomDataFrame) transformations
+* transformers supports languages:
+  - ScalaClass
+  - ScalaCode
+  - SQL
+  - Python
+* transformers with additional logic, e.g.:
+  - `StandardizeColNamesTransformer`
+  - `AdditionalColumnsTransformer` (in HistorizeAction), adding information from context or derived from input, for example, adding input file name
+  - `SparkRepartitionTransformer` for optimized file handling
+
+What we have here:
+* in `config/airports.conf` we already saw an SQL transformer
+* in `config/departures.conf` look at `download-deduplicate-departures`
+  - **chained** transformers
+  - first **SQL** query, to convert UnixTime to dateTime format
+  - then **Scala Code** for deduplication
+    + the deduplication action does compare input and target
+    + the transformation verifies that there are no duplicated in the input
+* in `config/distances.conf` a Scala class is called
+  - see `src/main/scala/com/sample/ComputeDistanceTransformer.scala`
+    + definition and usage of distance calculation
+
+> Note: *transformer* is deprecated
+
+### config Structure
 
 Let's have a look to the present implementation:
 
-> **WSL**: `less config` 
+> **WSL**: `ls config ; ls envConfig` 
 > <br>
-> **IntelliJ**: show directory structure especially `config` -> see multiple configuration files
+> **IntelliJ**: show directory structure especially `config` and `envConfig` -> see multiple configuration files
 
 * specification of the pipeline can be split in **multiple files** and even **directories**
   - -> directories can be used to manage different environments e.g. 
@@ -113,7 +181,7 @@ envConfig
 Let's have a look into a configuration file:
 > `config/airports.conf` 
 > <br>
-> Note: you can also use other viewer/editor, e.g. vim in Ubuntu or SublimeText or IntelliJ in Windows using `\\wsl$\Ubuntu\home\<username>\...`
+> WSL tipp: There are a bunch of viewers and editors. Simplest may be `nano`. From Windows, you can SublimeText or IntelliJ using `\\wsl$\Ubuntu\home\<username>\...`
 
 * 3 **data objects** for 3 different layers: **ext**, **stg**, **int**
   - here each data object has a different type: WebserviceFileDataObject, CsvFileDataObject, DeltaLakeTableDataObject
@@ -145,58 +213,10 @@ Let's have a look into a configuration file:
 :warning: TODO overwrite not working'
 -->
 
-### Schema Viewer - What is supported?
-> open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
-* distinguish `global`, `dataObjects`, `actions`, and `connections`
-
-### DataObjects
-There are data objects different types: files, database connections, and table formats. 
-To mention **a few** dataObjects: 
-
-* `JdbcTableDataObject` to connect to a database e.g. MS SQL or Oracle SQL
-* `KafkaTopicDataObject` to read from Kafka Topics
-* `DeltaLakeTableDataObject` tables in delta format (based on parquet), including schema registered in metastore and transaction logs enables time travel (a common destination)
-* `SnowflakeTableDataObject` access to Snowflake tables 
-* `AirbyteDataObject` provides access to a growing list of [Airbyte](https://docs.airbyte.com/integrations/) connectors to various sources and sinks e.g. Facebook, Google {Ads,Analytics,Search,Sheets,...}, Greenhouse, Instagram, Jira,...
-
-### Actions
-SDLB is designed to define/customize your own actions. Nevertheless, there are basic/common actions implemented and a general framework provided to implement your own specification
- 
-* ``FileTransferAction``: pure file transfer
-* ``CopyAction``: basic generic action. Reads source into DataFrame and then writes DataFrame to target data object. Provides opportunity to add **transformer(s)**
-* ``CostumDataFrameAction``: can handle **multiple inputs/outputs** 
-* ...
-* actions with additional logic, e.g.
-  - ``DeduplicateAction``: verifies to not have duplicates between input and output, keeps last record and history when *captured*
-  - ``HistorizeAction``: technical historization using **valid-from/to** columns
-
-#### Transformations
-* distinguish between **1to1** (CopyAction, Dedup/Hist) and **many-to-many** (CustomDataFrame) transformations
-* transformers supports languages:
-	- ScalaClass
-	- ScalaCode
-	- SQL
-	- Python
-* transformers with additional logic, e.g.:
-	- `StandardizeColNamesTransformer` 
-	- `AdditionalColumnsTransformer` (in HistorizeAction), adding information from context or derived from input, for example, adding input file name
-	- `SparkRepartitionTransformer` for optimized file handling
-
-What we have here: 
-* in `config/airports.conf` we already saw an SQL transformer
-* in `config/departures.conf` look at `download-deduplicate-departures`
-  - **chained** transformers
-  - first **SQL** query, to convert UnixTime to dateTime format
-  - then **Scala Code** for deduplication
-    + the deduplication action does compare input and target
-    + the transformation verifies that there are no duplicated in the input
-* in `config/distances.conf` a Scala class is called
-  - see `src/main/scala/com/sample/ComputeDistanceTransformer.scala`
-    + definition and usage of distance calculation
-
-> Note: *transformer* is deprecated
-
 ## Feeds
+Often we do not want to run all defined pipelines. Esp. during development, debugging or in various use case, 
+we rely on running only parts. This may be just a single action/transformation, or downloading everything.  
+
 * start application with `--help`: 
 > * **WSL**: `podman run --rm --pod sdlb_training sdl-spark --help`
 >   * Note: `--rm` removes container after execution, `--pod` specifies the pod to run in, with supporting containers
@@ -245,6 +265,18 @@ Task: What is the issue? -> fix issue
 > - Let's define a command: <br>
 >   `alias sdlb_cmd="podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf"`
 
+## Exectuion phases
+
+The SDLB executes the following phases on each run:
+
+   - **Configuration parsing**
+   - **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
+   - **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
+   - **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode. 
+   - 
+* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
+* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
+
 
 ## Test Configuration
 since we realize there could be issues, let's first run a config test using `--test config`:
@@ -259,7 +291,7 @@ let us double-check what DataObjects there are available... [SDLB Schema Viewer]
 Task: fix issue 
 <!-- A collapsible section with markdown -->
 > <details><summary>Solution: Click to expand!</summary>
-> In `config/airports.conf` correct the data object type of stg_airports to *CvsFileDataObject*
+> In `config/airports.conf` correct the data object type of stg_airports to *CsvFileDataObject*
 > </details>
 
 ## Dry-run
@@ -306,13 +338,13 @@ Task: fix issue
                   └─────────────────┘
 ```
 
-## Execution Phases
+## Execution Phases in practice
 let's run without `dry-run`
 > * **WSL**: real execution: `sdlb_cmd --feed-sel 'airport'`
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
 
 * logs reveal the **execution phases**
-* in general, we have: 
+* **Remember**: in general, we have: 
     - configuration parsing
     - DAG preparation
     - DAG init
@@ -394,7 +426,8 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 Task: fix issue 
 <!-- A collapsible section with markdown -->
 > <details><summary>Solution: Click to expand!</summary>
-> In `config/departures.conf` correct the data object download-deduplicate-departures to not select foobar
+>
+> * In `config/departures.conf` correct the data object download-deduplicate-departures to not select foobar
 > </details>
 
 
@@ -416,23 +449,24 @@ runSimulation -> unit with synthetical DataFrames
 and
 [Corresponding Config File](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/resources/configScalaClassSparkDsNto1Transformer/usingDataObjectIdWithPartitionAutoSelect.conf)
 
-<! probably change presenters here>
 
+<! probably change presenters here>
 
 ## Partitions
 First have a look at `data/btl_distances`.
 
 There are two subdirectories named with the partition name and value.
 
-**Task**: recompute *compute-distances* only with/for partition `LSZB` <br>
+**Task**: recompute `compute-distances` only with/for partition `LSZB` <br>
 **Hint**: use CLI help
 
 ><details><summary>Solution: Click to expand!</summary>
-> to specify a partion, the CLI option `--partition-value` need to be used. 
-> Here we need `--partition-values estdepartureairport=LSZB`
-> Execute <br>
-> * **WSL**: `sdlb_cmd --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
-> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
+> 
+> * specify a partion: CLI option `--partition-value`
+> * Here we need: `--partition-values estdepartureairport=LSZB` with `--feed-sel ids:compute-distances` since other dataObjects are not implemented with partitions
+> * Execute <br>
+>   * **WSL**: `sdlb_cmd --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
+>   * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
 ></details>
 
 When you now look at data/btl_distances, you will only see an updated partition estdepartureairport=LSZB 
@@ -445,18 +479,18 @@ But batch processing with partitioning is still the most performant data process
 when dealing with large amounts of data.
 
 ## Incremental Load
-* desire to **not read all** data from input at every run -> incrementally
+* desire to **not read** (and write) **all** data from input at every run -> incrementally
 * or **here**: departure source **restricted request** to <7 days
   - initial request 2 days 29.-20.08.2021
 
 ### General aspects
 * in general, we often want an initial load and then regular updates
-* distinguish between
-* **StateIncremental** 
-  - stores a state, utilized during request submission, e.g. WebService or DB request
-* **SparkIncremental**
-  - uses max values from **compareCol**
-  - *DataFrameIncrementalMode* and *FileIncrementalMode*
+* we distinguish between:
+  * **StateIncremental** 
+    - stores a state, utilized during request submission, e.g. WebService or DB request
+  * **SparkIncremental**
+    - uses max values from **compareCol**
+    - *DataFrameIncrementalMode* and *FileIncrementalMode*
  
 ### Current Example
 Let's try out StateIncremental with the action `download-deduplicate-departures`
@@ -466,8 +500,17 @@ Let's try out StateIncremental with the action `download-deduplicate-departures`
     + instantiating state variables 
     + see also [getting-started example](https://smartdatalake.ch/docs/getting-started/part-3/incremental-mode)
 
-These Requirements are already met.
+These Requirements are already met. &#10004;
 
+## Execution Modes
+for Actions there are different execution modes, including various incremental modes, e.g.:
+* `SparkStreamingMode`
+  - single action streaming
+    + action -> executionMode -> SparkStreamingMode
+* see other execution modes ... explore Schema Viewer and explore the SDL code
+  - PartitionDiffMode, FailNoPartitionValuesMode, ...
+
+Here we use `DataObjectStateIncrementalMode`: 
 * To enable stateIncremental we need to change the action `download-deduplicate-departures` and set these parameters of the DeduplicateAction:
   ```
     executionMode = { type = DataObjectStateIncrementalMode }
@@ -517,6 +560,7 @@ Task: change the streaming trigger interval to 10s (or alternatively to 120s)
 Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-schema-viewer/)
 
 > <details><summary>Solution: Click to expand!</summary>
+>
 > search stream in Schema Viewer 
 > and add to the `config/global.conf` -> `global`->`synchronousStreamingTriggerIntervalSec = 10` 
 > This defines the interval between 2 starts (not end to start)
@@ -539,19 +583,13 @@ Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-sche
       2022-08-04 10:56:28 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/succeeded/SDLB_training.24.1.json [main]
       2022-08-04 10:56:28 INFO  LocalSmartDataLakeBuilder$ - sleeping 5 seconds for synchronous streaming trigger interval [main]
     ```
-
-## Execution Modes
-for Actions there are different execution modes, including various incremental modes, e.g.:
-  * `SparkStreamingMode`
-    - single action streaming
-      + action -> executionMode -> SparkStreamingMode
-  * see other execution modes ... explore Schema Viewer and explore the SDL code 
-    - PartitionDiffMode, FailNoPartitionValuesMode, ...
+    
+**Note**: there is also the `SparkStreamingMode` you may want to use for the action
 
 ## Parallelism
 Distinguish 2 types of parallelism:
   - within a spark job: the amount of Spark tasks, controlled by global option `    "spark.sql.shuffle.partitions" = 2`
-  - parallel running DAG actions of SDLB, by default serial, one by one action
+  - parallel running DAG actions of SDLB, by default serial, *one by one* action
     + see `Action~download-airports[FileTransferAction]: Exec started` and `Action~download-deduplicate-departures[DeduplicateAction]`
     + use command line option `--parallelism 2` to run both tasks in parallel. compare:
 
@@ -679,7 +717,7 @@ The viewer runs separately
 
 # SDLB feature summary
 * [ ] Run **anywhere**
-* [ ] Integrations for major public **clouds** (as jar in Databricks, AWS Glue; container e.g. in Kubernetes; in VM)
+  * [ ] Integrations for major public **clouds** (as jar in Databricks, AWS Glue; container e.g. in Kubernetes; in VM)
 * [ ] Support for different **Execution Engines** (Files, Spark, Snowflake for now)
 * [ ] **Open-source**
 * [ ] **easily-extendable** (Scala & Python)

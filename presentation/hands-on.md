@@ -1,5 +1,36 @@
 # Hands-On
 
+## Organization
+Groups for Exercizes
+
+**Group 1**
+
+- Philippe
+- Katharina
+- Ludwig
+
+**Group 2**
+
+- Gilles
+- Robert
+
+**Group 3**
+
+- Andreas
+- Luc
+- Bettina
+
+**Group 4**
+- Florian
+- John Carlos
+- David
+
+**Group 5**
+
+- Nicolas
+- Fabiana
+- Guy Merlin
+
 ## Task
 * split into groups of **2** or 3
 * find use case you implement next week in a 4h session
@@ -37,8 +68,8 @@
 calculate 5G antenna density instide zip code (PLZ) areas
 
 ### Data
-* [5g antenna positions and metadata](https://opendata.swiss/dataset/5g-mobilfunknetze-nr-antennenstandorteþtps://data.geo.admin.ch/ch.bakom.mobil-antennenstandorte-5g/data/ch.bakom.mobil-antennenstandorte-5g_en.json)
-* [PLZ directory](https://opendata.swiss/dataset/plz_verzeichnisþtps://swisspost.opendatasoft.com/api/v2/catalog/datasets/plz_verzeichnis_v2/exports/csv)
+* [5g antenna positions and metadata](https://data.geo.admin.ch/ch.bakom.mobil-antennenstandorte-5g/data/ch.bakom.mobil-antennenstandorte-5g_en.json)
+* [PLZ directory](https://swisspost.opendatasoft.com/explore/dataset/plz_verzeichnis_v2/download/?format=csv&timezone=Europe/Berlin&lang=de&use_labels_for_header=true&csv_separator=%3B)
 
 ### Target pipeline
 ![target pipeline for 5G use case](images/5G_case_pipeline.png)
@@ -58,6 +89,6 @@ calculate 5G antenna density instide zip code (PLZ) areas
 
 * download multiple samples and historize availability
 * create delta lake tables
-* combine avialabilty with location data
+* combine availabilty with location data
 * compute availability average
 
