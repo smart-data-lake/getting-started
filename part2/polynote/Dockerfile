@@ -17,13 +17,13 @@ RUN mvn -f /home/app/sdl-lib-pom.xml package
 #
 # Package stage
 #
-FROM polynote/polynote:${POLYNOTE_VERSION}-${SCALA_VERSION}
+FROM docker.io/polynote/polynote:${POLYNOTE_VERSION}-${SCALA_VERSION}
 
 # Arguments after `FROM` are reset
 ARG SCALA_VERSION="2.12"
 # check available versions at https://spark.apache.org/downloads.html
-ARG SPARK_VERSION="3.2.2"
-ARG HADOOP_VERSION="3.2"
+ARG SPARK_VERSION="3.3.2"
+ARG HADOOP_VERSION="3"
 # derby version used by this spark version - we need to load additional derbyclient jar to connect to remote metastore
 ARG DERBY_VERSION="10.12.1.1"
 

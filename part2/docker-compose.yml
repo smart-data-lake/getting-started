@@ -7,7 +7,7 @@ services:
     ports:
       - "1527:1527"
     volumes:
-      - "./data/_metastore:/mnt/database"
+      - "../data/_metastore:/mnt/database"
     environment:
       DB_DIR: "/mnt/database"
 
@@ -25,5 +25,5 @@ services:
       - "./polynote/config.yml:/opt/polynote/config.yml"
       - "./polynote/notebooks:/mnt/notebooks"
       - "./data:/mnt/data"
-      - "./target:/mnt/lib"
-      - "./config:/mnt/config" # SDL config to use DataObjects in notebooks
+      - "../target:/mnt/lib"
+      - "../config:/mnt/config" # SDL config to use DataObjects in notebooks
