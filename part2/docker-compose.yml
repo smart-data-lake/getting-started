@@ -1,4 +1,5 @@
 version: '3.2'
+
 services:
   metastore:
     build:
@@ -10,6 +11,8 @@ services:
       - "../data/_metastore:/mnt/database"
     environment:
       DB_DIR: "/mnt/database"
+    networks:
+      - sdl-getting-started
 
   polynote:
     build:
@@ -24,6 +27,11 @@ services:
     volumes:
       - "./polynote/config.yml:/opt/polynote/config.yml"
       - "./polynote/notebooks:/mnt/notebooks"
-      - "./data:/mnt/data"
+      - "../data:/mnt/data"
       - "../target:/mnt/lib"
       - "../config:/mnt/config" # SDL config to use DataObjects in notebooks
+    networks:
+      - sdl-getting-started
+
+networks:
+  sdl-getting-started:
