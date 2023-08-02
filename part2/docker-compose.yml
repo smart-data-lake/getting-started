@@ -1,23 +1,21 @@
 version: '3.2'
-
 services:
   metastore:
     build:
       context: ./metastore
-    hostname: metastore
+    hostname: localhost
     ports:
       - "1527:1527"
     volumes:
       - "../data/_metastore:/mnt/database"
     environment:
       DB_DIR: "/mnt/database"
-    networks:
-      - sdl-getting-started
+    network_mode: "host"
 
   polynote:
     build:
       context: ./polynote
-    hostname: polynote
+    hostname: localhost
     depends_on:
       - metastore
     command: ["--config", "/opt/polynote/config.yml"]
@@ -27,11 +25,8 @@ services:
     volumes:
       - "./polynote/config.yml:/opt/polynote/config.yml"
       - "./polynote/notebooks:/mnt/notebooks"
-      - "../data:/mnt/data"
-      - "../target:/mnt/lib"
-      - "../config:/mnt/config" # SDL config to use DataObjects in notebooks
-    networks:
-      - sdl-getting-started
+        - "../data:/mnt/data"
+        - "../target:/mnt/lib"
+        - "../config:/mnt/config" # SDL config to use DataObjects in notebooks
+    network_mode: "host"
 
-networks:
-  sdl-getting-started:
