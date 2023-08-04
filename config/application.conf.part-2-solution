@@ -3,7 +3,7 @@
 
 global {
   spark-options {
-    "spark.hadoop.javax.jdo.option.ConnectionURL" = "jdbc:derby://metastore:1527/db;create=true"
+    "spark.hadoop.javax.jdo.option.ConnectionURL" = "jdbc:derby://localhost:1527/db;create=true"
     "spark.hadoop.javax.jdo.option.ConnectionDriverName" = "org.apache.derby.jdbc.ClientDriver"
     "spark.hadoop.javax.jdo.option.ConnectionUserName" = "sa"
     "spark.hadoop.javax.jdo.option.ConnectionPassword" = "1234"
@@ -15,7 +15,7 @@ global {
 dataObjects {
   ext-departures {
     type = WebserviceFileDataObject
-    url = "https://opensky-network.org/api/flights/departure?airport=LSZB&begin=1630200800&end=1630310979"
+    url = "https://opensky-network.org/api/flights/departure?airport=LSZB&begin=1673760980&end=1673933780"
     readTimeoutMs=200000
   }
   stg-departures {
