@@ -13,3 +13,9 @@ spark:
     spark.sql.extensions: "io.delta.sql.DeltaSparkSessionExtension"
     spark.sql.catalog.spark_catalog: "org.apache.spark.sql.delta.catalog.DeltaCatalog"
     spark.ui.port: 4140
+
+# Added because of this issue
+# https://github.com/polynote/polynote/issues/946
+behavior:
+  shared_packages:
+    - io.delta

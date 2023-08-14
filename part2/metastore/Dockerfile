@@ -1,6 +1,6 @@
 FROM docker.io/openjdk:15-alpine
 
-ENV DERBY_VERSION 10.15.2.0
+ENV DERBY_VERSION 10.14.2.0
 ENV DB_DIR /mnt/database
 
 RUN \

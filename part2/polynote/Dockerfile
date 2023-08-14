@@ -3,7 +3,7 @@
 # - a spark distribution (because polynote needs more than spark java artifacts)
 # - SDL libraries (to use SDL in notebooks)
 
-ARG POLYNOTE_VERSION=0.4.4
+ARG POLYNOTE_VERSION=0.5.1
 # check available versions at https://spark.apache.org/downloads.html
 ARG SCALA_VERSION="2.12"
 
@@ -25,7 +25,7 @@ ARG SCALA_VERSION="2.12"
 ARG SPARK_VERSION="3.3.2"
 ARG HADOOP_VERSION="3"
 # derby version used by this spark version - we need to load additional derbyclient jar to connect to remote metastore
-ARG DERBY_VERSION="10.12.1.1"
+ARG DERBY_VERSION="10.14.2.0"
 
 USER root
 
