@@ -17,7 +17,7 @@ podman pod rm -i getting-started
 podman pod create --name getting-started -p 8192:8192 -p 4140-4199:4140-4199 -p 1080:1080
 
 #metastore
-podman run -dt --pod getting-started --name=part2_metastore --label com.docker.compose.service=metastore -e DB_DIR=/mnt/database -v ${PWD}/data/_metastore:/mnt/database part2_metastore
+podman run -dt --add-host metastore:127.0.0.1 --pod getting-started --name=part2_metastore --label com.docker.compose.service=metastore -e DB_DIR=/mnt/database -v ${PWD}/data/_metastore:/mnt/database part2_metastore
 
 #polynote
-podman run --pod getting-started --name=part2_polynote --requires=part2_metastore --label com.docker.compose.service=polynote -v ${PWD}/part2/polynote/config.yml:/opt/polynote/config.yml -v ${PWD}/part2/polynote/notebooks:/mnt/notebooks -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config part2_polynote --config /opt/polynote/config.yml
+podman run --pod getting-started --add-host polynote:127.0.0.1 --name=part2_polynote --requires=part2_metastore --label com.docker.compose.service=polynote -v ${PWD}/part2/polynote/config.yml:/opt/polynote/config.yml -v ${PWD}/part2/polynote/notebooks:/mnt/notebooks -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config part2_polynote --config /opt/polynote/config.yml
