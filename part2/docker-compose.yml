@@ -25,8 +25,8 @@ services:
     volumes:
       - "./polynote/config.yml:/opt/polynote/config.yml"
       - "./polynote/notebooks:/mnt/notebooks"
-        - "../data:/mnt/data"
-        - "../target:/mnt/lib"
-        - "../config:/mnt/config" # SDL config to use DataObjects in notebooks
+      - "../data:/mnt/data"
+      - "../target:/mnt/lib"
+      - "../config:/mnt/config" # SDL config to use DataObjects in notebooks
     network_mode: "host"
 
