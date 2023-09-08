@@ -1,28 +1,13 @@
 - Update:
-	+ preparation document with Intellij -> SOTI
-		* setup Intellij with its Plugin, Scala, ..., Parquet, (DBeaver)
-		* install  (maybe node intellij plugin)
-		* git, SDLB download
-		* build SDLB
-		* check successful run
-		* MS Win native Visualizer
-			- powershell script to get Vizualizer artifact
-			- script ro start Viz
-	+ without docker/podman, only Intellij
-		* lecture Notes -> SCHM
-		  + [x] significantly shorten theory part at the beginning
-          + [x] new env var error case
-          + [x] local_WSL, local_IntelliJ
-          + [x] exercise: add new DO and Action where columns are name and elevation in m
-          + [ ] update "further SDLB features"
-          + [ ] update roadmap
-		* HandsOn -> TBB
- 			+ [x] config / envConfig separation
-			- [x] no docker -> parquet, ...
-              + [x] new case for env Variable usage  
-                + [x] in IntelliJ select output path via env Variable
-            + [x] fix deduplicate action 
-	+ find more short exercises for more HandsOn
+- CSV: failfast, filename
+- StandardizeColNamesTransformer
+- note for presenters: use CSV instead of excel for hands-on exercises
+- changes:
+  + add starting exersice, create first small pipeline step by step with participants
+    + add exercise searching for proper action/DO type in Viewer
+  + puzzle: add exercise selecting action and DO blocks from shared note books, with specifying proper names in actions
+  + later extend run to existing departure.conf etc. and bug fix exercises
+- rework second part TBD
 
 Backlog:
 + [ ] preparation:
