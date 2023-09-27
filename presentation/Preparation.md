@@ -5,7 +5,7 @@ Welcome! Please follow the steps outlined in this document to complete the techn
 ## What you will need
 
 The following technical requirements are needed in order to participate in the training. Your system may already have some of these installed:
-- Java / JDK 11 (or newer) --> The SDLB is a framework programmed in Scala and it runs on the Java Virtual Machine.
+- Java / **JDK 11** --> The SDLB is a framework programmed in Scala and it runs on the Java Virtual Machine.
 - Hadoop --> A framework for distributed storage (needs to be separately installed). 
 - Intellij (with some plugins) --> Integrated Development Environment (IDE) where you will develop, build and run your data pipelines. In this guide we will install IntelliJ and its add-ons and will make sure that the project can build correctly.
 
@@ -30,7 +30,7 @@ In the case above, the machine is running Java 11 per default. If you see a simi
 <img src="/presentation/images/install_java.png" width="50%" height="50%">
 
 
-**If your Java version is lower than 11**, you have to install a newer version (as described above) and update the default version being used by your OS. For this, please refer to the guide on [this link](https://www.happycoders.eu/java/how-to-switch-multiple-java-versions-windows/).
+**If your Java version is different from Java 11**, you have to install a this version (as described above) and update the default version being used by your OS. For this, please refer to the guide on [this link](https://www.happycoders.eu/java/how-to-switch-multiple-java-versions-windows/).
 
 Type `java --version` again to double-check that the installation was carried out successfully.
 
@@ -84,9 +84,11 @@ IntelliJ is the Integrated Development Environment (IDE) where we are going to d
 <img src="/presentation/images/addmaven.png" width="40%" height="40%">
 
 6. Make a test run by changing the runConfigurations to *SDLB_test* and clicking on the *Play* button. A successful build and run should show you the SDLB options and end with an exit code 0 as shown in the screenshot.
+When the class can not be found: right-click on the file pom.xml -> Add as Maven project. The first run will build the framework which could take a few minutes.
 
 ![](/presentation/images/runtest.png)
 
+At the end of the output you should see: `Process finished with exit code 0`
 
 That's it! Now you're all set up for the upcoming training.
 
