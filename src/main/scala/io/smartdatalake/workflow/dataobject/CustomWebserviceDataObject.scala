@@ -38,7 +38,7 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
                                       override val metadata: Option[DataObjectMetadata] = None
                                      )
                                      (@transient implicit val instanceRegistry: InstanceRegistry)
-  extends DataObject with CanCreateSparkDataFrame with CanCreateIncrementalOutput with SmartDataLakeLogger {
+  extends DataObject with CanCreateSparkDataFrame with CanCreateIncrementalOutput with CanHandlePartitions with SmartDataLakeLogger {
 
   private var previousState : Seq[State] = Seq()
   private var nextState : Seq[State] = Seq()
@@ -118,7 +118,7 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
       // put simple nextState logic below
       nextState = currentQueryParameters.map(params => State(params.airport, params.end))
       // return
-      departuresDf
+   departuresDf
     }
   }
 
@@ -133,6 +133,13 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
   }
 
   override def factory: FromConfigFactory[DataObject] = CustomWebserviceDataObject
+
+  override def partitions: Seq[String] = Seq("estdepartureairport")
+
+  override private[smartdatalake] def expectedPartitionsCondition : Option[String] = None
+
+  override def listPartitions(implicit context: ActionPipelineContext): Seq[PartitionValues] =
+    queryParameters.map(qp => PartitionValues(Map("estdepartureairport" -> qp.airport)))
 }
 
 object CustomWebserviceDataObject extends FromConfigFactory[DataObject] with SmartDataLakeLogger {

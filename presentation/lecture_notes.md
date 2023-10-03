@@ -453,6 +453,14 @@ and
 <! probably change presenters here>
 
 ## Partitions
+
+Q: After partitioning your data...
+A: You have more data than before
+A: *You have divided your data into multiple pieces
+A: * You can access data faster
+A: Your data uses up less space
+
+
 First have a look at `data/btl_distances`.
 
 There are two subdirectories named with the partition name and value.
@@ -462,15 +470,17 @@ There are two subdirectories named with the partition name and value.
 
 ><details><summary>Solution: Click to expand!</summary>
 > 
-> * specify a partion: CLI option `--partition-value`
-> * Here we need: `--partition-values estdepartureairport=LSZB` with `--feed-sel ids:compute-distances` since other dataObjects are not implemented with partitions
+> * specify a new partition: CLI option `--partition-value`
+> * Here we need: `--partition-values estdepartureairport=EDDM` with `--feed-sel .*` to download the new data for departures from munich
+> * > * `-DdataObjects.ext_departures.queryParameters.0.airport=EDDM
+        -DdataObjects.ext_departures.queryParameters.0.begin=1630200800
+        -DdataObjects.ext_departures.queryParameters.0.end=1630310979`
 > * Execute <br>
->   * **WSL**: `sdlb_cmd --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
 >   * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
 ></details>
 
-When you now look at data/btl_distances, you will only see an updated partition estdepartureairport=LSZB 
-and in the logs you find: `start writing to DataObject~btl_distances, partitionValues estdepartureairport=LSZB [exec-compute-distances]`)
+When you now look at data/btl_distances, you will only see an a new folder estdepartureairport=EDDM 
+and in the logs you find: `start writing to DataObject~btl_distances, partitionValues estdepartureairport=EDDM [exec-compute-distances]`)
 
 Working with partitions forces to create the whole data pipeline around them <br> 
 -> **everything needs to be partitioned** by that key. <br>
