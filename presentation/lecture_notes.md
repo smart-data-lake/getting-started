@@ -469,7 +469,7 @@ There are two subdirectories named with the partition name and value.
 **Hint**: use CLI help
 
 ><details><summary>Solution: Click to expand!</summary>
-> 
+> (SDLB_new_partition config file)
 > * specify a new partition: CLI option `--partition-value`
 > * Here we need: `--partition-values estdepartureairport=EDDM` with `--feed-sel .*` to download the new data for departures from munich
 > * > * `-DdataObjects.ext_departures.queryParameters.0.airport=EDDM
@@ -488,45 +488,30 @@ The trend goes towards incremental processing (see next chapter).
 But batch processing with partitioning is still the most performant data processing method 
 when dealing with large amounts of data.
 
-## Incremental Load
-* desire to **not read** (and write) **all** data from input at every run -> incrementally
-* or **here**: departure source **restricted request** to <7 days
-  - initial request 2 days 29.-20.08.2021
-
-### General aspects
-* in general, we often want an initial load and then regular updates
-* we distinguish between:
-  * **StateIncremental** 
-    - stores a state, utilized during request submission, e.g. WebService or DB request
-  * **SparkIncremental**
-    - uses max values from **compareCol**
-    - *DataFrameIncrementalMode* and *FileIncrementalMode*
- 
-### Current Example
-Let's try out StateIncremental with the action `download-deduplicate-departures`
-* state is used to store last position
-  - To be able to use the StateIncremental mode [CustomWebserviceDataObject](https://github.com/smart-data-lake/getting-started/blob/training/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala) needs to: 
-    + Implement Interface `CanCreateIncrementalOutput` and defining the `setState` and `getState` methods
-    + instantiating state variables 
-    + see also [getting-started example](https://smartdatalake.ch/docs/getting-started/part-3/incremental-mode)
-
-These Requirements are already met. &#10004;
-
 ## Execution Modes
 for Actions there are different execution modes, including various incremental modes, e.g.:
-* `SparkStreamingMode`
-  - single action streaming
-    + action -> executionMode -> SparkStreamingMode
-* see other execution modes ... explore Schema Viewer and explore the SDL code
-  - PartitionDiffMode, FailNoPartitionValuesMode, ...
+  - see https://smartdatalake.ch/docs/reference/executionModes#dataobjectstateincrementalmode
 
+### Incremental Load
 Here we use `DataObjectStateIncrementalMode`: 
+* 
+* * desire to **not read** (and write) **all** data from input at every run -> incrementally
+* or **here**: departure source **restricted request** to <7 days
+  - initial request 2 days 29.-20.08.2021
 * To enable stateIncremental we need to change the action `download-deduplicate-departures` and set these parameters of the DeduplicateAction:
   ```
     executionMode = { type = DataObjectStateIncrementalMode }
-    mergeModeEnable = true
-    updateCapturedColumnOnlyWhenChanged = true
   ```
+  
+### Current Example
+Let's try out StateIncremental with the action `download-deduplicate-departures` 
+* state is used to store last position
+  - To be able to use the StateIncremental mode [CustomWebserviceDataObject](https://github.com/smart-data-lake/getting-started/blob/training/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala) needs to:
+    + Implement Interface `CanCreateIncrementalOutput` and defining the `setState` and `getState` methods
+    + instantiating state variables
+    + see also [getting-started example](https://smartdatalake.ch/docs/getting-started/part-3/incremental-mode)
+
+These Requirements are already met. &#10004;
 
 After changing our config, try to execute the concerned action
 > * **WSL**: `sdlb_cmd --feed-sel ids:download-deduplicate-departures`
@@ -534,7 +519,12 @@ After changing our config, try to execute the concerned action
 
 Now it will **fail** because we need to provide a path for the state-path. 
 
-Add state path and name:
+Q: Where is the state stored for DataObjectStateIncrementalMode?
+A: In Memory
+A: In One Central File
+A: In one file per run
+
+Add state path and name: (SDLB_state config file)
 > * **WSL**: `sdlb_cmd --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training`
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures --state-path $ProjectFileDir$/data/state -n SDLB_training`
 
@@ -552,6 +542,8 @@ Add state path and name:
 
 > Note: When get result/error: `Webservice Request failed with error <404>`, if there are no new data available. 
 
+
+
 ## Streaming
 * continuous processing, cases we want to run the actions again and again
 
@@ -561,6 +553,7 @@ Add state path and name:
 > * **WSL**: `sdlb_cmd  --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training -s` 
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures --state-path $ProjectFileDir$/data/state -n SDLB_training -s`
 * and see the action running again and again
+* (IntelliJ Config SDLB_Streaming)
 
 -> notice the recurring of the action
 -> monitor the growth of the table
@@ -571,7 +564,7 @@ Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-sche
 
 > <details><summary>Solution: Click to expand!</summary>
 >
-> search stream in Schema Viewer 
+> search interval in Schema Viewer 
 > and add to the `config/global.conf` -> `global`->`synchronousStreamingTriggerIntervalSec = 10` 
 > This defines the interval between 2 starts (not end to start)
 > </details>
@@ -595,6 +588,36 @@ Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-sche
     ```
     
 **Note**: there is also the `SparkStreamingMode` you may want to use for the action
+
+## Checkpoint / Restart
+
+Q: What does the 1.1 mean in the file SDLB_training.1.1.json ?
+A: Version Number of SDLB used
+A: Version Number of Spark used
+A: Hash of the Data that was processed
+A: Run id and attempt id
+
+When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
+* requires states (`--state-path`)
+
+Let's try.
+> Since we use states already, just run again (**serial**, no log file necessary) and cancel inbetween
+> * **WSL**: `sdlb_cmd --feed-sel .* --state-path /mnt/data/state -n SDLB_training`
+> * **IntelliJ**: CLI arguments `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --state-path $ProjectFileDir$/data/state -n SDLB_training`
+
+-> cancel run to simulate crash (**after download** phase when seeing in the logs):
+```
+(Action~download-airports) finished writing DataFrame to stg_airports: jobDuration=PT0.871S files_written=1 [exec-download-airports]
+...
+ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec succeeded [dag-1-191]
+```
+
+* inspect **current** state in file: `data/state/current/SDLB_training.?.?.json`
+  - see the SUCCESS and CANCELED statements
+* restart with the same command
+  - notice line at the beginning: `LocalSmartDataLakeBuilder$ - recovering application SDLB_training runId=1 lastAttemptId=1 [main]`
+  - notice the changed DAG, no download
+
 
 ## Parallelism
 Distinguish 2 types of parallelism:
@@ -642,28 +665,6 @@ Then run in parallel: adding `--parallelism 2` and change output file name
        2022-08-04 12:23:09 INFO  HadoopFileActionDAGRunStateStore - updated state into file:/mnt/data/state/current/SDLB_training.29.1.json [dag-29-93]
   ```
 - :warning: parallel actions are more difficult to **debug**
-
-## Checkpoint / Restart
-When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
-* requires states (`--state-path`)
-
-Let's try.
-> Since we use states already, just run again (**serial**, no log file necessary) and cancel inbetween
-> * **WSL**: `sdlb_cmd --feed-sel .* --state-path /mnt/data/state -n SDLB_training`
-> * **IntelliJ**: CLI arguments `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --state-path $ProjectFileDir$/data/state -n SDLB_training`
-
--> cancel run to simulate crash (**after download** phase when seeing in the logs):
-```
-(Action~download-airports) finished writing DataFrame to stg_airports: jobDuration=PT0.871S files_written=1 [exec-download-airports]
-...
-ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[DeduplicateAction]: Exec succeeded [dag-1-191]
-```
-
-* inspect **current** state in file: `data/state/current/SDLB_training.?.?.json`
-  - see the SUCCESS and CANCELED statements
-* restart with the same command
-  - notice line at the beginning: `LocalSmartDataLakeBuilder$ - recovering application SDLB_training runId=1 lastAttemptId=1 [main]`
-  - notice the changed DAG, no download
 
 ## Execution Engines vs Execution Environments
 [Go through documentation](https://smartdatalake.ch/docs/reference/executionEngines)

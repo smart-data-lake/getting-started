@@ -1,5 +1,5 @@
 Update:
-- [ ] CSV: failfast, filename
+- [ ] CSV: failfast, filename done
 - [ ] StandardizeColNamesTransformer
 - note for presenters: use CSV instead of excel for hands-on exercises
 - [ ] changes first part: 
@@ -9,7 +9,7 @@ Update:
 
 + [ ] later extend run to existing departure.conf etc. and bug fix exercises
 - [ ] quizzes, multiple choice, e.g. what are the best partition column (slido?)
-- [ ] incremantal load, pictures from blog post
+- [ ] incremantal load, pictures from blog post. which pictures would help with our example?
 - [ ] rework second part add things from backlog
 
 - [ ] update preparation, send preparation
@@ -22,7 +22,7 @@ Backlog:
   + requires Java 11, Java 17 has issue with the selected Hadoop version
   + better test for setup, including a simple copy of a dataFrame
   + better enforce the run through of the preparation
-+ [ ] fix partition issue when rerun, better incremental process than overwrite
++ [ ] fix partition issue when rerun, better incremental process than overwrite done
 + [ ] advertise also via LinkedIn
 + [ ] scala file for analyzing tables like notebook
 + [ ] secret handling
@@ -30,4 +30,5 @@ Backlog:
 - [ ] create a build script to automatically create the version with failures/tasks to fix 
 - [ ] merge back improved structure to getting-started
 - [ ] create build script, to create the training version 
-- [ ] data frame incremental
+- [ ] data frame incremental done?
+- [ ] every 2-3 years update default timestamps of webservice. If you get timeouts for some requests (especially for stateincremental mode, this may be the reason: https://github.com/smart-data-lake/smart-data-lake/pull/732/files)
