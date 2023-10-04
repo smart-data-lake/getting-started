@@ -29,8 +29,7 @@ ARG DERBY_VERSION="10.14.2.0"
 USER root
 
 # check available versions at https://spark.apache.org/downloads.html
-RUN apt-get -y update; apt-get -y install curl
-RUN curl --silent https://dlcdn.apache.org/spark/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//' | grep "spark-"$SPARK_MAJOR_VERSION | sed 's/spark-//' > /opt/spark.version
+RUN wget -q -O - https://dlcdn.apache.org/spark/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//' | grep "spark-"$SPARK_MAJOR_VERSION | sed 's/spark-//' > /opt/spark.version
 RUN bash -l -c 'echo export SPARK_VERSION="$(cat /opt/spark.version)" >> /etc/bash.bashrc'
 
 WORKDIR /opt
