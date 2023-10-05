@@ -498,11 +498,11 @@ We will come to metrics later when we talk about state.
 
 ## Partitions
 ><details><summary>Solution: Click to expand!</summary>
-> Q: After partitioning your data...
-> A: You have more data than before
-> A: *You have divided your data into multiple pieces
-> A: * You can access data faster
-> A: Your data uses up less space
+Q: After partitioning your data...
+A: You have more data than before
+A: *You have divided your data into multiple pieces
+A: * You can access data faster
+A: Your data uses up less space
 ></details>
 
 First have a look at `data/btl_distances`.
