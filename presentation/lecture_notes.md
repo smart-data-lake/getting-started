@@ -452,14 +452,58 @@ and
 
 <! probably change presenters here>
 
-## Partitions
+## Data Quality
 
+Q: After you built your pipeline, how do you know if it does what you expect?
+
+A: If it did not crash it was a success
+A: Look at some Data Samples of the output with your intuition
+A: Define some rules on your output and execute Queries on the whole output
+
+Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
+
+### Constraints
+Add new constraint on dataObject btl_distances
+
+```
+    constraints = [{
+      name = Departure Airport should be different from Arrival Aiport
+      description = "A flight from A to A makes no sense"
+      expression = "estarrivalairport != estdepartureairport"
+      errorMsgCols = [estdepartureairport,estarrivalairport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg]
+    }]
+```
+
+Execute SDLB on partition estdepartureairport=LSZB (SDLB_data_quality)
+`-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel compute --partition-values estdepartureairport=LSZB`
+It will fail.
+Then show the debugger by putting a breakpoint at the end of com.sample.ComputeDistanceTransformer.transform.
+Let's see if there is data that violates constraint.
+Fix it by uncommenting the where clause.
+
+### Expectations
+add new constraint on dataObject btl_distances
+```
+    expectations = [{
+      type = SQLFractionExpectation
+      name = RailPessimist
+      description = "most flights could be replaced by rail"
+      countConditionExpression = "could_be_done_by_rail = true"
+      expectation = "< 0.5"
+      failedSeverity = "Warn"
+    }]
+```
+Notice the warning.
+We will come to metrics later when we talk about state.
+
+## Partitions
+><details><summary>Solution: Click to expand!</summary>
 Q: After partitioning your data...
 A: You have more data than before
 A: *You have divided your data into multiple pieces
 A: * You can access data faster
 A: Your data uses up less space
-
+></details>
 
 First have a look at `data/btl_distances`.
 
