@@ -453,13 +453,13 @@ and
 <! probably change presenters here>
 
 ## Data Quality
-
-Q: After you built your pipeline, how do you know if it does what you expect?
-
-A: If it did not crash it was a success
-A: Look at some Data Samples of the output with your intuition
-A: Define some rules on your output and execute Queries on the whole output
-
+><details><summary>Quizztime</summary>
+> Q: After you built your pipeline, how do you know if it does what you expect?
+> 
+> A: If it did not crash it was a success
+> A: Look at some Data Samples of the output with your intuition
+> A: Define some rules on your output and execute Queries on the whole output
+></details>
 Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 ### Constraints
@@ -497,12 +497,12 @@ Notice the warning.
 We will come to metrics later when we talk about state.
 
 ## Partitions
-><details><summary>Solution: Click to expand!</summary>
-Q: After partitioning your data...
-A: You have more data than before
-A: *You have divided your data into multiple pieces
-A: * You can access data faster
-A: Your data uses up less space
+><details><summary>Quizztime</summary>
+> Q: After partitioning your data...
+> A: You have more data than before
+> A: *You have divided your data into multiple pieces
+> A: * You can access data faster
+> A: Your data uses up less space
 ></details>
 
 First have a look at `data/btl_distances`.
@@ -562,12 +562,12 @@ After changing our config, try to execute the concerned action
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures`
 
 Now it will **fail** because we need to provide a path for the state-path. 
-
-Q: Where is the state stored for DataObjectStateIncrementalMode?
-A: In Memory
-A: In One Central File
-A: In one file per run
-
+><details><summary>Quizztime</summary>
+> Q: Where is the state stored for DataObjectStateIncrementalMode?
+> A: In Memory
+> A: In One Central File
+> A: In one file per run
+></details>
 Add state path and name: (SDLB_state config file)
 > * **WSL**: `sdlb_cmd --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training`
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures --state-path $ProjectFileDir$/data/state -n SDLB_training`
@@ -634,13 +634,13 @@ Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-sche
 **Note**: there is also the `SparkStreamingMode` you may want to use for the action
 
 ## Checkpoint / Restart
-
-Q: What does the 1.1 mean in the file SDLB_training.1.1.json ?
-A: Version Number of SDLB used
-A: Version Number of Spark used
-A: Hash of the Data that was processed
-A: Run id and attempt id
-
+><details><summary>Quizztime</summary>
+> Q: What does the 1.1 mean in the file SDLB_training.1.1.json ?
+> A: Version Number of SDLB used
+> A: Version Number of Spark used
+> A: Hash of the Data that was processed
+> A: Run id and attempt id
+></details>
 When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
 * requires states (`--state-path`)
 
