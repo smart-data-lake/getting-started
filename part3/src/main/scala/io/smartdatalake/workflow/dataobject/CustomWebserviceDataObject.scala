@@ -23,7 +23,9 @@ import scala.annotation.tailrec
 import scala.util.{Failure, Success}
 
 case class HttpTimeoutConfig(connectionTimeoutMs: Int, readTimeoutMs: Int)
-case class DepartureQueryParameters(airport: String, begin: Long, end: Long)
+
+// Default to the interval of 2 days from now to today
+case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis() / 1000 - 172800L, end: Long = System.currentTimeMillis() / 1000)
 
 /**
  * [[DataObject]] to call webservice and return response as a DataFrame
@@ -31,10 +33,10 @@ case class DepartureQueryParameters(airport: String, begin: Long, end: Long)
 case class CustomWebserviceDataObject(override val id: DataObjectId,
                                       schema: String,
                                       queryParameters: Seq[DepartureQueryParameters],
-                                      additionalHeaders: Map[String,String] = Map(),
+                                      additionalHeaders: Map[String, String] = Map(),
                                       timeouts: Option[HttpTimeoutConfig] = None,
                                       authMode: Option[AuthMode] = None,
-                                      baseUrl : String,
+                                      baseUrl: String,
                                       nRetry: Int = 1,
                                       override val metadata: Option[DataObjectMetadata] = None
                                      )
@@ -42,7 +44,7 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
   extends DataObject with CanCreateSparkDataFrame with SmartDataLakeLogger {
 
   @tailrec
-  private def request(url: String, method: WebserviceMethod = WebserviceMethod.Get, body: String = "", retry: Int = nRetry) : Array[Byte] = {
+  private def request(url: String, method: WebserviceMethod = WebserviceMethod.Get, body: String = "", retry: Int = nRetry): Array[Byte] = {
     val webserviceClient = ScalaJWebserviceClient(url, additionalHeaders, timeouts, authMode, proxy = None, followRedirects = true)
     val webserviceResult = method match {
       case WebserviceMethod.Get => webserviceClient.get()
@@ -53,12 +55,12 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
         logger.info(s"Success for request ${url}")
         c
       case Failure(e) =>
-        if(retry == 0) {
+        if (retry == 0) {
           logger.error(e.getMessage, e)
           throw new WebserviceException(e.getMessage)
         }
-        logger.info(s"Request will be repeated, because the server responded with: ${e.getMessage}. \nRequest retries left: ${retry-1}")
-        request(url, method, body, retry-1)
+        logger.info(s"Request will be repeated, because the server responded with: ${e.getMessage}. \nRequest retries left: ${retry - 1}")
+        request(url, method, body, retry - 1)
     }
   }
 
@@ -72,11 +74,11 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
 
     // if time interval is more than a week, set end config to 4 days after begin
     def checkQueryParameters(queryParameters: Seq[DepartureQueryParameters]) = {
-      queryParameters.map{
+      queryParameters.map {
         param =>
           val diff = param.end - param.begin
-          if(diff / (3600*24) >= 7) {
-            param.copy(end=param.begin+3600*24*4)
+          if (diff / (3600 * 24) >= 7) {
+            param.copy(end = param.begin + 3600 * 24 * 4)
           } else {
             param
           }
@@ -92,6 +94,7 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
       param => s"${baseUrl}?airport=${param.airport}&begin=${param.begin}&end=${param.end}"
     )
     // make requests
+    departureRequests.foreach(req => logger.info("Going to request: " + req))
     val departuresResponses = departureRequests.map(request(_))
     // create dataframe with the correct schema and add created_at column with the current timestamp
     val departuresDf = departuresResponses.toDF("responseBinary")
