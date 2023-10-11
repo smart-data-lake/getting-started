@@ -106,10 +106,40 @@ Let's start writing a config
 > open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
 * distinguish `global`, `dataObjects`, `actions`, and `connections`
 
+### QUIZ TIME!
+
+<details>
+<summary>Click here to show the question</summary>
+
+### Question 1: Which of the following characteristics are true about the Smart Data Lake Builder?
+
+- **A** -> It combines the advantages of a Data Warehouse and Data Lakes
+- **B** -> It is a .NET-based application for data orchestration
+- **C** -> It includes features like historization, incremental load and partitioning
+- **D** -> It features runtime validation while transferring the data
+- **E** -> Its main elements comprise data objects, activities and connections.
+
+
+- [ ] A, C and E.
+- [ ] A and C.
+- [ ] B and E.
+- [ ] B, C and D.
+- [ ] Only C.
+
+<details>
+<summary>Answer</summary>
+
+**Only C** is correct!
+</details>
+
+</details>
+
+
+
 > write sections `dataObjects { }` and `actions { }` in our new config file.
 
 ### DataObjects
-There are data objects different types: files, database connections, and table formats. In other words, dataObjects define data entities and how they can be accessed by properties including location, type and others.
+There are data objects of different types: files, database connections, and table formats. In other words, dataObjects define data entities and how they can be accessed by properties including location, type and others.
 To mention **a few** dataObjects:
 
 * `JdbcTableDataObject` to connect to a database e.g. MS SQL or Oracle SQL
@@ -154,6 +184,8 @@ What we have here:
     + definition and usage of distance calculation
 
 > Note: *transformer* is deprecated
+
+![Core components](images/core_components.png)
 
 ### config Structure
 
@@ -213,6 +245,201 @@ Let's have a look into a configuration file:
 :warning: TODO overwrite not working'
 -->
 
+### QUIZ TIME!
+
+<details>
+<summary>Click here to show the first question</summary>
+
+### Question 1: Which of the following sentences about data objects are correct?
+
+- **A** -> Data objects describe dependencies between data entities
+- **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type), 
+it also must have two corresponding two input data objects.
+- **C** -> Data objects can have many transformers.
+- **D** -> Data objects can only have one transformer.
+- **E** -> None of the possibilities are correct.
+
+
+- [ ] A and B.
+- [ ] A and C.
+- [ ] B and D.
+- [ ] Only D.
+- [ ] Only E.
+
+<details>
+<summary>Answer</summary>
+
+**Only E** is correct!
+</details>
+
+</details>
+
+<details>
+<summary>Click here to show the second question</summary>
+
+### Question 2: Which of the following sentences about actions are correct?
+
+- **A** -> Actions describe dependencies between data entities
+- **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type),
+  it also must have two corresponding actions.
+- **C** -> Actions can have many transformers.
+- **D** -> Actions can only have one transformer.
+- **E** -> None of the possibilities are correct.
+
+
+- [ ] A and B.
+- [ ] A and C.
+- [ ] B and D.
+- [ ] A and D.
+- [ ] Only D.
+- [ ] Only E.
+
+<details>
+<summary>Answer</summary>
+
+**A and C** are both correct!
+</details>
+
+</details>
+
+<details>
+<summary>Click here to show the third question</summary>
+
+### Question 3: Where are the credentials to a SQL-database defined?
+
+
+- [ ] In the actions.
+- [ ] In the connections.
+- [ ] In the data objects.
+
+<details>
+<summary>Answer</summary>
+
+Credentials are defined **in the connections**
+</details>
+
+</details>
+
+### PUZZLE TIME!
+
+<details>
+<summary>Click here to show the puzzle</summary>
+
+
+It is now time to continue building our pipeline. For this, you are given some preconfigured data objects
+and actions. The idea is that you use them to further build your airports.config file. Please consider the
+following points:
+
+
+
+<details>
+<summary>Answer</summary>
+
+**Only C** is correct!
+</details>
+
+</details>
+
+## Three important concepts before testing our pipeline
+
+### 1. Feeds
+Often we do not want to run all defined pipelines. 
+Especially during development, debugging or in various use case,
+we rely on running only parts. This may be just a single action/transformation, 
+or downloading everything. The way we define the parts we want to run is by 
+associating actions with so-called *feeds*. Feeds can be understood as markers for 
+"sub-pipelines" within one greater pipeline. 
+The following example has two feeds:
+
+![Feeds in SDLB](images/feeds_in_SDLB.png)
+
+
+
+Feeds are inserted into the metadata as follows:
+
+```
+actionName {
+  type = actionType
+  input = some-input-dataObject
+  output = some-output-dataObject
+  metadata {
+    feed = feedName
+  }
+}
+```
+
+### 2. Combining HOCON files and setting environment variables
+
+The structures in SDLB are very flexible, not only can 
+building blocks (data objects, actions, etc.) be separated in 
+different files and directories, but also used in various 
+locations. Thus, e.g. team members can write their 
+configuration files for the creation of separate pipelines 
+while re-using common configurations. This is possible since 
+SDLB merges all selected configuration files into one stream.
+
+
+![Merging config files](images/merge_config_files.png)
+
+> **TIPP**: One way of using this feature is defining *templates*.
+> Imagine having to migrate 2000 tables from the same database.
+> Instead of writing the same connection information in each
+> source data object, we can use a template and only adapt the
+> parameter of the table name!
+
+```
+templates {
+  myTemplate {
+    type = JdbcTableDataObject
+    connectionId = myConnectionId
+    metadata.feed = load_tables
+  }
+}
+
+dataObjects {
+  departures-table = ${templates.myTemplate} {
+    table.name = departures
+  }
+  
+  arrivals-table = ${templates.myTemplate} {
+    table.name = arrivals
+  }
+  
+  airports-table = ${templates.myTemplate} {
+    table.name = airports
+  }
+}
+
+```
+
+Furthermore, we can define environment variables that aren't hardcoded in
+our .config files, but that are passed as an argument whenever
+we start the SDLB. They are defined as follows:
+
+```
+authentication {
+  user = ${USER_PARAM}
+  password = ${PW_PARAM}
+  path = ${DATALAKEPREFIX}
+}
+```
+
+> **Survey:** Can you find out where to pass environment variables as parameters
+> in IntelliJ?
+
+### 3. Execution phases
+
+The SDLB executes the following phases on each run:
+
+1. **Configuration parsing**
+2. **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
+3. **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
+4. **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode.
+* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
+* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
+
+
+
 ## Feeds
 Often we do not want to run all defined pipelines. Esp. during development, debugging or in various use case, 
 we rely on running only parts. This may be just a single action/transformation, or downloading everything.  
@@ -264,18 +491,6 @@ Task: What is the issue? -> fix issue
 > define an alias thus we do not specify the core arguments again and again and it gets more clear:
 > - Let's define a command: <br>
 >   `alias sdlb_cmd="podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf"`
-
-## Exectuion phases
-
-The SDLB executes the following phases on each run:
-
-   - **Configuration parsing**
-   - **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
-   - **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
-   - **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode. 
-   - 
-* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
-* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
 
 
 ## Test Configuration
