@@ -21,7 +21,8 @@ import scala.util.{Failure, Success}
 
 case class HttpTimeoutConfig(connectionTimeoutMs: Int, readTimeoutMs: Int)
 
-case class DepartureQueryParameters(airport: String, begin: Long, end: Long)
+// Default to the interval of 2 days from now to today
+case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis()/1000 - 172800L, end: Long = System.currentTimeMillis()/1000)
 
 case class State(airport: String, nextBegin: Long)
 
@@ -106,6 +107,8 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
       val departureRequests: Seq[String] = currentQueryParameters.map(
         param => s"${baseUrl}?airport=${param.airport}&begin=${param.begin}&end=${param.end}"
       )
+
+      departureRequests.foreach( req => logger.info("Going to request: " + req))
       // make requests
       val departuresResponses = departureRequests.map(request(_))
       // create dataframe with the correct schema and add created_at column with the current timestamp
