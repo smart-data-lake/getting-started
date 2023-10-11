@@ -9,7 +9,7 @@
     <option name="MAIN_CLASS_NAME" value="io.smartdatalake.app.LocalSmartDataLakeBuilder" />
     <module name="getting-started" />
     <option name="PROGRAM_PARAMETERS" value="-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --partition-values estdepartureairport=EDDM" />
-    <option name="VM_PARAMETERS" value="-DdataObjects.ext_departures.queryParameters.0.airport=EDDM -DdataObjects.ext_departures.queryParameters.0.begin=1630200800 -DdataObjects.ext_departures.queryParameters.0.end=1630310979" />
+    <option name="VM_PARAMETERS" value="-DdataObjects.ext_departures.queryParameters.0.airport=EDDM" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
