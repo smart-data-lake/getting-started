@@ -11,6 +11,8 @@ derby.log
 *.log
 .metals
 .vscode
+sdlb-viewer/.venv
+sdlb-viewer/state
 
 # User-specific stuff
 .idea/**/workspace.xml

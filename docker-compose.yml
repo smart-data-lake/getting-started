@@ -30,7 +30,7 @@ services:
 
   sdlb-viewer:
     build:
-      context: ./sdlb-viewer
+      context: ./sdlb-viewer-docker
     hostname: vizualizer
     ports:
       - "5000:5000"
