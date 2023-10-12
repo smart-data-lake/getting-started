@@ -13,12 +13,12 @@ Set-Location -Path "$PSScriptRoot\sdlb-viewer"
 
 # PYTHON INDEX BUILDER (see that you switch to Python3 if you don't have python installed)
 try {
-    python3 -m venv .venv
-    .\.venv\Scripts\Activate
+ #   python3 -m venv .venv
+#    .\.venv\Scripts\Activate
     pip install -r .\requirements.txt
     python3 .\build_index.py state
 } finally {
-    .\.venv\Scripts\Deactivate
+ #   .\.venv\Scripts\Deactivate
 }
 
 .\lighttpd\lighttpd.exe -D -f .\lighttpd.conf
