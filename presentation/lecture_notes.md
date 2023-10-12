@@ -473,15 +473,15 @@ Paste the code blocks into your airports.conf file!
 
 Change lecturers
 ## Time to test the pipeline
-Let's run SDLB_part2 template from IntelliJ.
+Let's run SDLB_part2 template from IntelliJ. `--feed-sel * --partition-values estdepartureairport=LSZB`
 While it runs inspect the command
 
 start application with `--help`: 
 
 * `feed-sel` always necessary 
-	- can be specified by metadata feed, name, or ids
-	- can be lists or regex, e.g. `--feed-sel '.*airport.*'` **Note**: on CLI we need `'.*'` in IntelliJ we can directly use `.*`
-	- can also be `startWith...` or `endWith...`
+
+you can also just run a part of the pipeline:
+`--feed-sel *--partition-values estdepartureairport=LSZB`
 
 ### DAG
 * (Directed acyclic graph)
@@ -636,23 +636,11 @@ We will come to metrics later when we talk about state.
 > A: Your data uses up less space
 ></details>
 
+![Partitions](images/partitions.png)
+
 First have a look at `data/btl_distances`.
 
-There are two subdirectories named with the partition name and value.
-
-**Task**: recompute `compute-distances` only with/for partition `LSZB` <br>
-**Hint**: use CLI help
-
-><details><summary>Solution: Click to expand!</summary>
-> (SDLB_new_partition config file)
-> * specify a new partition: CLI option `--partition-value`
-> * Here we need: `--partition-values estdepartureairport=EDDM` with `--feed-sel .*` to download the new data for departures from munich
-> * > * `-DdataObjects.ext_departures.queryParameters.0.airport=EDDM
-        -DdataObjects.ext_departures.queryParameters.0.begin=1630200800
-        -DdataObjects.ext_departures.queryParameters.0.end=1630310979`
-> * Execute <br>
->   * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:compute-distances --partition-values estdepartureairport=LSZB`
-></details>
+Let's download the data for a different partition, set partitionValues estdepartureairport=EDDM.
 
 When you now look at data/btl_distances, you will only see an a new folder estdepartureairport=EDDM 
 and in the logs you find: `start writing to DataObject~btl_distances, partitionValues estdepartureairport=EDDM [exec-compute-distances]`)
@@ -668,6 +656,9 @@ for Actions there are different execution modes, including various incremental m
   - see https://smartdatalake.ch/docs/reference/executionModes#dataobjectstateincrementalmode
 
 ### Incremental Load
+
+![Incremental Load](images/incremental.png)
+
 Here we use `DataObjectStateIncrementalMode`: 
 * 
 * * desire to **not read** (and write) **all** data from input at every run -> incrementally
@@ -858,48 +849,6 @@ The viewer runs separately
 > * **WSL**: in a container,and can be launched browsing to [localhost:5000](http://localhost:5000).
 > Note: there is still an issue with parsing "unresolved" variables. If you see just "Loading", 
 > uncomment out the `$METASTOREPW` or `DATALAKEPREFIX` in `envConfig/local*.conf`.
-
-# Exercise
-> **Task**: create a new table provided in CSV format:
-> * airports name
-> * elevation in ft
-> * and elevation in m 
-
-> <details><summary>Solution: Click to expand!</summary>
-> 
-> * create a dataObject like
-> ```
->  btl_airports_elevation { ### TODO remove for training
->    type = CsvFileDataObject
->    path = ${env.datalakeprefix}"/~{id}"
->    metadata {
->      name = "Calculated Airport elevation in meters"
->      description = "contains beside GPS coordiantes, elevation, continent, country, region"
->      layer = "staging"
->      subjectArea = "airports"
->      tags = ["aviation", "airport", "location"]
->    }
->  }
-> ```
-> * create an action using stg_airports as input and the above dataObject as output
-> * e.g. with `SQLDfTransformer`: `code = "select name, elevation_ft, (elevation_ft / 3.281) as elevation_meters from stg_airports"`
-> ```
-> export-airport-elevations { ### TODO remove for training
->   type = CopyAction
->   inputId = stg_airports
->   outputId = btl_airports_elevation
->   transformers = [{
->     type = SQLDfTransformer
->     code = "select name, elevation_ft, (elevation_ft / 3.281) as elevation_meters from stg_airports" #Tricky, do not use comma but decimal point ;-)
->   }]
->   metadata {
->     name = "Airport elevation"
->     description = "Write airport elevation in meters to Parquet file"
->     feed = download-airport
->   }
->  }
-> ```
-> </details>
 
 # SDLB feature summary
 * [ ] Run **anywhere**
