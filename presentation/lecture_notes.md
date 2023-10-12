@@ -481,7 +481,10 @@ existing templates.
 Paste the code blocks into your airports.conf file! 
 </details>
 
-## Feeds
+## Time to test the pipeline
+
+### Testing different feeds
+
 Often we do not want to run all defined pipelines. Esp. during development, debugging or in various use case, 
 we rely on running only parts. This may be just a single action/transformation, or downloading everything.  
 
@@ -506,7 +509,7 @@ we rely on running only parts. This may be just a single action/transformation, 
 > work to where we want to be, start with `--feed-sel .*airport.* --test config`
 > run parameters: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
 
-## Environment Variables in HOCON
+### Testing environment variables
 
 Note error: 
 * **WSL** error: `Could not resolve substitution to a value: ${METASTOREPW}`
@@ -534,7 +537,7 @@ Task: What is the issue? -> fix issue
 >   `alias sdlb_cmd="podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf"`
 
 
-## Test Configuration
+### Test Configuration
 since we realize there could be issues, let's first run a config test using `--test config`:
 
 > * **WSL**: `sdlb_cmd --feed-sel '.*airport.*' --test config` (fix bug together)
@@ -550,13 +553,13 @@ Task: fix issue
 > In `config/airports.conf` correct the data object type of stg_airports to *CsvFileDataObject*
 > </details>
 
-## Dry-run
+### Dry-run
 * run again (and then with) `--test dry-run` and feed `'.*'` to check all configs: 
 
 > * **WSL**:  `sdlb_cmd --feed-sel '.*airport.*' --test dry-run`
 > * **IntelliJ**: add `--test dry-run`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test dry-run`
 
-## DAG
+### DAG
 * (Directed acyclic graph)
 > show DAG in output
 * automatically created using the specifications in the SDLB config. 
@@ -594,7 +597,7 @@ Task: fix issue
                   └─────────────────┘
 ```
 
-## Execution Phases in practice
+### Execution Phases in practice
 let's run without `dry-run`
 > * **WSL**: real execution: `sdlb_cmd --feed-sel 'airport'`
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
@@ -608,7 +611,7 @@ let's run without `dry-run`
 * early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
 * [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
 
-## Inspect result
+### Inspect result
 * files in the file system: `stg_airport`: CSV files located at `data/stg_airports/`
 
 > * **WSL**: Polynote: tables in the DataLake
@@ -633,7 +636,7 @@ let's run without `dry-run`
   
 now we have tested and executed the part for airport, let's go for the whole pipeline. First we start with the testing again.
 
-## Schema handling
+### Schema handling
 * test the whole pipeline using `.*` and `--test dry-run`
 > * **WSL**: `sdlb_cmd --feed-sel '.*'  --test dry-run `
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --test dry-run`
@@ -696,7 +699,7 @@ Task: fix issue
 > * **WSL**: `departure table consists of 457 row and entries are of original date: 20210829 20210830`
 > * **IntelliJ**: 224+233 rows in 2 parquet files and `dt` dates of `20210829` and `20210830`
 
-## Unit Tests
+### Unit Tests
 not only during runtime we want to have our code tested. When we develop new dataObjects, transformers etc., 
 we want to have them tested during compile time. An example where a unit test is created using synthetic data and a related config file:  
 
