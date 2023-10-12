@@ -69,7 +69,7 @@
 <sub>
 
 ```
-${env.datalakeprefix}
+path = ${env.datalakeprefix}"/~{id}"
 ```
 </sub>
 
@@ -84,7 +84,7 @@ ${env.datalakeprefix}
 <sub>
 
 ```
-${templates.dataLake}
+int_airports = ${templates.dataLake} {
 ```
 </sub>
 

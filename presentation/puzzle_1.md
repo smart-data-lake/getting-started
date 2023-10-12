@@ -55,11 +55,14 @@
 <sub>
 
 ```
-  btl_airports_elevation {
+  btl_elevation { 
     type = CsvFileDataObject
-    path = "data/~{id}"
+    sparkRepartition { #This will create only one .csv file and not many!
+      numberOfTasksPerPartition=1
+      filename="elevation.csv"
+    }
     csvOptions {
-      mode=failfast 
+      mode=failfast
     }
   }
 ```
@@ -76,8 +79,32 @@
 <sub>
 
 ```
-  btl_elevation {
+  btl_airports_elevation { 
     type = CsvFileDataObject
+    path = ${env.datalakeprefix}"/~{id}"
+    sparkRepartition { #This will create only one .csv file and not many!
+      numberOfTasksPerPartition=1
+      filename="elevation.csv"
+    }
+    csvOptions {
+      mode=failfast
+    }
+  }
+```
+</sub>
+
+</details>
+
+---
+
+<details>
+<summary>Data Object 5</summary>
+
+<sub>
+
+```
+  int-airports-table {
+    type = JDBCTableDataObject
     csvOptions {
       mode=failfast 
     }
@@ -147,7 +174,7 @@
     outputId = int_airports
     transformers = [{
       type = SQLDfTransformer
-      SQLCode = "select ident, name, latitude_deg, longitude_deg from stg_airports"
+      SQLScript = "select ident, name, latitude_deg, longitude_deg from stg_airports"
     }]
   }
 ```
