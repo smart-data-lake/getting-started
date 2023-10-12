@@ -109,9 +109,9 @@ Let's start writing a config
 ### QUIZ TIME!
 
 <details>
-<summary>Click here to show the question</summary>
+<summary>Click here to show the question 1</summary>
 
-### Question 1: Which of the following characteristics are true about the Smart Data Lake Builder?
+### Question 1: What is true about the SDLB?
 
 - **A** -> It combines the advantages of a Data Warehouse and Data Lakes
 - **B** -> It is a .NET-based application for data orchestration
@@ -251,51 +251,46 @@ Let's have a look into a configuration file:
 ### QUIZ TIME!
 
 <details>
-<summary>Click here to show the first question</summary>
+<summary>Click here to show question 2</summary>
 
-### Question 1: Which of the following sentences about data objects are correct?
+### Question 2: Which facts about data objects are correct?
 
 - **A** -> Data objects describe dependencies between data entities
 - **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type), 
 it also must have two corresponding two input data objects.
 - **C** -> Data objects can have many transformers.
-- **D** -> Data objects can only have one transformer.
-- **E** -> None of the possibilities are correct.
+- **D** -> None of the possibilities are correct.
 
 
 - [ ] A and B.
 - [ ] A and C.
 - [ ] B and D.
 - [ ] Only D.
-- [ ] Only E.
 
 <details>
 <summary>Answer</summary>
 
-**Only E** is correct!
+**Only D** is correct!
 </details>
 
 </details>
 
 <details>
-<summary>Click here to show the second question</summary>
+<summary>Click here to show question 3</summary>
 
-### Question 2: Which of the following sentences about actions are correct?
+### Question 3: Which is true about actions?
 
 - **A** -> Actions describe dependencies between data entities
 - **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type),
   it also must have two corresponding actions.
 - **C** -> Actions can have many transformers.
-- **D** -> Actions can only have one transformer.
-- **E** -> None of the possibilities are correct.
+- **D** -> None of the possibilities are correct.
 
 
 - [ ] A and B.
 - [ ] A and C.
-- [ ] B and D.
-- [ ] A and D.
+- [ ] B and C.
 - [ ] Only D.
-- [ ] Only E.
 
 <details>
 <summary>Answer</summary>
@@ -306,9 +301,9 @@ it also must have two corresponding two input data objects.
 </details>
 
 <details>
-<summary>Click here to show the third question</summary>
+<summary>Click here to show question 4</summary>
 
-### Question 3: Where are the credentials to a SQL-database defined?
+### Question 4: Where are the credentials to a SQL-database defined?
 
 
 - [ ] In the actions.
