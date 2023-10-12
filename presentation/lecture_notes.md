@@ -323,26 +323,49 @@ Credentials are defined **in the connections**
 ### PUZZLE TIME!
 
 <details>
-<summary>Click here to show the puzzle</summary>
+<summary>Click here to show the puzzle 1</summary>
 
 
-It is now time to continue building our pipeline. For this, you are given some preconfigured data objects
-and actions. The idea is that you use them to further build your airports.config file. Please consider the
-following points:
+It is now time to continue building our pipeline. 
+For this, you are given some preconfigured data objects
+and actions. The idea is that you use them to further 
+build your airports.config file. 
 
+We want the pipeline to do the following:
 
+1. Download the airports data from the given link as a
+.csv file. 
+2. Store the airports table only with the attributes 
+*identity*, _name_, _latitude degree_ and _longitude degree_ in
+the **Delta Lake format**.
+3. Furthermore, we want to store .csv File containing
+also the airport elevation. Since we have colleagues 
+both in the USA and in Europe, we want to provide 
+the airport elevation both in feet and in meters. For this
+file, it suffices that we provide the attributes 
+_airport_name_, _elevationInFeet_ and _elevationInMeters_.
 
-<details>
-<summary>Answer</summary>
-
-**Only C** is correct!
-</details>
+In order to build the pipeline, consider the following:
+- How many data objects and actions do you need in total?
+How many did we already configure?
+- Which attributes are possible? Which ones are required?
+  (Use the Schema Viewer!)
+- We want to use the Lakehouse Architecture. How can the 
+components be named properly?
 
 </details>
 
 ## Three important concepts before testing our pipeline
 
-### 1. Feeds
+### 1. Metadata and Feeds
+
+Data Objects and Actions have metadata that serves as information
+about the component. Metadata can refer to the name, the description, 
+or some tags associated with the component. 
+While metadata attributes are optional, they can be very useful 
+in some situations, as it is the case of *feeds*:
+
+
 Often we do not want to run all defined pipelines. 
 Especially during development, debugging or in various use case,
 we rely on running only parts. This may be just a single action/transformation, 
@@ -438,7 +461,25 @@ The SDLB executes the following phases on each run:
 * early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
 * [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
 
+### PUZZLE TIME!
 
+<details>
+<summary>Click here to show the puzzle 2</summary>
+
+
+Before testing our pipeline, we want to write some metadata
+into our data objects and actions. We also want to
+replace some code blocks with template definitions and
+environment variables. Please use these puzzle parts and 
+consider the following:
+
+- Which feeds make sense? Which ones are not really useful?
+- Check out the envConfig/ folder to search for some
+existing templates.
+- Do you have to overwrite some of the exiting code?
+
+Paste the code blocks into your airports.conf file! 
+</details>
 
 ## Feeds
 Often we do not want to run all defined pipelines. Esp. during development, debugging or in various use case, 
