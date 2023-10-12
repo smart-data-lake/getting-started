@@ -138,6 +138,9 @@ Let's start writing a config
 
 > write sections `dataObjects { }` and `actions { }` in our new config file.
 
+<!-- DO THIS PART with SchemaViewer -->
+
+
 ### DataObjects
 There are data objects of different types: files, database connections, and table formats. In other words, dataObjects define data entities and how they can be accessed by properties including location, type and others.
 To mention **a few** dataObjects:
@@ -327,10 +330,6 @@ Credentials are defined **in the connections**
 
 
 It is now time to continue building our pipeline. 
-For this, you are given some preconfigured data objects
-and actions. The idea is that you use them to further 
-build your airports.config file. 
-
 We want the pipeline to do the following:
 
 1. Download the airports data from the given link as a
@@ -348,10 +347,17 @@ _airport_name_, _elevationInFeet_ and _elevationInMeters_.
 In order to build the pipeline, consider the following:
 - How many data objects and actions do you need in total?
 How many did we already configure?
-- Which attributes are possible? Which ones are required?
+- Which configuration fields are possible? Which ones are required?
   (Use the Schema Viewer!)
 - We want to use the Lakehouse Architecture. How can the 
 components be named properly?
+
+For this exercise, you are given some preconfigured data objects
+and actions. The idea is that you use them to further
+build your airports.config file.
+
+TASK: Copy and paste the proper data objects and actions
+into your airports.conf file!
 
 </details>
 
@@ -450,17 +456,6 @@ authentication {
 > **Survey:** Can you find out where to pass environment variables as parameters
 > in IntelliJ?
 
-### 3. Execution phases
-
-The SDLB executes the following phases on each run:
-
-1. **Configuration parsing**
-2. **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
-3. **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
-4. **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode.
-* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
-* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
-
 ### PUZZLE TIME!
 
 <details>
@@ -536,7 +531,7 @@ Task: What is the issue? -> fix issue
 > - Let's define a command: <br>
 >   `alias sdlb_cmd="podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf"`
 
-
+<!--
 ### Test Configuration
 since we realize there could be issues, let's first run a config test using `--test config`:
 
@@ -548,17 +543,18 @@ since we realize there could be issues, let's first run a config test using `--t
 let us double-check what DataObjects there are available... [SDLB Schema Viewer](http://smartdatalake.ch/json-schema-viewer/index.html#viewer-page&version=sdl-schema-2.3.0-SNAPSHOT.json)
 
 Task: fix issue 
-<!-- A collapsible section with markdown -->
+<-- A collapsible section with markdown -->
 > <details><summary>Solution: Click to expand!</summary>
 > In `config/airports.conf` correct the data object type of stg_airports to *CsvFileDataObject*
 > </details>
-
+-->
+<!--
 ### Dry-run
 * run again (and then with) `--test dry-run` and feed `'.*'` to check all configs: 
 
 > * **WSL**:  `sdlb_cmd --feed-sel '.*airport.*' --test dry-run`
 > * **IntelliJ**: add `--test dry-run`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test dry-run`
-
+-->
 ### DAG
 * (Directed acyclic graph)
 > show DAG in output
@@ -596,6 +592,16 @@ Task: fix issue
                   │compute-distances│
                   └─────────────────┘
 ```
+### 3. Execution phases
+
+The SDLB executes the following phases on each run:
+
+1. **Configuration parsing**
+2. **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
+3. **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
+4. **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode.
+* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
+* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
 
 ### Execution Phases in practice
 let's run without `dry-run`
