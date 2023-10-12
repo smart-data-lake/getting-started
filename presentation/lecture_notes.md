@@ -471,89 +471,22 @@ existing templates.
 Paste the code blocks into your airports.conf file! 
 </details>
 
+Change lecturers
 ## Time to test the pipeline
+Let's run SDLB_part2 template from IntelliJ.
+While it runs inspect the command
 
-### Testing different feeds
-
-Often we do not want to run all defined pipelines. Esp. during development, debugging or in various use case, 
-we rely on running only parts. This may be just a single action/transformation, or downloading everything.  
-
-* start application with `--help`: 
-> * **WSL**: `podman run --rm --pod sdlb_training sdl-spark --help`
->   * Note: `--rm` removes container after execution, `--pod` specifies the pod to run in, with supporting containers
-> * **IntelliJ**: configure Run with parameters `--help`
-> Note: configure: Java 11?, main class `io.smartdatalake.app.LocalSmartDataLakeBuilder`
-
+start application with `--help`: 
 
 * `feed-sel` always necessary 
 	- can be specified by metadata feed, name, or ids
 	- can be lists or regex, e.g. `--feed-sel '.*airport.*'` **Note**: on CLI we need `'.*'` in IntelliJ we can directly use `.*`
 	- can also be `startWith...` or `endWith...`
 
-* directories for mounting data, target and config directory, container name, config directories/files
-
-* try run feed everything: 
-> * **WSL**: `podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf --feed-sel '.*airport.*'`
->  - Note: data, target, config, and envConfig directories are mounted into the container
-> * **IntelliJ**: 
-> work to where we want to be, start with `--feed-sel .*airport.* --test config`
-> run parameters: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
-
-### Testing environment variables
-
-Note error: 
-* **WSL** error: `Could not resolve substitution to a value: ${METASTOREPW}`
-* **IntelliJ** error: `Could not resolve substitution to a value: ${DATALAKEPREFIX}`
-
-Task: What is the issue? -> fix issue 
-<!-- A collapsible section with markdown -->
-> <details><summary>Solution: Click to expand!</summary>
-> WSL: in `envConfig/local_WSL.conf` we defined `"spark.hadoop.javax.jdo.option.ConnectionPassword" = ${METASTOREPW}` <br>
-> the Metastore password is set while configuring the metastore. 
-> In the Metastore Dockerfile the `metastore/entrypoint.sh` is specified. 
-> In this file the Password is specified as 1234.
-> Thus, set environment variable in the container using the podman option: `-e METASTOREPW=1234` <br>
-> Note: better not to use clear test passwords anywhere. 
-> In cloud environment use password stores and its handling. 
-> Avoid passwords being exposed in repos and logs. 
-> <br>
-> IntelliJ: In the env config file the variable DATALAKEPREFIX is used to control the location of data.
-> Here, setting an environment variable DATALAKEPREFIX is necessary. Let's go with `data`
-> </details>
-
-> **WSL**
-> define an alias thus we do not specify the core arguments again and again and it gets more clear:
-> - Let's define a command: <br>
->   `alias sdlb_cmd="podman run --rm --hostname=localhost --pod sdlb_training -v ${PWD}/data:/mnt/data -v ${PWD}/target:/mnt/lib -v ${PWD}/config:/mnt/config -v ${PWD}/envConfig:/mnt/envConfig sdl-spark:latest --config /mnt/config,/mnt/envConfig/local_WSL.conf"`
-
-<!--
-### Test Configuration
-since we realize there could be issues, let's first run a config test using `--test config`:
-
-> * **WSL**: `sdlb_cmd --feed-sel '.*airport.*' --test config` (fix bug together)
-> * **IntelliJ**: add `--test config`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test config`
-
-* while running we get:
-`Exception in thread "main" io.smartdatalake.config.ConfigurationException: (DataObject~stg_airports) ClassNotFoundException: Implementation CsvFoobarDataObject of interface DataObject not found`
-let us double-check what DataObjects there are available... [SDLB Schema Viewer](http://smartdatalake.ch/json-schema-viewer/index.html#viewer-page&version=sdl-schema-2.3.0-SNAPSHOT.json)
-
-Task: fix issue 
-<-- A collapsible section with markdown -->
-> <details><summary>Solution: Click to expand!</summary>
-> In `config/airports.conf` correct the data object type of stg_airports to *CsvFileDataObject*
-> </details>
--->
-<!--
-### Dry-run
-* run again (and then with) `--test dry-run` and feed `'.*'` to check all configs: 
-
-> * **WSL**:  `sdlb_cmd --feed-sel '.*airport.*' --test dry-run`
-> * **IntelliJ**: add `--test dry-run`, thus we set: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.* --test dry-run`
--->
 ### DAG
 * (Directed acyclic graph)
 > show DAG in output
-* automatically created using the specifications in the SDLB config. 
+* automatically created using the specifications in the SDLB config.
 * can fork and join
 * no recursion
 
@@ -587,6 +520,10 @@ Task: fix issue
                   │compute-distances│
                   └─────────────────┘
 ```
+
+  show result files
+
+
 ### 3. Execution phases
 
 The SDLB executes the following phases on each run:
@@ -598,49 +535,12 @@ The SDLB executes the following phases on each run:
 * early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
 * [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
 
-### Execution Phases in practice
-let's run without `dry-run`
-> * **WSL**: real execution: `sdlb_cmd --feed-sel 'airport'`
-> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*airport.*`
-
-* logs reveal the **execution phases**
-* **Remember**: in general, we have: 
-    - configuration parsing
-    - DAG preparation
-    - DAG init
-    - DAG exec (not processed in dry-run mode)
-* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
-* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
-
-### Inspect result
-* files in the file system: `stg_airport`: CSV files located at `data/stg_airports/`
-
-> * **WSL**: Polynote: tables in the DataLake
->  - open [Polynote at localhost:8192](http://localhost:8192/notebook/inspectData.ipynb)
-> * **IntelliJ**: open Avro/Parquet Viewer and Drag and drop file into 
-
-> <details><summary>Example content</summary>
-> ```
-> $ head data/stg_airports/result.csv
-> "id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","gps_code","iata_code","local_code","home_link","wikipedia_link","keywords"
-> : 6523,"00A","heliport","Total Rf Heliport",40.07080078125,-74.93360137939453,11,"NA","US","US-PA","Bensalem","no","00A",,"00A",,,
-> 323361,"00AA","small_airport","Aero B Ranch Airport",38.704022,-101.473911,3435,"NA","US","US-KS","Leoti","no","00AA",,"00AA",,,
-> 6524,"00AK","small_airport","Lowell Field",59.947733,-151.692524,450,"NA","US","US-AK","Anchor Point","no","00AK",,"00AK",,,
-> 6525,"00AL","small_airport","Epps Airpark",34.86479949951172,-86.77030181884766,820,"NA","US","US-AL","Harvest","no","00AL",,"00AL",,,
-> 6526,"00AR","closed","Newport Hospital & Clinic Heliport",35.6087,-91.254898,237,"NA","US","US-AR","Newport","no",,,,,,"00AR"
-> 322127,"00AS","small_airport","Fulton Airport",34.9428028,-97.8180194,1100,"NA","US","US-OK","Alex","no","00AS",,"00AS",,,
-> 6527,"00AZ","small_airport","Cordes Airport",34.305599212646484,-112.16500091552734,3810,"NA","US","US-AZ","Cordes","no","00AZ",,"00AZ",,,
-> 6528,"00CA","small_airport","Goldstone (GTS) Airport",35.35474,-116.885329,3038,"NA","US","US-CA","Barstow","no","00CA",,"00CA",,,
-> 324424,"00CL","small_airport","Williams Ag Airport",39.427188,-121.763427,87,"NA","US","US-CA","Biggs","no","00CL",,"00CL",,,
-> ```
-> </details>
-  
-now we have tested and executed the part for airport, let's go for the whole pipeline. First we start with the testing again.
 
 ### Schema handling
-* test the whole pipeline using `.*` and `--test dry-run`
-> * **WSL**: `sdlb_cmd --feed-sel '.*'  --test dry-run `
-> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --test dry-run`
+
+add foobar in download-deduplicate-departures:
+SDLB checked the schema (expected columns of the DataObjects and saw that foobar is not expected there, before executing anything)
+
 * execution fail in init phase by because of not finding "foobar" column in `download-deduplicate-departures`:
 
 ```
@@ -682,35 +582,6 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
     - support for schema evolution 
       + replaced or extended or extend (new column added, removed columns kept) schema 
 		+ for JDBC and DeltaLakeTable, need to be enabled
-
-Task: fix issue 
-<!-- A collapsible section with markdown -->
-> <details><summary>Solution: Click to expand!</summary>
->
-> * In `config/departures.conf` correct the data object download-deduplicate-departures to not select foobar
-> </details>
-
-
-* run whole pipeline with `.*` and without ~~`--test dry-run`~~  
-> * **WSL**: `sdlb_cmd --feed-sel '.*' `
-> * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .*`
-
-* show results
-    after the listing tables and schema, we monitor the amount of data in the tables and the latest value
-> * **WSL**: `departure table consists of 457 row and entries are of original date: 20210829 20210830`
-> * **IntelliJ**: 224+233 rows in 2 parquet files and `dt` dates of `20210829` and `20210830`
-
-### Unit Tests
-not only during runtime we want to have our code tested. When we develop new dataObjects, transformers etc., 
-we want to have them tested during compile time. An example where a unit test is created using synthetic data and a related config file:  
-
-runSimulation -> unit with synthetical DataFrames
-[Unit Test in SDLB](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/scala/io/smartdatalake/workflow/action/ScalaClassSparkDsNTo1TransformerTest.scala#L325)
-and
-[Corresponding Config File](https://github.com/smart-data-lake/smart-data-lake/blob/develop-spark3/sdl-core/src/test/resources/configScalaClassSparkDsNto1Transformer/usingDataObjectIdWithPartitionAutoSelect.conf)
-
-
-<! probably change presenters here>
 
 ## Data Quality
 ><details><summary>Quizztime</summary>
