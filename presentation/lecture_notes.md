@@ -594,36 +594,12 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 ### Constraints
-Add new constraint on dataObject btl_distances
-
-```
-    constraints = [{
-      name = Departure Airport should be different from Arrival Aiport
-      description = "A flight from A to A makes no sense"
-      expression = "estarrivalairport != estdepartureairport"
-      errorMsgCols = [estdepartureairport,estarrivalairport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg]
-    }]
-```
+Puzzle Time! Puzzle 3
 
 Execute SDLB on partition estdepartureairport=LSZB (SDLB_data_quality)
 `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel compute --partition-values estdepartureairport=LSZB`
-It will fail.
-Then show the debugger by putting a breakpoint at the end of com.sample.ComputeDistanceTransformer.transform.
-Let's see if there is data that violates constraint.
-Fix it by uncommenting the where clause.
 
-### Expectations
-add new constraint on dataObject btl_distances
-```
-    expectations = [{
-      type = SQLFractionExpectation
-      name = RailPessimist
-      description = "most flights could be replaced by rail"
-      countConditionExpression = "could_be_done_by_rail = true"
-      expectation = "< 0.5"
-      failedSeverity = "Warn"
-    }]
-```
+Let's change the numbers to see what happens when the expectations and constraints are violated.
 Notice the warning.
 We will come to metrics later when we talk about state.
 
