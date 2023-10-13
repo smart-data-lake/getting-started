@@ -7,19 +7,11 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 class ComputeDistanceTransformer extends CustomDfTransformer {
   override def transform(session: SparkSession, options: Map[String, String], df: DataFrame, dataObjectId: String): DataFrame = {
     val calculateDistanceInKilometerUdf = udf(calculateDistanceInKilometer)
-
-    val blub =
-      df.withColumn("distance",
-        calculateDistanceInKilometerUdf(col("dep_latitude_deg"), col("dep_longitude_deg"), col("arr_latitude_deg"), col("arr_longitude_deg")))
-        .withColumn("could_be_done_by_rail", col("distance") < 500)
-        .where(col("estdepartureairport") =!= col("estarrivalairport"))
-        .groupBy("could_be_done_by_rail").agg(count("*"))
-
     val output =
     df.withColumn("distance",
       calculateDistanceInKilometerUdf(col("dep_latitude_deg"),col("dep_longitude_deg"),col("arr_latitude_deg"), col("arr_longitude_deg")))
       .withColumn("could_be_done_by_rail", col("distance") < 500)
-      .where(col("estdepartureairport") =!= col("estarrivalairport"))
+
     output
   }
 
