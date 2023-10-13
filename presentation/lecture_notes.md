@@ -27,6 +27,7 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 - icebreaker, the largest amount of data sources or tables you worked with in a single project
 -->
 
+
 ## Goal
 * train loving friend imagine to **replace** short distant flights **with train** rides
 * discover/count all flights which
@@ -92,21 +93,16 @@ The Smart Data Lake Builder (SDLB) is the tool we will use to accomplish these s
 * we build SDLB core package with additional custom packages. Here we have 2 additional files (Scala classes) with *custom web downloader* and *transformer*
 * reuse of artifacts from mounted directory in mvn container
 
-
 ## Hocon - Pipeline Description
+
+The data pipelines we will define are in *.conf* files
+and are defined in the HOCON-format.
+
 * [**H**uman-**O**ptimized **C**onfig **O**bject **N**otation](https://github.com/lightbend/config/blob/main/HOCON.md)
 * originating from JSON
 * great features, like variables/references
 
-Let's start writing a config
-> open new file `test_config.conf` <br>
-> what to write? -> Schema viewer
-
-### Schema Viewer - What is supported?
-> open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
-* distinguish `global`, `dataObjects`, `actions`, and `connections`
-
-### QUIZ TIME!
+## QUIZ TIME!
 
 <details>
 <summary>Click here to show the question 1</summary>
@@ -136,7 +132,91 @@ Let's start writing a config
 
 
 
-> write sections `dataObjects { }` and `actions { }` in our new config file.
+<details>
+<summary>Click here to show the question 2</summary>
+
+### Question 2: Which statements about the layered architecture are true?
+
+- **A** -> Data in the external layer is stored in external locations.
+- **B** -> The staging layer is used to "dump" raw data from the external layer.
+- **C** -> The integration layer comprises some data transformation.
+- **D** -> The business transformation layer comprises some data transformation.
+
+
+- [ ] A, B and D.
+- [ ] A, B and C.
+- [ ] B, C and D.
+- [ ] All are correct.
+
+<details>
+<summary>Answer</summary>
+
+**All the options are** correct!
+</details>
+
+</details>
+
+
+# Writing your first configuration file
+
+The data pipelines we will define are in *.conf* files
+(see HOCON-format above). Let's open the project and 
+have a look to the present implementation:
+
+> **WSL**: `ls config ; ls envConfig`
+> <br>
+> **IntelliJ**: show directory structure especially `config` and `envConfig` -> see multiple configuration files
+
+In the current implementation, there is a distinction between
+"normal" configuration files (pipeline definitions) and
+environment configuration files; which define variables and
+key-value-pairs that we need for different environments
+(local, testing, production, etc...).
+```
+config
++-- global.conf
++-- sourceA.conf
++-- sourceB.conf
++-- app1.conf
+envConfig
++-- local.conf
++-- awsDev.conf
++-- azureDev.conf
+```
+
+
+<details>
+<summary>WSL TIPP</summary>
+
+There are a bunch of viewers and editors to see config 
+files. Simplest may be `nano`. From Windows, you can use 
+SublimeText or IntelliJ using 
+*\wsl$\Ubuntu\home\<username>\...*
+
+</details>
+
+We want to write a pipeline that does the following:
+
+1. Download the airports data from the given link as a
+   .csv file.
+
+> - Create a new file `airports.conf`
+> - ....and now?
+
+
+### Schema Viewer - What can I write?
+open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
+* distinguish `global`, `dataObjects`, `actions`, and `connections`
+
+
+> - Add a two sections in `airports.conf`:
+> 
+> ` dataObjects{ } ` 
+> 
+> `actions{ } ` 
+
+
+
 
 <!-- DO THIS PART with SchemaViewer -->
 
@@ -174,62 +254,21 @@ Actions describe dependencies between input and output DataObjects and necessary
   - `AdditionalColumnsTransformer` (in HistorizeAction), adding information from context or derived from input, for example, adding input file name
   - `SparkRepartitionTransformer` for optimized file handling
 
-What we have here:
-* in `config/airports.conf` we already saw an SQL transformer
-* in `config/departures.conf` look at `download-deduplicate-departures`
-  - **chained** transformers
-  - first **SQL** query, to convert UnixTime to dateTime format
-  - then **Scala Code** for deduplication
-    + the deduplication action does compare input and target
-    + the transformation verifies that there are no duplicated in the input
-* in `config/distances.conf` a Scala class is called
-  - see `src/main/scala/com/sample/ComputeDistanceTransformer.scala`
-    + definition and usage of distance calculation
-
-> Note: *transformer* is deprecated
-
 ![Core components](images/core_components.png)
 
-### config Structure
+### Back to the config Structure...
 
-Let's have a look to the present implementation:
+- Reminder: we are aiming at having 3 different layers plus 1 layer for 
+external data entities : **ext**, **stg**, **int**, **btl**. 
 
-> **WSL**: `ls config ; ls envConfig` 
-> <br>
-> **IntelliJ**: show directory structure especially `config` and `envConfig` -> see multiple configuration files
+<details>
+<summary>Which are the two layers concerned for 
+our mini-pipeline? (Click to see the answer)</summary>
+We are concerned about the external layer and the staging layer.
+</details>
 
-* specification of the pipeline can be split in **multiple files** and even **directories**
-  - -> directories can be used to manage different environments e.g. 
-
-```
-config
-+-- global.conf
-+-- sourceA.conf
-+-- sourceB.conf
-+-- app1.conf
-envConfig
-+-- local.conf
-+-- awsDev.conf
-+-- azureDev.conf
-```
-
-Let's have a look into a configuration file:
-> `config/airports.conf` 
-> <br>
-> WSL tipp: There are a bunch of viewers and editors. Simplest may be `nano`. From Windows, you can SublimeText or IntelliJ using `\\wsl$\Ubuntu\home\<username>\...`
-
-* 3 **data objects** for 3 different layers: **ext**, **stg**, **int**
-  - here each data object has a different type: WebserviceFileDataObject, CsvFileDataObject, DeltaLakeTableDataObject
-  - `ext_airports`: specifies the location of a file to be downloaded 
-  - `stg_airports`: a staging CSV file to be downloaded into (raw data)
-  - `int_airports`: filtered and written into `DeltaLakeTable`
-
-* 2 **actions** defining the connection between the data objects
-  - first simple download
-  - then filter and historize
-
-* structures and parameters, like *type*, *inputId*,...
-* **Transformer** will be handled later
+> **TASK**: Define the first two data objects and one action
+> to complete this task.
 
 <!--
 ## Excursion: env variables
@@ -251,9 +290,9 @@ Let's have a look into a configuration file:
 ### QUIZ TIME!
 
 <details>
-<summary>Click here to show question 2</summary>
+<summary>Click here to show question 3</summary>
 
-### Question 2: Which facts about data objects are correct?
+### Question 3: Which facts about data objects are correct?
 
 - **A** -> Data objects describe dependencies between data entities
 - **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type), 
@@ -276,13 +315,13 @@ it also must have two corresponding two input data objects.
 </details>
 
 <details>
-<summary>Click here to show question 3</summary>
+<summary>Click here to show question 4</summary>
 
-### Question 3: Which is true about actions?
+### Question 4: Which is true about actions?
 
 - **A** -> Actions describe dependencies between data entities
-- **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type),
-  it also must have two corresponding actions.
+- **B** -> It is technically impossible to write from the 
+integration layer to the staging layer using one action.
 - **C** -> Actions can have many transformers.
 - **D** -> None of the possibilities are correct.
 
@@ -301,14 +340,15 @@ it also must have two corresponding two input data objects.
 </details>
 
 <details>
-<summary>Click here to show question 4</summary>
+<summary>Click here to show question 5</summary>
 
-### Question 4: Where are the credentials to a SQL-database defined?
+### Question 5: Where are the credentials to a SQL-database defined?
 
 
 - [ ] In the actions.
 - [ ] In the connections.
 - [ ] In the data objects.
+- [ ] In the global configurations
 
 <details>
 <summary>Answer</summary>
@@ -347,16 +387,16 @@ How many did we already configure?
 - We want to use the Lakehouse Architecture. How can the 
 components be named properly?
 
-For this exercise, you are given some preconfigured data objects
+For this exercise, you are given some [preconfigured data objects](puzzle_1.md)
 and actions. The idea is that you use them to further
 build your airports.config file.
 
-TASK: Copy and paste the proper data objects and actions
-into your airports.conf file!
+> **TASK**: Copy and paste the proper data objects and actions
+> into your `airports.conf` file!
 
 </details>
 
-## Three important concepts before testing our pipeline
+## Two important concepts before testing our pipeline
 
 ### 1. Metadata and Feeds
 
@@ -460,19 +500,23 @@ authentication {
 Before testing our pipeline, we want to write some metadata
 into our data objects and actions. We also want to
 replace some code blocks with template definitions and
-environment variables. Please use these puzzle parts and 
-consider the following:
+environment variables. Before starting the exercise, please 
+think about the following:
 
 - Which feeds make sense? Which ones are not really useful?
 - Check out the envConfig/ folder to search for some
 existing templates.
 - Do you have to overwrite some of the exiting code?
 
-Paste the code blocks into your airports.conf file! 
+> **TASK**: 
+> 1. Paste the [code blocks from the puzzle](puzzle_2.md) into your airports.conf file!
+> Note that there are no "extra" blocks this time.
+> 2. Try running your pipeline one time!
 </details>
 
-Change lecturers
-## Time to test the pipeline
+*Pause / Change lecturers here*
+
+## Time to further test the pipeline
 Let's run SDLB_part2 template from IntelliJ. `--feed-sel * --partition-values estdepartureairport=LSZB`
 While it runs inspect the command
 

@@ -103,10 +103,12 @@
 <sub>
 
 ```
-  int-airports-table {
+  ext-airports-table {
     type = JDBCTableDataObject
-    csvOptions {
-      mode=failfast 
+    connectionId = elevationServerConnection
+    db = "elevation_db"
+    table = {
+      name = "Hinweis"
     }
   }
 ```
