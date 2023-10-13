@@ -59,6 +59,12 @@ If you already have Hadoop installed, you should be able to see its version with
 
 2. Test the results with `hadoop version` in your terminal. You may have to restart your computer for the changes to take place.
 
+   Note: If you get
+   ```
+   The system cannot find the path specified.
+   '-Dhadoop.security.logger' is not recognized as an internal or external command, operable program or batch file.
+   ```
+   you most probably have a blanc in your JAVA installation path. Nevertheless, the Hadoop installation should be correct anyways. 
 
 ### Installing IntelliJ and building the project
 
