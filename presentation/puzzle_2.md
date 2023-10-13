@@ -6,7 +6,7 @@
 <details>
 <summary>Code Block 1</summary>
 
-<sub>
+
 
 ```
     metadata {
@@ -17,7 +17,7 @@
     }
 
 ```
-</sub>
+
 
 </details>
 
@@ -26,7 +26,7 @@
 <details>
 <summary>Code Block 2</summary>
 
-<sub>
+
 
 ```
     metadata {
@@ -36,8 +36,6 @@
     }
 ```
 
-</sub>
-
 </details>
 
 ---
@@ -45,7 +43,6 @@
 <details>
 <summary>Code Block 3</summary>
 
-<sub>
 
 ```
     metadata {
@@ -56,7 +53,6 @@
       tags = ["aviation", "airport", "location"]
     }
 ```
-</sub>
 
 </details>
 
@@ -66,12 +62,10 @@
 <details>
 <summary>Code Block 4</summary>
 
-<sub>
-
 ```
 path = ${env.datalakeprefix}"/~{id}"
 ```
-</sub>
+
 
 </details>
 
@@ -81,12 +75,12 @@ path = ${env.datalakeprefix}"/~{id}"
 <details>
 <summary>Code Block 5</summary>
 
-<sub>
+
 
 ```
 int_airports = ${templates.dataLake} {
 ```
-</sub>
+
 
 </details>
 
@@ -95,7 +89,7 @@ int_airports = ${templates.dataLake} {
 <details>
 <summary>Code Block 6</summary>
 
-<sub>
+
 
 ```
     metadata {
@@ -106,7 +100,7 @@ int_airports = ${templates.dataLake} {
       tags = ["aviation", "airport", "location"]
     }
 ```
-</sub>
+
 
 </details>
 
@@ -115,7 +109,7 @@ int_airports = ${templates.dataLake} {
 <details>
 <summary>Code Block 7</summary>
 
-<sub>
+
 
 ```
    metadata {
@@ -125,7 +119,7 @@ int_airports = ${templates.dataLake} {
      feed = download-airport
    }
 ```
-</sub>
+
 
 </details>
 
@@ -134,7 +128,6 @@ int_airports = ${templates.dataLake} {
 <details>
 <summary>Code Block 8</summary>
 
-<sub>
 
 ```
     metadata {
@@ -145,7 +138,6 @@ int_airports = ${templates.dataLake} {
       tags = ["aviation", "airport", "location"]
     }
 ```
-</sub>
 
 </details>
 

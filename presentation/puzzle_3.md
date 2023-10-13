@@ -5,7 +5,6 @@
 <details>
 <summary>Code Block 1</summary>
 
-<sub>
 
 ```
     constraints = [{
@@ -15,13 +14,13 @@
       errorMsgCols = [departureairport,arrivalairport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg]
     }]
 ```
-</sub>
+
 </details>
+
 ---
 <details>
 <summary>Code Block 2</summary>
 
-<sub>
 
 ```
     expectations = [{
@@ -33,7 +32,6 @@
     }]
 
 ```
-</sub>
 
 </details>
 
@@ -41,7 +39,6 @@
 <details>
 <summary>Code Block 3</summary>
 
-<sub>
 
 ```
     constraints = [{
@@ -52,13 +49,15 @@
     }]
 
 ```
-</sub>
+
 </details>
+
 ---
+
 <details>
 <summary>Code Block 4</summary>
 
-<sub>
+
 
 ```
     expectations = [{
@@ -71,7 +70,6 @@
     }]
 
 ```
-</sub>
 
 </details>
 

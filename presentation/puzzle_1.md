@@ -6,7 +6,7 @@
 <details>
 <summary>Data Object 1</summary>
 
-<sub>
+
 
 ```
   int-airports {
@@ -20,7 +20,7 @@
   }
 
 ```
-</sub>
+
 
 </details>
 
@@ -29,7 +29,7 @@
 <details>
 <summary>Data Object 2</summary>
 
-<sub>
+
 
 ```
   int_airports {
@@ -43,7 +43,7 @@
   }
 ```
 
-</sub>
+
 
 </details>
 
@@ -52,7 +52,7 @@
 <details>
 <summary>Data Object 3</summary>
 
-<sub>
+
 
 ```
   btl_elevation { 
@@ -66,7 +66,7 @@
     }
   }
 ```
-</sub>
+
 
 </details>
 
@@ -76,7 +76,7 @@
 <details>
 <summary>Data Object 4</summary>
 
-<sub>
+
 
 ```
   btl_airports_elevation { 
@@ -91,7 +91,6 @@
     }
   }
 ```
-</sub>
 
 </details>
 
@@ -100,7 +99,7 @@
 <details>
 <summary>Data Object 5</summary>
 
-<sub>
+
 
 ```
   ext-airports-table {
@@ -112,7 +111,6 @@
     }
   }
 ```
-</sub>
 
 </details>
 
@@ -123,7 +121,7 @@
 <details>
 <summary>Action 1</summary>
 
-<sub>
+
 
 ```
   export-elevations {
@@ -136,7 +134,6 @@
     }]
   }
 ```
-</sub>
 
 </details>
 
@@ -145,7 +142,6 @@
 <details>
 <summary>Action 2</summary>
 
-<sub>
 
 ```
   export-airport-elevations {
@@ -158,7 +154,6 @@
     }]
   }
 ```
-</sub>
 
 </details>
 
@@ -167,7 +162,6 @@
 <details>
 <summary>Action 3</summary>
 
-<sub>
 
 ```
   transform-airports {
@@ -180,7 +174,6 @@
     }]
   }
 ```
-</sub>
 
 </details>
 
@@ -189,7 +182,6 @@
 <details>
 <summary>Action 4</summary>
 
-<sub>
 
 ```
   historize-airports {
@@ -202,7 +194,6 @@
     }]
   }
 ```
-</sub>
 
 </details>
 
