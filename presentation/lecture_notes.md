@@ -627,89 +627,107 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
       + replaced or extended or extend (new column added, removed columns kept) schema 
 		+ for JDBC and DeltaLakeTable, need to be enabled 
         + 
-QUIZ TIME!
-><details><summary>Click here to show the question 1</summary>
+### QUIZ TIME!
+><details><summary>Click here to show the question 6</summary>
+> 
 > Q: When does SDLB execute custom code such as ComputeDistanceTransformer?
 >
-> A: Configuration parsing
-> A: DAG preparation
-> A: DAG Init *
-> A: DAG exec *
+> - A: Configuration parsing
+> - B: DAG preparation
+> - C: DAG Init *
+> - D: DAG exec *
 ></details>
 
-><details><summary>Click here to show the question 2</summary>
-> Q: When your config has a typo and you entered an Action Type that does not exist, when will SBLD notice it and abort?
+><details><summary>Click here to show the question 7</summary>
+> 
+> Q: When your config has a typo and you wrote an Action Type that does not exist, when will SBLD notice it and abort?
 >
-> A: Configuration parsing *
-> A: DAG preparation
-> A: DAG Init
-> A: DAG exec
+> - A: Configuration parsing *
+> - B: DAG preparation
+> - C: DAG Init
+> - D: DAG exec
 ></details>
 
 
-><details><summary>Click here to show the question 3</summary>
+><details><summary>Click here to show the question 8</summary>
+>
 > Q: When your Action is trying to process a column that does not exist, when will SBLD notice it and abort?
 >
-> A: Configuration parsing 
-> A: DAG preparation
-> A: DAG Init *
-> A: DAG exec
+> - A: Configuration parsing 
+> - B: DAG preparation
+> - C: DAG Init *
+> - D: DAG exec
 ></details>
 
-><details><summary>Click here to show the question 4</summary>
+><details><summary>Click here to show the question 9</summary>
+> 
 > Q: If an earlier action fails during Init or Exec Phase, what will SDLB do with the other actions?
 >
-> A: Cancel all other Actions
-> A: Cancel all Actions that depend on the failed Action
-> A: Actions that do not depend on the failed Action continue running
-> A: Cancel all other Actions, but only in Exec Phase
+> - A: Cancel all other Actions
+> - B: Cancel all Actions that depend on the failed Action
+> - C: Actions that do not depend on the failed Action continue running
+> - D: Cancel all other Actions, but only in Exec Phase
 ></details>
 
 
 ## Data Quality
 
-QUIZ TIME!
-><details><summary>Click here to show the question 1</summary>
+### QUIZ TIME!
+><details><summary>Click here to show the question 10</summary>
+>
 > Q: After you built your pipeline, how do you know if it does what you expect?
 > 
-> A: If it did not crash it was a success
-> A: Look at some Data Samples of the output with your intuition
-> A: Define some rules on your output and execute Queries on the whole output
+> - A: If it did not crash it was a success
+> - B: Look at some Data Samples of the output with your intuition
+> - C: Define some rules on your output and execute Queries on the whole output
 ></details>
 Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 ### Constraints and Expectation
-Puzzle Time! Puzzle 3
 
-Execute SDLB on partition estdepartureairport=LSZB (SDLB_data_quality)
-`-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel compute --partition-values estdepartureairport=LSZB`
 
-Let's change the numbers to see what happens when the expectations and constraints are violated.
-Notice the warning.
-We will come to metrics later when we talk about state.
+**Puzzle Time!** 
 
-QUIZ TIME!
-><details><summary>Click here to show the question 1</summary>
-> Q: Which statements are true?
+><details><summary>Click here to show puzzle 3</summary>
+>
+>Insert [the code given in puzzle 3](puzzle_3.md) in the file *distances.conf*.
+>
+>Execute SDLB on partition estdepartureairport=LSZB (SDLB_data_quality):
+> 
+>`-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel compute --partition-values estdepartureairport=LSZB`
+>
+>Let's change the numbers to see what happens when the expectations and constraints are violated.
+>Notice the warning.
+>We will come to metrics later when we talk about state.
+</details>
+
+
+
+### QUIZ TIME!
+><details><summary>Click here to show the question 11</summary>
+> Q: Which statements about expectations and constraints are true?
 >
 > A: An Expectation allows to make a check on the expected number of records
-> A: When an Expectation has failed, SDLB will always abort
-> A: A Constraint allows to make a check on individual records
-> A: When a Constraint has failed, SDLB will always abort
+> B: When an Expectation has failed, SDLB will always abort
+> C: A Constraint allows to make a check on individual records
+> D: When a Constraint has failed, SDLB will always abort
 ></details>
 
 ## Partitions
-QUIZ TIME!
 
 
 ![Partitions](images/partitions.png)
 
-><details><summary>Click here to show the question 1</summary>
+### QUIZ TIME!
+
+><details><summary>Click here to show the question 12</summary>
+>
 > Q: After partitioning your data...
+> 
 > A: You have more data than before
-> A: *You have divided your data into multiple pieces
-> A: * You can access data faster
-> A: Your data uses up less space
+> B: *You have divided your data into multiple pieces
+> C: * You can access data faster
+> D: Your data uses up less space
 ></details>
 
 First have a look at `data/btl_distances`.
@@ -758,12 +776,16 @@ After changing our config, try to execute the concerned action
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures`
 
 Now it will **fail** because we need to provide a path for the state-path.
-Quizz time
-><details><summary>Quizztime</summary>
+
+### QUIZ TIME!
+><details><summary>Click here to show question 13</summary>
+>
 > Q: Where is the state stored for DataObjectStateIncrementalMode?
-> A: In Memory
-> A: In One Central File
-> A: In one file per run
+> 
+> - A: In Memory
+> - B: In One Central File
+> - C: In one file per run *
+> - D: The state is not stored
 ></details>
 Add state path and name: (SDLB_state config file)
 > * **WSL**: `sdlb_cmd --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training`
@@ -831,13 +853,17 @@ Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-sche
 **Note**: there is also the `SparkStreamingMode` you may want to use for the action
 
 ## Checkpoint / Restart
-Quizz time
-><details><summary>Quizztime</summary>
-> Q: What does the 1.1 mean in the file SDLB_training.1.1.json ?
-> A: Version Number of SDLB used
-> A: Version Number of Spark used
-> A: Hash of the Data that was processed
-> A: Run id and attempt id
+
+### QUIZ TIME!
+
+><details><summary>Click here to show question 14</summary>
+>
+> Q: What does the *1.1* mean in the file *SDLB_training.1.1.json* ?
+> 
+> - A: Version Number of SDLB used
+> - B: Version Number of Spark used
+> - C: Hash of the Data that was processed
+> - D: Run id and attempt id
 ></details>
 When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
 * requires states (`--state-path`)
