@@ -85,7 +85,7 @@ We will come to metrics later when we talk about state.
   - multiple dataObjects and actions
   - suggestion: at least one transformation (more than data copy)
   - sketch dataObjects and actions with main properties/operations
-  - see https://smartdatalake.ch/JsonSchemaViewer/ for inspiration
+  - see https://smartdatalake.ch/json-schema-viewer for inspiration
 
 * next week:
   - first present and discuss ideas and analyze feasibility, methods to implement
