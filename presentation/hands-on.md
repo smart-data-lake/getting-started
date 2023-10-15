@@ -5,31 +5,19 @@ Groups for Exercizes
 
 **Group 1**
 
-- Philippe
-- Katharina
-- Ludwig
+
 
 **Group 2**
 
-- Gilles
-- Robert
 
 **Group 3**
 
-- Andreas
-- Luc
-- Bettina
 
 **Group 4**
-- Florian
-- John Carlos
-- David
+
 
 **Group 5**
 
-- Nicolas
-- Fabiana
-- Guy Merlin
 
 ## Task
 * split into groups of **2** or 3
