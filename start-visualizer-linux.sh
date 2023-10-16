@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if ! command -v lighttpd &> /dev/null
 then
   sudo apt install lighttpd
