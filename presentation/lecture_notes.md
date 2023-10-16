@@ -530,7 +530,8 @@ The SDLB executes the following phases on each run:
 Let's run SDLB_part2 template from IntelliJ. `--partition-values=estdepartureairport=LSZB,EDDF` with debug break point
 While it runs inspect the command
 
-start application with `--help`: 
+**Explain Feeds**
+**start application with `--help`: **
 
 ### DAG
 * (Directed acyclic graph)
