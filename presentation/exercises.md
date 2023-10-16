@@ -95,7 +95,7 @@ We will come to metrics later when we talk about state.
 
 
 ## Interesting links
-- [Lecture notes](https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md)
+- [Lecture notes](https://github.com/smart-data-lake/getting-started/blob/training_solution/presentation/lecture_notes.md)
   --> We recommend that you follow the presentation and only consult the lecture notes
   in case you need them (the training solutions are posted there...)
 - [Data Lakehouse paper](https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf)
