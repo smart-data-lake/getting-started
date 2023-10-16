@@ -5,6 +5,7 @@
     <envs>
       <env name="DATALAKEPREFIX" value="data" />
     </envs>
+    <output_file path="$ProjectFileDir$/serialoutput.txt" is_save="true" />
     <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
     <option name="MAIN_CLASS_NAME" value="io.smartdatalake.app.LocalSmartDataLakeBuilder" />
     <module name="getting-started" />
