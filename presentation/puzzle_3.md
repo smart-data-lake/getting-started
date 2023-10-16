@@ -11,7 +11,7 @@
       name = Departure Airport should be different from Arrival Aiport
       description = "A flight from A to A makes no sense"
       expression = "arrivalairport != departureairport"
-      errorMsgCols = [departureairport,arrivalairport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg]
+      errorMsgCols = [departureairport,arrivalairport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg,could_be_done_by_rail]
     }]
 ```
 
@@ -45,7 +45,7 @@
       name = Departure Airport should be different from Arrival Aiport
       description = "A flight from A to A makes no sense"
       expression = "estarrivalairport != estdepartureairport"
-      errorMsgCols = [estdepartureairport,estarrivalairport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg]
+      errorMsgCols = [estdepartureairport,estarrivalairport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg,could_be_done_by_rail]
     }]
 
 ```
