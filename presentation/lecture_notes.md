@@ -516,16 +516,21 @@ existing templates.
 
 *Pause / Change lecturers here*
 
-## Time to further test the pipeline
-Let's run SDLB_part2 template from IntelliJ. `--feed-sel * --partition-values estdepartureairport=LSZB`
+### 3. Execution phases
+
+The SDLB executes the following phases on each run:
+
+1. **Configuration parsing**
+2. **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
+3. **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
+4. **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode.
+* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
+* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
+
+Let's run SDLB_part2 template from IntelliJ. `--partition-values=estdepartureairport=LSZB,EDDF` with debug break point
 While it runs inspect the command
 
 start application with `--help`: 
-
-* `feed-sel` always necessary 
-
-you can also just run a part of the pipeline:
-`--feed-sel *--partition-values estdepartureairport=LSZB`
 
 ### DAG
 * (Directed acyclic graph)
@@ -568,16 +573,7 @@ you can also just run a part of the pipeline:
   show result files
 
 
-### 3. Execution phases
 
-The SDLB executes the following phases on each run:
-
-1. **Configuration parsing**
-2. **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
-3. **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
-4. **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode.
-* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
-* [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
 
 
 ### Schema handling
