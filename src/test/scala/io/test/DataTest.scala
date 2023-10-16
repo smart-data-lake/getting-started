@@ -6,6 +6,8 @@ import org.apache.spark.sql.SparkSession
 
 class DataTest extends FunSuite {
   val spark: SparkSession = SparkSession.builder()
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+    .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
     .master("local[1]")
     .appName("data explorer")
     .getOrCreate()
@@ -23,7 +25,7 @@ class DataTest extends FunSuite {
     val deltaTable = DeltaTable.forPath(spark, "data/int_departures")
     while (true) {
       Thread.sleep(10000)
-      println(" int_departures has currently" + deltaTable.toDF.count() + " number of rows")
+      println(" int_departures has currently " + deltaTable.toDF.count() + " number of rows")
     }
   }
 }
