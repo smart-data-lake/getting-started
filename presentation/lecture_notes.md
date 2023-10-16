@@ -973,18 +973,19 @@ The viewer runs separately
 * [ ] Spark Specific Features: BreakDataFrameLineage and Autocaching
 
 ## RoadMap
-Q1:
-* Catalog support in Notebook (Scala)
+2023:
 * Integrated MLOps with MFLow (train & predict)
-* Remote Agent support (Preview)
-  Q2
-* Extended Metrics Collection for Iceberg and Delta Lake
+* Remote Agent support
 * Operations UI for visualizing Runtime Information
-  H2:
+
+Q4:
+* Extended Metrics Collection for Iceberg and Delta Lake
 * Language Server: Code completion for configuration files in Visual Studio Code and IntelliJ
 
 2024:
-* SaaS User Interface / Rebranding?
+* Scala 3
+* SaaS User Interface
+* Rebranding?
 
 -----
 # References
