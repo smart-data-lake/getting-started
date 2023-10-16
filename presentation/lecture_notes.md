@@ -820,7 +820,7 @@ Add state path and name: (SDLB_state config file)
 -> possible see streaming trigger interval of 48s in output: `LocalSmartDataLakeBuilder$ - sleeping 48 seconds for synchronous streaming trigger interval [main]` otherwise process took more than 60 sec  
 
 Task: change the streaming trigger interval to 10s (or alternatively to 120s)
-Hint: search for streaming in [Schema Viewer](https://smartdatalake.ch/json-schema-viewer/)
+Hint: search for trigger in [Schema Viewer](https://smartdatalake.ch/json-schema-viewer/)
 
 > <details><summary>Solution: Click to expand!</summary>
 >
