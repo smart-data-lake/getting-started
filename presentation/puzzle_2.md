@@ -31,7 +31,7 @@
 ```
     metadata {
       name = "Airport elevation"
-      description = "Write airport elevation in meters to Parquet file"
+      description = "Write airport elevation in meters to Csv file"
       feed = download-airport
     }
 ```
@@ -133,7 +133,7 @@ int_airports = ${templates.dataLake} {
     metadata {
       name = "Calculated Airport elevation in meters"
       description = "contains beside GPS coordiantes, elevation, continent, country, region"
-      layer = "staging"
+      layer = "business transformation"
       subjectArea = "airports"
       tags = ["aviation", "airport", "location"]
     }
