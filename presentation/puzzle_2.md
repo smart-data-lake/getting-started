@@ -13,7 +13,7 @@
       name = "Airport historization and filter"
       description = "Filter name and coordinates of airports and hisorize data"
       tags = ["historize", "filter", "DeltaLake"]
-      feed = historize-airport
+      feed = transform
     }
 
 ```
@@ -32,7 +32,7 @@
     metadata {
       name = "Airport elevation"
       description = "Write airport elevation in meters to Csv file"
-      feed = download-airport
+      feed = transform
     }
 ```
 
