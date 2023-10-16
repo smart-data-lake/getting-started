@@ -729,10 +729,10 @@ Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 First have a look at `data/btl_distances`.
 
-Let's download the data for a different partition, set partitionValues estdepartureairport=EDDM.
+Let's download the data for a different partition, set partitionValues estdepartureairport=EDDF.
 
-When you now look at data/btl_distances, you will only see an a new folder estdepartureairport=EDDM 
-and in the logs you find: `start writing to DataObject~btl_distances, partitionValues estdepartureairport=EDDM [exec-compute-distances]`)
+When you now look at data/btl_distances, you will only see an a new folder estdepartureairport=EDDF 
+and in the logs you find: `start writing to DataObject~btl_distances, partitionValues estdepartureairport=EDDF [exec-compute-distances]`)
 
 Working with partitions forces to create the whole data pipeline around them <br> 
 -> **everything needs to be partitioned** by that key. <br>
