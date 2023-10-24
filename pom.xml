@@ -1,0 +1,287 @@
+<!--
+  ~ Smart Data Lake Examples - Build your data lake the smart way.
+  ~
+  ~ Copyright © 2019 ELCA Informatique SA (<https://www.elca.ch>)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!--
+	  By setting sdl-parent as parent you get proper dependency management for Spark and predefined plugin management
+	  Alternatively you could import Spark dependency management from sdl-parent with scope=import (or also directly from spark-parent),
+	  and need to copy all version properties from sdl-parent.pom into this pom.
+	-->
+	<parent>
+		<groupId>io.smartdatalake</groupId>
+		<artifactId>sdl-parent</artifactId>
+		<!--
+		  Set the smartdatalake version to use here.
+		  If version cannot be resolved, make sure maven central repository is defined in settings.xml and the corresponding profile activated.
+		-->
+		<version>2.5.0</version>
+	</parent>
+
+	<artifactId>getting-started</artifactId>
+	<version>1.0</version>
+
+	<name>SDL Getting Started</name>
+
+	<properties>
+		<!-- default scala version - use predefined maven profiles to override -->
+		<scala.minor.version>2.12</scala.minor.version>
+		<scala.version>${scala.minor.version}.12</scala.version>
+	</properties>
+
+	<profiles>
+
+		<profile>
+			<id>generate-catalog</id>
+			<build>
+				<plugins>
+					<!-- generate catalog scala code. -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.1.0</version>
+						<executions>
+							<execution>
+								<id>generate-catalog</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>io.smartdatalake.lab.LabCatalogGenerator</mainClass>
+									<arguments>
+										<argument>--config</argument>
+										<argument>./config</argument>
+										<argument>--srcDirectory</argument>
+										<argument>./src/main/scala-generated</argument>
+										<argument>--packageName</argument>
+										<argument>io.smartdatalake.generated</argument>
+										<argument>--className</argument>
+										<argument>DataObjectCatalog</argument>
+									</arguments>
+									<classpathScope>compile</classpathScope>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Compiles Scala sources incl. generated catalog -->
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>scala-maven-plugin</artifactId>
+						<executions>
+							<!-- add additional execution to compile generated catalog (see id generate-catalog) -->
+							<execution>
+								<id>compile-catalog</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<configuration>
+									<sourceDir>./src/main/scala-generated</sourceDir>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<repositories>
+		<!-- smartdatalake snapshots -->
+		<repository>
+			<id>ossrh</id>
+			<name>ossrh snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<build>
+		<sourceDirectory>src/main/scala</sourceDirectory>
+		<outputDirectory>target/classes</outputDirectory>
+		<plugins>
+			<!-- Compiles Scala sources. -->
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- Copies files in resources folders to target folder. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+			</plugin>
+
+			<!-- Creates the jar without dependencies -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>io.smartdatalake.app.LocalSmartDataLakeBuilder</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Version>${project.version}</Implementation-Version>
+						</manifestEntries>
+					</archive>
+					<excludes>
+						<exclude>log4j2.yml</exclude> <!-- Logging configuration should be left to user. -->
+						<exclude>${project.artifactId}*.jar</exclude> <!-- avoid "Error assembling JAR" because of already existing artifact jar -->
+						<exclude>*.conf</exclude> <!-- no SDL configuration files - they must be provided by the user separately -->
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!-- check for dependency version conflicts -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-core_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-deltalake_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-lang_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<!-- override scope for spark dependencies to include/exclude them correctly for the fat-jar -->
+		<!-- note that the corresponding profile defining spark.deps.scope is inherited from sdl-parent -->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_${scala.minor.version}</artifactId>
+			<version>${spark.version}</version>
+			<scope>${spark.deps.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-sql_${scala.minor.version}</artifactId>
+			<version>${spark.version}</version>
+			<scope>${spark.deps.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-hive_${scala.minor.version}</artifactId>
+			<version>${spark.version}</version>
+			<scope>${spark.deps.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-catalyst_${scala.minor.version}</artifactId>
+			<version>${spark.version}</version>
+			<scope>${spark.deps.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-avro_${scala.minor.version}</artifactId>
+			<version>${spark.version}</version>
+			<scope>${spark.deps.scope}</scope>
+		</dependency>
+
+		<!-- reading log4j2 yml file -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>${fasterxml.jackson.version}</version>
+		</dependency>
+
+		<!-- needed for derby metastore -->
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>datanucleus-api-jdo</artifactId>
+			<version>4.1.4</version>
+			<scope>${spark.deps.scope}</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyclient</artifactId>
+			<version>${derby.version}</version>
+			<scope>${spark.deps.scope}</scope>
+		</dependency>
+
+		<!-- TEST dependencies -->
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_${scala.minor.version}</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-core_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+			<classifier>test-jar</classifier>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-sftp</artifactId>
+			<version>${sshd.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-common</artifactId>
+			<version>${sshd.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-core</artifactId>
+			<version>${sshd.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.tomakehurst</groupId>
+			<artifactId>wiremock-standalone</artifactId>
+			<version>2.25.1</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+</project>
