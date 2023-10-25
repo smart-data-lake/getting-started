@@ -23,6 +23,6 @@ jobs:
       run: mvn clean package
       
     - name: Run Getting Started
-      run: mvn exec:java -Dexec.mainClass="io.smartdatalake.app.LocalSmartDataLakeBuilder" -Dexec.args="--feed-sel download --config part3/config" 
+      run: mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel download --config config/part3.conf"
       
     
