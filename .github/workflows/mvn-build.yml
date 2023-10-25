@@ -1,0 +1,27 @@
+name: Build, Run Getting Started, and Deploy UI
+
+on:
+  push:
+    branches:
+      - feature/729-add-ui-demo-v1
+
+jobs:
+  build_and_run:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Java JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: 11  # You can specify the Java version you need for your project
+      
+    - name: Build with Maven Package
+      run: mvn clean package
+      
+    - name: Run Getting Started
+      run: mvn exec:java -Dexec.mainClass="io.smartdatalake.app.LocalSmartDataLakeBuilder" -Dexec.args="--feed-sel download --config part3/config" 
+      
+    
