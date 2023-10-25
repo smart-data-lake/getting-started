@@ -12,7 +12,7 @@
     "display": "standalone",
     "theme_color": "#000000",
     "background_color": "#ffffff",
-    "backendConfig": "local;/sdl-viz/state",
-    "baseUrl": "/sdl-viz/"
+    "backendConfig": "local;/viz/state",
+    "baseUrl": "/viz/"
 
 }
