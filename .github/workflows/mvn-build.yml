@@ -41,8 +41,8 @@ jobs:
             
         - name: Create Config and State Files
           run: |
-              mkdir -p sdl-visualizer/config
-              mkdir -p sdl-visualizer/state
+              mkdir -p /config
+              mkdir -p /state
 
         - name: list path
           run: |
@@ -54,8 +54,8 @@ jobs:
 
         - name: Copy Config and State Files
           run: |
-             cp config/application.conf sdl-visualizer/config/
-             find data/state/succeeded -name "*.json" -exec cp {} sdl-visualizer/state/
+             cp ../config/application.conf /config
+             find ../data/state/succeeded -name "*.json" -exec cp {} /state
                 
           
          
