@@ -23,42 +23,28 @@ jobs:
       run: mvn clean package
       
     - name: Run Getting Started
-      run: mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path data/state -n getting-started"
+      run: mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path viz/state -n getting-started"
       
     - name: Commit and Push New State File
       run: |
-        git add data/state/
+        git add viz/state/
         git commit -m "Update state file"
         git push
-    
-    
-  deploy:
-        runs-on: ubuntu-latest
-    
-        steps:
-        - name: Checkout repository
-          uses: actions/checkout@v2
 
-        - name: Download and Unzip Latest UI Snapshot
-          run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip -d ./viz
-            
-        - name: Create Config and State Files
-          run: |
-              mkdir viz/config
-              mkdir viz/state
+    - name: Copy Config File
+      run: |
+         mkdir viz/config
+         cp config/application.conf viz/config
 
-        - name: list path
-          run: |
-              pwd
+    - name: Download and Unzip Latest UI Snapshot
+      run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip -d -n ./viz
         
-        - name: list path
-          run: |
-            ls 
+    
+    - name: list path
+      run: |
+        ls 
 
-        - name: Copy Config and State Files
-          run: |
-             cp config/application.conf viz/config
-             cp data/state/succeeded/*.json viz/state
-                
+
+            
           
          
