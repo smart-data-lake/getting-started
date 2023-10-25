@@ -36,9 +36,6 @@ jobs:
         runs-on: ubuntu-latest
     
         steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v2
-
         - name: Download and Unzip Latest UI Snapshot
           run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip
             
@@ -46,11 +43,19 @@ jobs:
           run: |
               mkdir -p sdl-visualizer/config
               mkdir -p sdl-visualizer/state
+
+        - name: list path
+          run: |
+              pwd
         
+        - name: list path
+          run: |
+            ls 
+
         - name: Copy Config and State Files
           run: |
-             cp config/application.conf sdl-visualizer/config
-             find data/state/succeeded -name "*.json" -exec cp {} sdl-visualizer/state
+             cp config/application.conf sdl-visualizer/config/
+             find data/state/succeeded -name "*.json" -exec cp {} sdl-visualizer/state/
                 
           
          
