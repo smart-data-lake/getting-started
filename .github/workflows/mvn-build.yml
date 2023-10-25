@@ -15,8 +15,9 @@ jobs:
       
     - name: Set up Java JDK
       uses: actions/setup-java@v2
-      with:
-        java-version: 11  # You can specify the Java version you need for your project
+      with: 
+        distribution: 'temurin'
+        java-version: '11'  # You can specify the Java version you need for your project
       
     - name: Build with Maven Package
       run: mvn clean package
