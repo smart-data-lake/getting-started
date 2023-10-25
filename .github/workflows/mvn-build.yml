@@ -36,6 +36,9 @@ jobs:
         runs-on: ubuntu-latest
     
         steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v2
+
         - name: Download and Unzip Latest UI Snapshot
           run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip
             
