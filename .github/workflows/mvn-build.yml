@@ -32,7 +32,7 @@ jobs:
         git push
     
     
-    deploy:
+  deploy:
         runs-on: ubuntu-latest
     
         steps:
