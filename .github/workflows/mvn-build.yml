@@ -30,6 +30,35 @@ jobs:
         git add data/state/
         git commit -m "Update state file"
         git push
+    
+    
+  deploy:
+        runs-on: ubuntu-latest
+    
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Download and Unzip Latest UI Snapshot
+          run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip -d ./viz
+            
+        - name: Create Config and State Files
+          run: |
+              mkdir viz/config
+              mkdir viz/state
+
+        - name: list path
+          run: |
+              pwd
+        
+        - name: list path
+          run: |
+            ls 
+
+        - name: Copy Config and State Files
+          run: |
+             cp config/application.conf viz/config
+             cp data/state/succeeded/*.json viz/state
                 
           
          
