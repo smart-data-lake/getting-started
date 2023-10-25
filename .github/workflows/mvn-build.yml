@@ -39,8 +39,15 @@ jobs:
         - name: Download and Unzip Latest UI Snapshot
           run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip
             
-        - name: Copy Config and State Files
+        - name: Create Config and State Files
           run: |
               mkdir -p sdl-visualizer/config
-              cp config/application.conf sdl-visualizer/config
-          working-directory: getting-started
+              mkdir -p sdl-visualizer/state
+        
+        - name: Copy Config and State Files
+          run: |
+             cp config/application.conf sdl-visualizer/config
+             find data/state/succeeded -name "*.json" -exec cp {} sdl-visualizer/state
+                
+          
+         
