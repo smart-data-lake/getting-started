@@ -41,8 +41,8 @@ jobs:
             
         - name: Create Config and State Files
           run: |
-              mkdir -p /config
-              mkdir -p /state
+              mkdir config
+              mkdir state
 
         - name: list path
           run: |
