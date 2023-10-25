@@ -43,12 +43,3 @@ jobs:
           run: |
               mkdir -p sdl-visualizer/config
               cp config/application.conf sdl-visualizer/config
-              mkdir -p sdl-visualizer/state
-              find state/succeeded -name "*.json" -exec cp {} ui-snapshop/state
-
-              
-        - name: Run build_index.sh script
-          run: |
-            chmod +x ./build_index.sh  
-            ./build_index.sh /state /config
-          working-directory: sdl-visualizer/
