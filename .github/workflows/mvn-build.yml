@@ -43,3 +43,4 @@ jobs:
           run: |
               mkdir -p sdl-visualizer/config
               cp config/application.conf sdl-visualizer/config
+          working-directory: getting-started
