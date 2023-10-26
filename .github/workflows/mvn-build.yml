@@ -27,6 +27,8 @@ jobs:
       
     - name: Commit and Push New State File
       run: |
+        git config --global user.email "jss629@hotmail.com"
+        git config --global user.name "dust629"
         git add viz/state/
         git commit -m "Update state file"
         git push
