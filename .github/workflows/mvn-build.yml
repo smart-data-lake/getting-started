@@ -7,6 +7,9 @@ on:
 
 jobs:
   build_and_run:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     
     steps:
@@ -36,24 +39,31 @@ jobs:
         git commit -m "Update state file"
         git push
 
-    # - name: Copy Config File
-    #   run: |
-    #      mkdir viz/config
-    #      cp config/application.conf viz/config
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
 
     # - name: Download and Unzip Latest UI Snapshot
-    #   run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip -d -n ./viz
-        
+    #   run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip -d -n ./viz    
     
-    # - name: Run build_index.sh script
-    #   run: |
-    #       chmod +x ./build_index.sh  
-    #       ./build_index.sh /state /config
-    #   working-directory: viz/
-   
-    # - name: list path
-    #   run: |
-    #     ls 
+    - name:  Unzip Latest UI Snapshot
+      run: unzip sdl-visualizer.zip -d -n ./viz    
+    
+    - name: Run build_index.sh script
+      run: |
+          chmod +x ./build_index.sh  
+          ./build_index.sh ./state/succeeded ./config
+      working-directory: viz/
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        # Upload entire repository
+        path: 'viz'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
+  
 
 
             
