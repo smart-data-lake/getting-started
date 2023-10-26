@@ -24,11 +24,14 @@ jobs:
       
     - name: Run Getting Started
       run: mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path viz/state -n getting-started"
-      
+    
+    - name: Git Config
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
     - name: Commit and Push New State File
       run: |
-        git config --global user.email "jss629@hotmail.com"
-        git config --global user.name "dust629"
         git add viz/state/
         git commit -m "Update state file"
         git push
