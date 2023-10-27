@@ -51,6 +51,7 @@ jobs:
 
     - name: Commit and Push New State File
       run: |
+        git pull
         git add viz/state/
         git commit -m "Update state file"
         git push
