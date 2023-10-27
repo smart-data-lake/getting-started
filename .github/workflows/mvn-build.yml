@@ -42,10 +42,10 @@ jobs:
         java-version: '11'  # You can specify the Java version you need for your project
       
     - name: Build with Maven Package
-      run: mvn clean package
+      run: mvn -B clean package
       
     - name: Run Getting Started
-      run: mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path viz/state -n getting-started"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path viz/state -n getting-started --parallelism 2"
     
     - name: Git Config
       run: |
