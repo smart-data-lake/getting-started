@@ -43,7 +43,7 @@ jobs:
       uses: actions/configure-pages@v3
 
     - name: Download and Unzip Latest UI Snapshot
-      run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip sdl-visualizer.zip -d -n viz    
+      run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip -n sdl-visualizer.zip -d ./viz    
     
     - name: Run build_index.sh script
       run: |
