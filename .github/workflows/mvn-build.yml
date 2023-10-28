@@ -66,7 +66,7 @@ jobs:
       run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip -n sdl-visualizer.zip -d ./viz    
     
     - name: Copy Config File
-      run: cp config/application.conf viz/config
+      run: cp -r config viz/config
 
     - name: Run build_index.sh script
       run: |
