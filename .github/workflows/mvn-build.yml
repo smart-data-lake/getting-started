@@ -71,10 +71,10 @@ jobs:
     - name: Run build_index.sh script
       run: |
           chmod +x ./build_index.sh  
-          ./build_index.sh ./state/succeeded ./config
+          ./build_index.sh ./state ./config
       working-directory: viz/
 
-    - name: Remove .ven Folder
+    - name: Remove .venv Folder
       run: |
         rm -rf viz/.venv/
 
