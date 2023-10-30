@@ -41,9 +41,6 @@ jobs:
         distribution: 'temurin'
         java-version: '11'  # You can specify the Java version you need for your project
       
-    - name: Build with Maven Package
-      run: mvn -B clean package
-
     - name: Config for Incremental Mode # ovewrite part3 solution
       run:  |
         cp -f part3/config/application.conf config/application.conf  
@@ -52,6 +49,9 @@ jobs:
 
     - name: Delete Lines with "metastore" in Config File # "metastore"  used for polynote
       run: sed -i '1,10{/metastore/d}' config/application.conf 
+    
+    - name: Build with Maven Package
+      run: mvn -B clean package
     
     - name: Run Getting Started
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path viz/state -n getting-started --parallelism 2"
