@@ -50,6 +50,9 @@ jobs:
         mkdir -p src/main/scala/io/smartdatalake/workflow/dataobject/
         cat part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution > src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
     
+    - name: check previous step
+      run: ls src/main/scala/io/smartdatalake/workflow/dataobject/
+
     - name: Delete Lines with "metastore" in Config File # "metastore"  used for polynote
       run: sed -i '1,10{/metastore/d}' config/application.conf 
     
@@ -84,8 +87,7 @@ jobs:
       working-directory: viz/
 
     - name: Remove .venv Folder
-      run: |
-        rm -rf viz/.venv/
+      run: rm -rf viz/.venv/
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v2
