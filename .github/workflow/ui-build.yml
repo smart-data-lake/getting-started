@@ -1,0 +1,98 @@
+name: Build, Run Getting Started, and Deploy UI
+
+on:
+  push:
+    branches:
+      - feature/729-UI-Demo-Auto-Deploy
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  # Run every Monday at 5:00
+  schedule:
+    - cron: '0 5 * * 1'      
+      
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+    contents: write
+    pages: write
+    id-token: write
+    
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build_and_run:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Java JDK
+      uses: actions/setup-java@v2
+      with: 
+        distribution: 'temurin'
+        java-version: '11'  # You can specify the Java version you need for your project
+      
+    - name: Config for Incremental Mode # ovewrite part3 solution
+      run:  |
+        cp -f part3/config/application.conf config/application.conf  
+        mkdir -p src/main/scala/io/smartdatalake/workflow/dataobject/
+        cat part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution > src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
+
+    - name: Delete Lines with "metastore" in Config File # "metastore"  used for polynote
+      run: sed -i '1,10{/metastore/d}' config/application.conf 
+    
+    - name: Build with Maven Package
+      run: mvn -B clean package
+    
+    - name: Run Getting Started
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path viz/state -n getting-started --parallelism 2"
+    
+    - name: Git Config
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Commit and Push New State File
+      run: |
+        git pull
+        git add viz/state/
+        git commit -m "Update state file"
+        git push
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+
+    - name: Download and Unzip Latest UI Snapshot
+      run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip -n sdl-visualizer.zip -d ./viz    
+    
+    - name: Copy Config File for UI
+      run: cp -r part3/config viz/config
+
+    - name: Run build_index.sh script
+      run: |
+          chmod +x ./build_index.sh  
+          ./build_index.sh ./state ./config
+      working-directory: viz/
+
+    - name: Remove .venv Folder
+      run: rm -rf viz/.venv/
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        # Upload vizualizer repository
+        path: 'viz'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
