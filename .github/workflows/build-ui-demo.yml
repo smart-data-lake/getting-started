@@ -47,7 +47,7 @@ jobs:
     - name: Config for Incremental Mode 
       run:  |
         cp part3/config/application.conf config/part3.conf
-        cp part3/state/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
+        cp part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
       
     - name: Run Getting Started
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/part3.conf --state-path viz/state -n getting-started --parallelism 2"
