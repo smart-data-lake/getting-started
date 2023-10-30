@@ -48,7 +48,7 @@ jobs:
       run:  |
         cp -f part3/config/application.conf config/application.conf  
         mkdir -p src/main/scala/io/smartdatalake/workflow/dataobject/
-        cp part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
+        cat part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution > src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
     
     - name: Delete Lines with "metastore" in Config File # "metastore"  used for polynote
       run: sed -i '1,10{/metastore/d}' config/application.conf 
