@@ -44,13 +44,14 @@ jobs:
     - name: Build with Maven Package
       run: mvn -B clean package
 
-    - name: Config for Incremental Mode 
+    - name: Config for Incremental Mode #part3 solution
       run:  |
         cp part3/config/application.conf config/part3.conf
+        mkdir -p src/main/scala/io/smartdatalake/workflow/dataobject/
         cp part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
     
-    - name: Delete Lines with "metastore" in Config File
-      run: sed -i '1,10{/metastore/d}' config/part3.conf
+    - name: Delete Lines with "metastore" in Config File # "metastore"  used for polynote
+      run: sed -i '1,10{/metastore/d}' config/part3.conf 
     
     - name: Run Getting Started
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/part3.conf --state-path viz/state -n getting-started --parallelism 2"
