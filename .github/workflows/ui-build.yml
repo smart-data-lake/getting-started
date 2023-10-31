@@ -35,6 +35,8 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.PAT_ACTIONS }}      
       
     - name: Set up Java JDK
       uses: actions/setup-java@v2
