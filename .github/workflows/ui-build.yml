@@ -44,9 +44,9 @@ jobs:
       
     - name: Config for Incremental Mode # ovewrite part3 solution
       run:  |
-        cp -f part3/config/application.conf config/application.conf  
+        cp -f part3/config/application.conf config/
         mkdir -p src/main/scala/io/smartdatalake/workflow/dataobject/
-        cat part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution > src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
+        cp part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
 
     - name: Delete Lines with "metastore" in Config File # "metastore"  used for polynote
       run: sed -i '1,10{/metastore/d}' config/application.conf 
@@ -76,7 +76,7 @@ jobs:
       run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip -n sdl-visualizer.zip -d ./viz    
     
     - name: Copy Config File for UI
-      run: cp -r part3/config viz/config
+      run: cp -f part3/config/application.conf viz/config/
 
     - name: Run build_index.sh script
       run: |
