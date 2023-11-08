@@ -2,7 +2,7 @@ name: Build, Run Getting Started, and Deploy UI
 
 on:
   push:
-    #workflow runs if any names does not match the previous patterns in paths-ignore
+    #The workflow runs for any changes that happen, except in ignored paths.
     paths-ignore:
       - 'viz/state/**'
     branches:
@@ -58,6 +58,18 @@ jobs:
 
     - name: Build with Maven Package
       run: mvn -B clean package
+
+    - name: Run Getting Started
+      id: getting-started1
+      continue-on-error: true
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path viz/state -n getting-started --parallelism 2"
+
+      # Duplicate of the getting started step that might fail ~ manual retry
+    - name: Run Getting Started Retry
+      id: getting-started2
+      if: steps.getting-started1.outcome == 'failure'
+      continue-on-error: true
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config config/application.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Git Config
       run: |
