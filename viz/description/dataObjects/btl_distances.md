@@ -5,9 +5,9 @@ The data is derived from [Airport locations](#/dataObjects/int_airports) and fli
 
 # Description
 This business table porvides data about flight distances.
-Further, flights with a travel distance <500km are tagged.
+Further, flights with a travel distance <500km are tagged. 
 
-The goal is to identify the amount of flight and all the locations, which are closer than 500km and therewith may be replaced by train travels.
+The goal is to identify the amount of flight and all the locations, which are closer than 500km and therewith may be replaced by train travels. 
 
 ![less flights more ...](description/dataObjects/train.png)
 
@@ -19,7 +19,7 @@ The goal is to identify the amount of flight and all the locations, which are cl
 
 # Structure
 
-This table is for decision making process and therewith part of the business transformation layer.
+This table is for decision making process and therewith part of the business transformation layer. 
 
 In general we distinguish
 
