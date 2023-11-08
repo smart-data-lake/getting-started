@@ -2,6 +2,9 @@ name: Build, Run Getting Started, and Deploy UI
 
 on:
   push:
+    #The workflow runs for any changes that happen, except in ignored paths.
+    paths-ignore:
+      - 'viz/state/**'
     branches:
       - feature/add_metadata_to_master
 
