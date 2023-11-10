@@ -7,7 +7,7 @@ on:
       - 'viz/state/**'
     branches:
       - master
-      - feature/add-desciption-in-UI'
+      - feature/add-desciption-in-UI
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
