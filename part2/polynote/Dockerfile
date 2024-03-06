@@ -12,7 +12,7 @@ ARG SCALA_VERSION="2.12"
 #
 FROM maven:3.6.0-jdk-11-slim AS build
 COPY sdl-lib-pom.xml /home/app/
-RUN mvn -f /home/app/sdl-lib-pom.xml package
+RUN mvn -f /home/app/sdl-lib-pom.xml "-Dmaven.repo.local=/mnt/.mvnrepo" -Pcopy-libs-with-spark package
 
 #
 # Package stage
@@ -21,12 +21,14 @@ FROM docker.io/polynote/polynote:${POLYNOTE_VERSION}-${SCALA_VERSION}
 
 # Arguments after `FROM` are reset
 ARG SCALA_VERSION="2.12"
-ARG SPARK_MAJOR_VERSION="3.3"
+ARG SPARK_MAJOR_VERSION="3.4"
 ARG HADOOP_VERSION="3"
 # derby version used by this spark version - we need to load additional derbyclient jar to connect to remote metastore
 ARG DERBY_VERSION="10.14.2.0"
 
 USER root
+
+RUN apt-get update && apt-get install -y procps
 
 # check available versions at https://spark.apache.org/downloads.html
 RUN wget -q -O - https://dlcdn.apache.org/spark/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//' | grep "spark-"$SPARK_MAJOR_VERSION | sed 's/spark-//' > /opt/spark.version
@@ -41,8 +43,12 @@ RUN sed -i 's/\r$//' install_spark.sh && chmod +x install_spark.sh && SPARK_VERS
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
-# copy sdl libraries
+# copy sdl libraries with spark.
+# Copying with spark allows us to control all dependency versions through sdl-lib-pom.xml
+RUN mv $SPARK_HOME/jars/ $SPARK_HOME/jarsOrg/
 COPY --from=build /home/app/target/lib/*.jar $SPARK_HOME/jars/
+
+#RUN chmod 777 $SPARK_HOME/jars/
 
 # switch to non-root user
 USER ${NB_USER}
