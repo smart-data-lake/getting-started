@@ -14,7 +14,7 @@
 		  Set the smartdatalake version to use here.
 		  If version cannot be resolved, make sure maven central repository is defined in settings.xml and the corresponding profile activated.
 		-->
-		<version>2.5.0</version>
+		<version>2.6.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>sdl-lib</artifactId>
@@ -23,22 +23,7 @@
 
 		<!-- default scala version - use predefined maven profiles to override -->
 		<scala.minor.version>2.12</scala.minor.version>
-		<scala.version>${scala.minor.version}.12</scala.version>
-
-		<!-- mark dependencies included in spark distribution as provided -->
-		<scala.deps.scope>provided</scala.deps.scope>
-		<spark.deps.scope>provided</spark.deps.scope>
-		<hadoop.deps.scope>provided</hadoop.deps.scope>
-		<flume.deps.scope>provided</flume.deps.scope>
-		<hive.deps.scope>provided</hive.deps.scope>
-		<hive.parquet.scope>provided</hive.parquet.scope>
-		<hive.storage.scope>provided</hive.storage.scope>
-		<hive.common.scope>provided</hive.common.scope>
-		<hive.llap.scope>provided</hive.llap.scope>
-		<hive.serde.scope>provided</hive.serde.scope>
-		<hive.shims.scope>provided</hive.shims.scope>
-		<orc.deps.scope>provided</orc.deps.scope>
-		<parquet.deps.scope>provided</parquet.deps.scope>
+		<scala.version>${scala.minor.version}.18</scala.version>
 
 	</properties>
 
@@ -86,46 +71,31 @@
 			<groupId>io.smartdatalake</groupId>
 			<artifactId>sdl-deltalake_${scala.minor.version}</artifactId>
 			<version>${project.parent.version}</version>
-			<exclusions>
-				<!-- TODO: this can probably be removed from sdl-deltalake! -->
-				<exclusion>
-					<groupId>org.apache.spark</groupId>
-					<artifactId>spark-sql-kafka-0-10_2.12</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
-		<!-- override scope for spark dependencies to include/exclude them correctly for the fat-jar -->
-		<!-- note that the corresponding profile defining spark.deps.scope is inherited from sdl-parent -->
+		<!-- needed for polynote using repl -->
 		<dependency>
 			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-core_${scala.minor.version}</artifactId>
+			<artifactId>spark-repl_${scala.minor.version}</artifactId>
 			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.spark</groupId>
+					<artifactId>spark-mllib_${scala.minor.version}</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.spark</groupId>
+					<artifactId>spark-graphx_${scala.minor.version}</artifactId>
+				</exclusion>
+ 			</exclusions>
 		</dependency>
+
+		<!-- S3 -->
 		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-sql_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-hive_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-catalyst_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-avro_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-aws</artifactId>
+			<!--version>${hadoop.version}</version-->
+			<version>3.3.4</version>
 		</dependency>
 
 		<!-- needed for derby metastore -->
