@@ -64,14 +64,14 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
     }
     webserviceResult match {
       case Success(c) =>
-        logger.info(s"Success for request ${url}")
+        logger.info(s"($id) Success for request ${url}")
         c
       case Failure(e) =>
         if (retry == 0) {
           logger.error(e.getMessage, e)
           throw new WebserviceException(e.getMessage)
         }
-        logger.info(s"Request will be repeated, because the server responded with: ${e.getMessage}. \nRequest retries left: ${retry - 1}")
+        logger.info(s"($id) Request will be repeated, because the server responded with: ${e.getMessage}. \nRequest retries left: ${retry - 1}")
         Thread.sleep(3000L)
         request(url, method, body, retry - 1)
     }
@@ -105,7 +105,6 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
         .select(explode($"response").as("record"))
         .select("record.*")
         .withColumn("created_at", current_timestamp())
-      df.printSchema
       df
     } else {
       // place the new implementation of currentQueryParameters below this line
@@ -120,18 +119,16 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
         param => s"${baseUrl}?airport=${param.airport}&begin=${param.begin}&end=${param.end}"
       )
 
-      departureRequests.foreach(req => logger.info("Going to request: " + req))
       val departuresDf = if (mockJsonDataObject.nonEmpty) {
         // mock requests as API is often down end of 2023...
-        logger.info(s"using mocked DataFrame: mockJsonDataObject=$mockJsonDataObject")
+        logger.info(s"($id) using mock DataFrame defined by mockJsonDataObject: $mockJsonDataObject")
         val mockDO = context.instanceRegistry.get[JsonFileDataObject](DataObjectId(mockJsonDataObject.get))
         val mockDeparturesDf = mockDO.getSparkDataFrame()
           .where($"estDepartureAirport".isInCollection(currentQueryParameters.map(_.airport)))
           .cache
-        mockDeparturesDf.printSchema
         // this is a simplification - its not handling multiple query parameters correctly...
-        val paramBegin = currentQueryParameters.map(_.begin).min
-        val paramEnd = currentQueryParameters.map(_.begin).max
+        val paramBegin = currentQueryParameters.map(_.begin).min.toInt
+        val paramEnd = currentQueryParameters.map(_.begin).max.toInt
         val minLastSeen = mockDeparturesDf.agg(min($"lastSeen")).as[Int].collect().toSeq.headOption
           .getOrElse(paramBegin)
         val mockDf = mockDeparturesDf
@@ -139,12 +136,13 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
           .withColumn("lastSeen", $"lastSeen" - minLastSeen + paramBegin)
           .where($"firstSeen" <= paramEnd) // remove records after time window
           .withColumn("created_at", current_timestamp())
-        println("#### MOCK ####")
-        mockDf.printSchema
         mockDf
       } else {
         // make requests
-        val departuresResponses = departureRequests.map(request(_))
+        val departuresResponses = departureRequests.map { req =>
+          logger.info(s"($id) Going to request: " + req)
+          request(req)
+        }
         // create dataframe with the correct schema and add created_at column with the current timestamp
         departuresResponses.toDF("responseBinary")
           .withColumn("responseString", byte2String($"responseBinary"))
