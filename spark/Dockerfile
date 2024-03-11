@@ -13,7 +13,7 @@ RUN mvn --quiet -f /opt/app/pom.xml -Pcopy-libs-with-spark "-Dmaven.repo.local=/
 FROM eclipse-temurin:17
 COPY --from=build /opt/app/target/lib/*.jar /opt/app/lib/
 COPY src/main/resources/log4j2.yml /opt/app/lib/
-COPY entrypoint.sh /opt/app/entrypoint.sh
+COPY spark/entrypoint.sh /opt/app/entrypoint.sh
 RUN chmod +x /opt/app/entrypoint.sh
 
 ENTRYPOINT ["/opt/app/entrypoint.sh"]
