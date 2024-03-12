@@ -139,24 +139,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>io.smartdatalake.app.LocalSmartDataLakeBuilder</mainClass>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Version>${project.version}</Implementation-Version>
-						</manifestEntries>
-					</archive>
-					<excludes>
-						<exclude>log4j2.yml</exclude> <!-- Logging configuration should be left to user. -->
-						<exclude>${project.artifactId}*.jar</exclude> <!-- avoid "Error assembling JAR" because of already existing artifact jar -->
-						<exclude>*.conf</exclude> <!-- no SDL configuration files - they must be provided by the user separately -->
-					</excludes>
-				</configuration>
 			</plugin>
 
 			<!-- check for dependency version conflicts -->
@@ -188,51 +170,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
-		<!-- override scope for spark dependencies to include/exclude them correctly for the fat-jar -->
-		<!-- note that the corresponding profile defining spark.deps.scope is inherited from sdl-parent -->
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-core_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-sql_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-hive_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-catalyst_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-avro_${scala.minor.version}</artifactId>
-			<version>${spark.version}</version>
-			<scope>${spark.deps.scope}</scope>
-		</dependency>
-
 		<!-- S3 -->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-aws</artifactId>
 			<version>${hadoop.version}</version>
-		</dependency>
-
-		<!-- reading log4j2 yml file -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-yaml</artifactId>
-			<version>${fasterxml.jackson.version}</version>
 		</dependency>
 
 		<!-- needed for derby metastore -->
