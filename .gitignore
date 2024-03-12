@@ -4,6 +4,7 @@ data
 .mvnrepo
 target
 venv
+.venv
 /.externalToolBuilders/
 derby.log
 *.log
