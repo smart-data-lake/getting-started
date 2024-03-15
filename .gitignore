@@ -9,6 +9,20 @@ venv
 derby.log
 *.log
 src/main/scala-generated
+config/index
+viz/assets
+viz/index.html
+viz/images
+viz/*.sh
+viz/*.py
+viz/config
+viz/*.md
+viz/*.txt
+viz/*.png
+viz/*.org
+.vscode
+.metals
+lsp
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -18,6 +32,7 @@ src/main/scala-generated
 .idea/**/shelf
 .idea/misc.xml
 .idea/scala_compiler.xml
+.idea/remote-targets.xml
 
 # Generated files
 .idea/**/contentModel.xml
