@@ -5,16 +5,18 @@ package io.smartdatalake.workflow.dataobject
 
 import com.typesafe.config.Config
 import io.smartdatalake.config.SdlConfigObject.DataObjectId
-import io.smartdatalake.config.{ConfigurationException, FromConfigFactory, InstanceRegistry}
+import io.smartdatalake.config.{FromConfigFactory, InstanceRegistry}
 import io.smartdatalake.definitions.AuthMode
 import io.smartdatalake.util.hdfs.PartitionValues
 import io.smartdatalake.util.misc.SmartDataLakeLogger
 import io.smartdatalake.util.webservice.WebserviceMethod.WebserviceMethod
 import io.smartdatalake.util.webservice.{ScalaJWebserviceClient, WebserviceException, WebserviceMethod}
-import io.smartdatalake.workflow.dataframe.spark.SparkDataFrame
+import io.smartdatalake.workflow.dataframe.GenericSchema
+import io.smartdatalake.workflow.dataframe.spark.SparkSchema
+import io.smartdatalake.workflow.dataobject.CustomWebserviceDataObject.{twoDaysSeconds, twoWeeksSeconds}
 import io.smartdatalake.workflow.{ActionPipelineContext, ExecutionPhase}
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.types.DataType
+import org.apache.spark.sql.types.ArrayType
 import org.json4s.jackson.{JsonMethods, Serialization}
 import org.json4s.{DefaultFormats, Formats}
 
@@ -25,19 +27,22 @@ import scala.util.{Failure, Success}
 case class HttpTimeoutConfig(connectionTimeoutMs: Int, readTimeoutMs: Int)
 
 // Default to the interval of [2 weeks and 2 days ago] -> [2 weeks ago]
-case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis() / 1000 - 1209600 - 172800L, end: Long = System.currentTimeMillis() / 1000 - 1209600 )
+case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis() / 1000 - twoWeeksSeconds - twoDaysSeconds, end: Long = System.currentTimeMillis() / 1000 - twoWeeksSeconds )
+
+case class State(airport: String, nextBegin: Long)
 
 /**
  * [[DataObject]] to call webservice and return response as a DataFrame
  */
 case class CustomWebserviceDataObject(override val id: DataObjectId,
-                                      schema: String,
+                                      responseRowSchema: GenericSchema,
                                       queryParameters: Seq[DepartureQueryParameters],
                                       additionalHeaders: Map[String, String] = Map(),
                                       timeouts: Option[HttpTimeoutConfig] = None,
                                       authMode: Option[AuthMode] = None,
                                       baseUrl: String,
                                       nRetry: Int = 1,
+                                      mockJsonDataObject: Option[String] = None,
                                       override val metadata: Option[DataObjectMetadata] = None
                                      )
                                      (@transient implicit val instanceRegistry: InstanceRegistry)
@@ -52,14 +57,14 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
     }
     webserviceResult match {
       case Success(c) =>
-        logger.info(s"Success for request ${url}")
+        logger.info(s"($id) Success for request ${url}")
         c
       case Failure(e) =>
         if (retry == 0) {
           logger.error(e.getMessage, e)
           throw new WebserviceException(e.getMessage)
         }
-        logger.info(s"Request will be repeated, because the server responded with: ${e.getMessage}. \nRequest retries left: ${retry - 1}")
+        logger.info(s"($id) Request will be repeated, because the server responded with: ${e.getMessage}. \nRequest retries left: ${retry - 1}")
         request(url, method, body, retry - 1)
     }
   }
@@ -94,12 +99,14 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
       param => s"${baseUrl}?airport=${param.airport}&begin=${param.begin}&end=${param.end}"
     )
     // make requests
-    departureRequests.foreach(req => logger.info("Going to request: " + req))
-    val departuresResponses = departureRequests.map(request(_))
+    val departuresResponses = departureRequests.map { req =>
+      logger.info(s"($id) Going to request: " + req)
+      request(req)
+    }
     // create dataframe with the correct schema and add created_at column with the current timestamp
     val departuresDf = departuresResponses.toDF("responseBinary")
       .withColumn("responseString", byte2String($"responseBinary"))
-      .select(from_json($"responseString", DataType.fromDDL(schema)).as("response"))
+      .select(from_json($"responseString", ArrayType(sparkResponseRowSchema)).as("response"))
       .select(explode($"response").as("record"))
       .select("record.*")
       .withColumn("created_at", current_timestamp())
@@ -116,4 +123,7 @@ object CustomWebserviceDataObject extends FromConfigFactory[DataObject] with Sma
   override def fromConfig(config: Config)(implicit instanceRegistry: InstanceRegistry): CustomWebserviceDataObject = {
     extract[CustomWebserviceDataObject](config)
   }
+
+  val twoWeeksSeconds = 60 * 60 * 24 * 14
+  val twoDaysSeconds  = 60 * 60 * 24 * 2
 }
