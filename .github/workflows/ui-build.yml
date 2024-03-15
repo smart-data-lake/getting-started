@@ -87,7 +87,7 @@ jobs:
         git push
 
     - name: Run Export config with additional documentation
-      id: schema-stats-export
+      id: config-json-export
       if: steps.getting-started1.outcome == 'success' || steps.getting-started2.outcome == 'success'
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config --filename viz/exportedConfig.json --description-path viz/description"
 
