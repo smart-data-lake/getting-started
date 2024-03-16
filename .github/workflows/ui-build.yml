@@ -52,6 +52,7 @@ jobs:
         cp -f part3/config/application.conf config/
         mkdir -p src/main/scala/io/smartdatalake/workflow/dataobject/
         cp part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
+        cp -r data-fallback-download data/fallback-download
 
     - name: Build with Maven Package
       run: | 
