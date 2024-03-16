@@ -3,19 +3,33 @@
 
 global {
   spark-options {
-    "spark.hadoop.javax.jdo.option.ConnectionURL" = "jdbc:derby://localhost:1527/db;create=true"
-    "spark.hadoop.javax.jdo.option.ConnectionDriverName" = "org.apache.derby.jdbc.ClientDriver"
-    "spark.hadoop.javax.jdo.option.ConnectionUserName" = "sa"
-    "spark.hadoop.javax.jdo.option.ConnectionPassword" = "1234"
     "spark.sql.shuffle.partitions" = 2
     "spark.databricks.delta.snapshotPartitions" = 2
+    # shared local metastore (metastore must be started)
+    #"spark.hadoop.javax.jdo.option.ConnectionURL" = "jdbc:derby://localhost:1527/db;create=true"
+    #"spark.hadoop.javax.jdo.option.ConnectionDriverName" = "org.apache.derby.jdbc.ClientDriver"
+    #"spark.hadoop.javax.jdo.option.ConnectionUserName" = "sa"
+    #"spark.hadoop.javax.jdo.option.ConnectionPassword" = "1234"
+    # shared local s3 storage service for bucket 'data' (s3proxy must be started)
+    #"spark.hadoop.fs.s3a.bucket.data.impl" = "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    #"spark.hadoop.fs.s3a.bucket.data.access.key" = "admin"
+    #"spark.hadoop.fs.s3a.bucket.data.secret.key" = "1234"
+    #"spark.hadoop.fs.s3a.bucket.data.endpoint" = "http://s3:8888/"
   }
+  environment {
+    hadoopFileStateStoreIndexAppend = true
+  }
+}
+
+env {
+  basePath = "/mnt/data/"
+  #basePath = "s3a://data/"
 }
 
 dataObjects {
   ext-departures {
     type = CustomWebserviceDataObject
-    schema = """array< struct< icao24: string, firstSeen: integer, estDepartureAirport: string, lastSeen: integer, estArrivalAirport: string, callsign: string, estDepartureAirportHorizDistance: integer, estDepartureAirportVertDistance: integer, estArrivalAirportHorizDistance: integer, estArrivalAirportVertDistance: integer, departureAirportCandidatesCount: integer, arrivalAirportCandidatesCount: integer >>"""
+    responseRowSchema = "icao24 string, firstSeen integer, estDepartureAirport string, lastSeen integer, estArrivalAirport string, callsign string, estDepartureAirportHorizDistance integer, estDepartureAirportVertDistance integer, estArrivalAirportHorizDistance integer, estArrivalAirportVertDistance integer, departureAirportCandidatesCount integer, arrivalAirportCandidatesCount integer"
     baseUrl = "https://opensky-network.org/api/flights/departure"
     nRetry = 5
     queryParameters = [{
@@ -27,18 +41,36 @@ dataObjects {
       connectionTimeoutMs = 200000
       readTimeoutMs = 200000
     }
+    metadata = {
+          name = "Flight Departures Web Download"
+          description = "OpenSky Network flight departures"
+          layer = "extern"
+          subjectArea = "flight data"
+          tags = ["aviation", "flight", "departures"]
+    }
+    # enable to use mock-data as fallback if webservice is down
+    #mockJsonDataObject = stg-departures-mock
   }
-  stg-departures {
+  # data object with mock data used by ext-departures, if webservice is not available
+  stg-departures-mock {
     type = JsonFileDataObject
-    path = "~{id}"
+    path = ${env.basePath}fallback-download/stg-departures
+    schema = ${dataObjects.ext-departures.responseRowSchema}
   }
   int-departures {
     type = DeltaLakeTableDataObject
-    path = "~{id}"
+    path = ${env.basePath}"~{id}"
     table {
       db = "default"
       name = "int_departures"
       primaryKey = [icao24, estdepartureairport, dt]
+    }
+    metadata = {
+          name = "Flight Departures"
+          description = "OpenSky Network flight departures"
+          layer = "integration"
+          subjectArea = "flight data"
+          tags = ["aviation", "flight", "departures"]
     }
   }
 
@@ -52,21 +84,35 @@ dataObjects {
   }
   stg-airports {
     type = CsvFileDataObject
-    path = "~{id}"
+    path = ${env.basePath}"~{id}"
+    metadata {
+              name = "Staging file of Airport location data"
+              description = "contains beside GPS coordiantes, elevation, continent, country, region"
+              layer = "staging"
+              subjectArea = "airports"
+              tags = ["aviation", "airport", "location"]
+    }
   }
   int-airports {
     type = DeltaLakeTableDataObject
-    path = "~{id}"
+    path = ${env.basePath}"~{id}"
     table {
       db = "default"
       name = "int_airports"
       primaryKey = [ident]
     }
+    metadata {
+              name = "Airport locations"
+              description = "airport names and locations"
+              layer = "integration"
+              subjectArea = "airports"
+              tags = ["aviation", "airport", "location"]
+    }
   }
 
   btl-departures-arrivals-airports {
     type = DeltaLakeTableDataObject
-    path = "~{id}"
+    path = ${env.basePath}"~{id}"
     table {
       db = "default"
       name = "btl_departures_arrivals_airports"
@@ -75,7 +121,7 @@ dataObjects {
 
   btl-distances {
     type = DeltaLakeTableDataObject
-    path = "~{id}"
+    path = ${env.basePath}"~{id}"
     table {
       db = "default"
       name = "btl_distances"
@@ -85,13 +131,17 @@ dataObjects {
 }
 
 actions {
+
   download-airports {
     type = FileTransferAction
     inputId = ext-airports
     outputId = stg-airports
     metadata {
-      feed = download
-    }
+             name = "Airport ingestion"
+             description = "download airport data and write into CSV"
+             tags = ["download", "websource"]
+             feed = download
+     }
   }
 
   download-deduplicate-departures {
@@ -117,7 +167,10 @@ actions {
       """
     }]
     metadata {
-      feed = compute
+              name = "Flight departure data injection"
+              description = "download and cleaning of flight departure data"
+              tags = ["deduplicated", "DeltaLake"]
+              feed = compute
     }
   }
 
@@ -129,9 +182,12 @@ actions {
       type = SQLDfTransformer
       code = "select ident, name, latitude_deg, longitude_deg from stg_airports"
     }]
-    metadata {
-      feed = compute
-    }
+     metadata {
+          name = "Airport historization and filter"
+          description = "Filter name and coordinates of airports and hisorize data"
+          tags = ["historize", "filter", "DeltaLake"]
+          feed = compute
+     }
   }
 
   join-departures-airports {
@@ -160,7 +216,10 @@ actions {
       }
     ]
     metadata {
-      feed = compute
+          name = "Airport Departures Join"
+          description = "merging flight details and airport locations"
+          tags = ["merge", "airports", "coordinates"]
+          feed = compute
     }
   }
 
@@ -173,7 +232,10 @@ actions {
       className = com.sample.ComputeDistanceTransformer
     }]
     metadata {
-      feed = compute
+              name = "Flight distance computation"
+              description = "compute the flight distance between departure and arrival"
+              tags = ["compute", "coordinates", "distances"]
+              feed = compute
     }
   }
 }
