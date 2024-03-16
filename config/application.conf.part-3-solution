@@ -33,7 +33,7 @@ dataObjects {
     type = CustomWebserviceDataObject
     responseRowSchema = "icao24 string, firstSeen integer, estDepartureAirport string, lastSeen integer, estArrivalAirport string, callsign string, estDepartureAirportHorizDistance integer, estDepartureAirportVertDistance integer, estArrivalAirportHorizDistance integer, estArrivalAirportVertDistance integer, departureAirportCandidatesCount integer, arrivalAirportCandidatesCount integer"
     baseUrl = "https://opensky-network.org/api/flights/departure"
-    nRetry = 5
+    nRetry = 2
     queryParameters = [{
       airport = "LSZB"
     },{
