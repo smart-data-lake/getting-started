@@ -66,12 +66,10 @@ jobs:
     - name: Run Getting Started Retry with Mock
       id: getting-started2
       if: steps.getting-started1.outcome == 'failure'
-      continue-on-error: true
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Schema and Statistics export
       id: schema-stats-export
-      if: steps.getting-started1.outcome == 'success' || steps.getting-started2.outcome == 'success'
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config --export-path viz/schema"
 
     - name: Git Config
