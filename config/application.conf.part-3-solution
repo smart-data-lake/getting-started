@@ -22,9 +22,11 @@ global {
 }
 
 env {
-  basePath = "/mnt/data/"
+  basePath = "./"
+  #basePath = "/mnt/data/"
   #basePath = "s3a://data/"
 }
+
 
 dataObjects {
   ext-departures {
