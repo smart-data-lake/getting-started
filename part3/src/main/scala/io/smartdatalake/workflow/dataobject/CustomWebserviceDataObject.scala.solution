@@ -50,7 +50,7 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
   private var previousState: Seq[State] = Seq()
   private var nextState: Seq[State] = Seq()
 
-  private val now = Instant.now.getEpochSecond
+  private val currentTs = Instant.now.getEpochSecond
 
   private val sparkResponseRowSchema = responseRowSchema.asInstanceOf[SparkSchema].inner
 
@@ -109,7 +109,7 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
       // if we have query parameters in the state we will use them from now on
       val currentQueryParameters = if (previousState.isEmpty) checkQueryParameters(queryParameters)
       else checkQueryParameters(previousState.map {
-        x => DepartureQueryParameters(x.airport, x.nextBegin, x.nextBegin + now -60) // current minute not always supported by API...
+        x => DepartureQueryParameters(x.airport, x.nextBegin, x.nextBegin + currentTs -60) // current minute not always supported by API...
       })
 
       // given the query parameters, generate all requests
