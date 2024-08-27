@@ -1,0 +1,189 @@
+{
+  "appConfig" : {
+    "feedSel" : ".*",
+    "applicationName" : "getting-started",
+    "configuration" : [ "./config" ],
+    "master" : "local[*]",
+    "deployMode" : "client",
+    "parallelism" : 2,
+    "statePath" : "viz/state",
+    "streaming" : false
+  },
+  "runId" : 26,
+  "attemptId" : 1,
+  "runStartTime" : "2024-08-27T21:49:52.378140315",
+  "attemptStartTime" : "2024-08-27T21:49:52.378181954",
+  "actionsState" : {
+    "join-departures-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 26,
+        "attemptId" : 1
+      },
+      "state" : "CANCELLED",
+      "startTstmpPrepare" : "2024-08-27T21:50:01.013217180",
+      "endTstmpPrepare" : "2024-08-27T21:50:01.109853959",
+      "startTstmpInit" : "2024-08-27T21:50:02.017452353",
+      "endTstmpInit" : "2024-08-27T21:50:02.235880187",
+      "startTstmp" : "2024-08-27T21:50:13.889393059",
+      "msg" : "TaskPredecessorFailureWarning: Task join-departures-airports failed because predecessor failed",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "btl-departures-arrivals-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : false,
+        "metrics" : { }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "int-departures", "int-airports" ],
+      "outputIds" : [ "btl-departures-arrivals-airports" ]
+    },
+    "download-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 26,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-08-27T21:49:55.534127623",
+      "endTstmpPrepare" : "2024-08-27T21:49:56.911064981",
+      "startTstmpInit" : "2024-08-27T21:50:01.204318541",
+      "endTstmpInit" : "2024-08-27T21:50:01.220114318",
+      "startTstmp" : "2024-08-27T21:50:02.317682672",
+      "endTstmp" : "2024-08-27T21:50:03.172272361",
+      "duration" : "PT0.854589689S",
+      "results" : [ {
+        "type" : "FileSubFeed",
+        "fileRefs" : [ {
+          "fullPath" : "stg-airports/result.csv",
+          "fileName" : "result.csv",
+          "partitionValues" : { }
+        } ],
+        "dataObjectId" : "stg-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "fileRefMapping" : [ {
+          "src" : {
+            "fullPath" : "",
+            "fileName" : "result",
+            "partitionValues" : { }
+          },
+          "tgt" : {
+            "fullPath" : "stg-airports/result.csv",
+            "fileName" : "result.csv",
+            "partitionValues" : { }
+          }
+        } ],
+        "metrics" : {
+          "files_written" : 1
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "ext-airports" ],
+      "outputIds" : [ "stg-airports" ]
+    },
+    "download-deduplicate-departures" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 26,
+        "attemptId" : 1
+      },
+      "state" : "FAILED",
+      "startTstmpPrepare" : "2024-08-27T21:49:56.915415760",
+      "endTstmpPrepare" : "2024-08-27T21:50:00.598778184",
+      "startTstmpInit" : "2024-08-27T21:50:01.222703766",
+      "endTstmpInit" : "2024-08-27T21:50:01.920842570",
+      "startTstmp" : "2024-08-27T21:50:02.318461656",
+      "endTstmp" : "2024-08-27T21:50:07.626374504",
+      "duration" : "PT5.307912848S",
+      "msg" : "WebserviceException: Webservice Request failed with error <404>",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "int-departures",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : false,
+        "metrics" : { }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "ext-departures" ],
+      "outputIds" : [ "int-departures" ]
+    },
+    "historize-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 26,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-08-27T21:50:00.599904464",
+      "endTstmpPrepare" : "2024-08-27T21:50:01.012125405",
+      "startTstmpInit" : "2024-08-27T21:50:01.930937434",
+      "endTstmpInit" : "2024-08-27T21:50:02.015752497",
+      "startTstmp" : "2024-08-27T21:50:03.205107216",
+      "endTstmp" : "2024-08-27T21:50:13.873368424",
+      "duration" : "PT10.668261208S",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "int-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : true,
+        "metrics" : {
+          "stage" : "$anonfun$recordDeltaOperationInternal$1",
+          "count" : 80654,
+          "num_output_bytes" : 3084491,
+          "num_tasks" : 1,
+          "rows_inserted" : 80654,
+          "num_files" : 2,
+          "stage_duration" : "PT0.213S"
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "stg-airports" ],
+      "outputIds" : [ "int-airports" ]
+    },
+    "compute-distances" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 26,
+        "attemptId" : 1
+      },
+      "state" : "CANCELLED",
+      "startTstmpPrepare" : "2024-08-27T21:50:01.111108060",
+      "endTstmpPrepare" : "2024-08-27T21:50:01.196481189",
+      "startTstmpInit" : "2024-08-27T21:50:02.237103591",
+      "endTstmpInit" : "2024-08-27T21:50:02.313617112",
+      "startTstmp" : "2024-08-27T21:50:13.902800238",
+      "msg" : "TaskPredecessorFailureWarning: Task compute-distances failed because predecessor failed",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "btl-distances",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : false,
+        "metrics" : { }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "btl-departures-arrivals-airports" ],
+      "outputIds" : [ "btl-distances" ]
+    }
+  },
+  "isFinal" : true,
+  "runStateFormatVersion" : 5,
+  "sdlbVersionInfo" : {
+    "version" : "2.7.0",
+    "user" : "runner",
+    "date" : "2024-07-27T14:39:42.560975520",
+    "revision" : "994e76041d\n"
+  },
+  "appVersionInfo" : {
+    "version" : "2.7.0"
+  }
+}
