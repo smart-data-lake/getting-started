@@ -1,0 +1,187 @@
+{
+  "appConfig" : {
+    "feedSel" : ".*",
+    "applicationName" : "getting-started",
+    "configuration" : [ "./config" ],
+    "master" : "local[*]",
+    "deployMode" : "client",
+    "parallelism" : 2,
+    "statePath" : "viz/state",
+    "streaming" : false
+  },
+  "runId" : 25,
+  "attemptId" : 2,
+  "runStartTime" : "2024-08-27T21:12:27.210585708",
+  "attemptStartTime" : "2024-08-27T21:13:48.822760980",
+  "actionsState" : {
+    "join-departures-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 25,
+        "attemptId" : 2
+      },
+      "state" : "SKIPPED",
+      "startTstmpPrepare" : "2024-08-27T21:13:56.529833531",
+      "endTstmpPrepare" : "2024-08-27T21:14:02.753815958",
+      "startTstmpInit" : "2024-08-27T21:14:03.030132767",
+      "endTstmpInit" : "2024-08-27T21:14:03.520518344",
+      "startTstmp" : "2024-08-27T21:14:03.724932574",
+      "endTstmp" : "2024-08-27T21:14:03.725743218",
+      "duration" : "PT0.000810644S",
+      "msg" : "TaskSkippedDontStopWarning: (Action~join-departures-airports) execution skipped because input subFeeds are skipped: DataObject~int-departures, DataObject~int-airports",
+      "results" : [ {
+        "type" : "InitSubFeed",
+        "dataObjectId" : "btl-departures-arrivals-airports",
+        "partitionValues" : [ ],
+        "isSkipped" : true
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "int-departures", "int-airports" ],
+      "outputIds" : [ "btl-departures-arrivals-airports" ]
+    },
+    "download-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 25,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-08-27T21:12:30.388914475",
+      "endTstmpPrepare" : "2024-08-27T21:12:31.667005005",
+      "startTstmpInit" : "2024-08-27T21:12:36.315356281",
+      "endTstmpInit" : "2024-08-27T21:12:36.327513660",
+      "startTstmp" : "2024-08-27T21:12:37.433026544",
+      "endTstmp" : "2024-08-27T21:12:38.544654387",
+      "duration" : "PT1.111627843S",
+      "results" : [ {
+        "type" : "FileSubFeed",
+        "fileRefs" : [ {
+          "fullPath" : "stg-airports/result.csv",
+          "fileName" : "result.csv",
+          "partitionValues" : { }
+        } ],
+        "dataObjectId" : "stg-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "fileRefMapping" : [ {
+          "src" : {
+            "fullPath" : "",
+            "fileName" : "result",
+            "partitionValues" : { }
+          },
+          "tgt" : {
+            "fullPath" : "stg-airports/result.csv",
+            "fileName" : "result.csv",
+            "partitionValues" : { }
+          }
+        } ],
+        "metrics" : {
+          "files_written" : 1
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "ext-airports" ],
+      "outputIds" : [ "stg-airports" ]
+    },
+    "download-deduplicate-departures" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 25,
+        "attemptId" : 2
+      },
+      "state" : "SKIPPED",
+      "startTstmpPrepare" : "2024-08-27T21:13:51.929174842",
+      "endTstmpPrepare" : "2024-08-27T21:13:56.523402876",
+      "startTstmpInit" : "2024-08-27T21:14:02.789959976",
+      "endTstmpInit" : "2024-08-27T21:14:03.024097905",
+      "startTstmp" : "2024-08-27T21:14:03.575491324",
+      "endTstmp" : "2024-08-27T21:14:03.687371135",
+      "duration" : "PT0.111879811S",
+      "msg" : "NoDataToProcessWarning: (DataObject~stg-departures-mock) No files to process found in execution plan",
+      "results" : [ {
+        "type" : "InitSubFeed",
+        "dataObjectId" : "int-departures",
+        "partitionValues" : [ ],
+        "isSkipped" : true
+      } ],
+      "dataObjectsState" : [ {
+        "dataObjectId" : "ext-departures",
+        "state" : "[{\"airport\":\"LSZB\",\"nextBegin\":1709504137},{\"airport\":\"EDDF\",\"nextBegin\":1709504137}]"
+      } ],
+      "inputIds" : [ "ext-departures" ],
+      "outputIds" : [ "int-departures" ]
+    },
+    "historize-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 25,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-08-27T21:12:35.727923641",
+      "endTstmpPrepare" : "2024-08-27T21:12:36.217063121",
+      "startTstmpInit" : "2024-08-27T21:12:37.029107075",
+      "endTstmpInit" : "2024-08-27T21:12:37.124117297",
+      "startTstmp" : "2024-08-27T21:12:38.575849549",
+      "endTstmp" : "2024-08-27T21:12:49.022409110",
+      "duration" : "PT10.446559561S",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "int-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : true,
+        "metrics" : {
+          "stage" : "$anonfun$recordDeltaOperationInternal$1",
+          "count" : 80654,
+          "num_output_bytes" : 3084491,
+          "num_tasks" : 1,
+          "rows_inserted" : 80654,
+          "num_files" : 2,
+          "stage_duration" : "PT0.208S"
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "stg-airports" ],
+      "outputIds" : [ "int-airports" ]
+    },
+    "compute-distances" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 25,
+        "attemptId" : 2
+      },
+      "state" : "SKIPPED",
+      "startTstmpPrepare" : "2024-08-27T21:14:02.754763901",
+      "endTstmpPrepare" : "2024-08-27T21:14:02.781649319",
+      "startTstmpInit" : "2024-08-27T21:14:03.521692821",
+      "endTstmpInit" : "2024-08-27T21:14:03.571318272",
+      "startTstmp" : "2024-08-27T21:14:03.740401570",
+      "endTstmp" : "2024-08-27T21:14:03.740819450",
+      "duration" : "PT0.00041788S",
+      "msg" : "TaskSkippedDontStopWarning: (Action~compute-distances) execution skipped because input subFeeds are skipped: DataObject~btl-departures-arrivals-airports",
+      "results" : [ {
+        "type" : "InitSubFeed",
+        "dataObjectId" : "btl-distances",
+        "partitionValues" : [ ],
+        "isSkipped" : true
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "btl-departures-arrivals-airports" ],
+      "outputIds" : [ "btl-distances" ]
+    }
+  },
+  "isFinal" : true,
+  "runStateFormatVersion" : 5,
+  "sdlbVersionInfo" : {
+    "version" : "2.7.0",
+    "user" : "runner",
+    "date" : "2024-07-27T14:39:42.560975520",
+    "revision" : "994e76041d\n"
+  },
+  "appVersionInfo" : {
+    "version" : "2.7.0"
+  }
+}
