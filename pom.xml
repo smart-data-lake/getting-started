@@ -32,7 +32,7 @@
 		  Set the smartdatalake version to use here.
 		  If version cannot be resolved, make sure maven central repository is defined in settings.xml and the corresponding profile activated.
 		-->
-		<version>2.6.1-SNAPSHOT</version>
+		<version>2.7.0</version>
 	</parent>
 
 	<artifactId>getting-started</artifactId>
@@ -42,8 +42,8 @@
 
 	<properties>
 		<!-- default scala version - use predefined maven profiles to override -->
-		<scala.minor.version>2.13</scala.minor.version>
-		<scala.version>${scala.minor.version}.12</scala.version>
+		<scala.minor.version>2.12</scala.minor.version>
+		<scala.version>${scala.minor.version}.18</scala.version>
 	</properties>
 
 	<profiles>
@@ -71,10 +71,6 @@
 										<argument>./config</argument>
 										<argument>--srcDirectory</argument>
 										<argument>./src/main/scala-generated</argument>
-										<argument>--packageName</argument>
-										<argument>io.smartdatalake.generated</argument>
-										<argument>--className</argument>
-										<argument>DataObjectCatalog</argument>
 									</arguments>
 									<classpathScope>compile</classpathScope>
 								</configuration>
@@ -168,13 +164,6 @@
 			<groupId>io.smartdatalake</groupId>
 			<artifactId>sdl-lang_${scala.minor.version}</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
-
-		<!-- S3 -->
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-aws</artifactId>
-			<version>${hadoop.version}</version>
 		</dependency>
 
 		<!-- needed for derby metastore -->
