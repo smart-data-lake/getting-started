@@ -1,5 +1,7 @@
 metastore_db
-data
+data/*
+!data/stg-airports-fallback
+!data/stg-departures-fallback
 .cache-*
 .mvnrepo
 target
