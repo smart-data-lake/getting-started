@@ -3,10 +3,6 @@
 
 global {
   spark-options {
-    "spark.hadoop.javax.jdo.option.ConnectionURL" = "jdbc:derby://localhost:1527/db;create=true"
-    "spark.hadoop.javax.jdo.option.ConnectionDriverName" = "org.apache.derby.jdbc.ClientDriver"
-    "spark.hadoop.javax.jdo.option.ConnectionUserName" = "sa"
-    "spark.hadoop.javax.jdo.option.ConnectionPassword" = "1234"
     "spark.sql.shuffle.partitions" = 2
     "spark.databricks.delta.snapshotPartitions" = 2
   }
@@ -97,6 +93,8 @@ actions {
     type = DeduplicateAction
     inputId = stg-departures
     outputId = int-departures
+    mergeModeEnable = true
+    updateCapturedColumnOnlyWhenChanged = true
     transformers = [{
       type = SQLDfTransformer
       code = "select stg_departures.*, date_format(from_unixtime(firstseen),'yyyyMMdd') dt from stg_departures"
@@ -121,6 +119,7 @@ actions {
     type = HistorizeAction
     inputId = stg-airports
     outputId = int-airports
+    mergeModeEnable = true
     transformers = [{
       type = SQLDfTransformer
       code = "select ident, name, latitude_deg, longitude_deg from stg_airports"
