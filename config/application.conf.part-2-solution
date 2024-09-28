@@ -1,13 +1,6 @@
 
 # This is the application.conf file as it should look after completing part-2
 
-global {
-  spark-options {
-    "spark.sql.shuffle.partitions" = 2
-    "spark.databricks.delta.snapshotPartitions" = 2
-  }
-}
-
 dataObjects {
   ext-departures {
     type = WebserviceFileDataObject

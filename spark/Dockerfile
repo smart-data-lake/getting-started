@@ -1,12 +1,11 @@
-ARG SCALA_VERSION="2.13"
-ARG SPARK_VERSION="3.4"
-ARG HADOOP_VERSION="3"
+ARG SCALA_VERSION="2.12"
+ARG SPARK_VERSION="3.5"
 
 #
 # Build stage
 #
-FROM maven:3.9.6-eclipse-temurin-17 AS build
-COPY src /opt/app/src
+FROM maven:3-eclipse-temurin-17 AS build
+COPY ../src /opt/app/src
 COPY pom.xml /opt/app
 RUN mvn --quiet -f /opt/app/pom.xml -Pcopy-libs -Pscala-$SCALA_VERSION -Dmaven.repo.local=/mnt/.mvnrepo dependency:copy-dependencies@copy-libs-exec
 
@@ -17,7 +16,11 @@ RUN mvn --quiet -f /opt/app/pom.xml -Pcopy-libs -Pscala-$SCALA_VERSION -Dmaven.r
 FROM eclipse-temurin:17
 ARG SCALA_VERSION
 ARG SPARK_VERSION
-ARG HADOOP_VERSION
+
+# install python
+RUN apt-get update -y && apt-get install -y procps wget python3 python3-dev python3-pip build-essential
+
+WORKDIR /opt
 
 # get latest Spark version for selected minor version
 RUN wget -q -O - https://dlcdn.apache.org/spark/ | grep -o 'href=".*">' | sed 's/href="//;s/\/">//' | grep "spark-"$SPARK_VERSION | sed 's/spark-//' > /opt/spark.version

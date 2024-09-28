@@ -1,16 +1,6 @@
 
 # This is the application.conf file as it should look after completing part-3
 
-global {
-  spark-options {
-    "spark.sql.shuffle.partitions" = 2
-    "spark.databricks.delta.snapshotPartitions" = 2
-  }
-  environment {
-    hadoopFileStateStoreIndexAppend = true
-  }
-}
-
 env {
   catalog = null // null = empty hocon key = no catalog = spark_catalog (default)
   schema = "default"

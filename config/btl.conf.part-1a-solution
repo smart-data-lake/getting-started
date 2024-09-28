@@ -1,0 +1,33 @@
+
+# This is an empty xyz.conf file to start with part-1
+
+dataObjects {
+
+  btl-connected-airports {
+    type = CsvFileDataObject
+    path = "~{id}"
+  }
+
+}
+
+actions {
+
+  join-departures-airports {
+    type = CustomDataFrameAction
+    inputIds = [stg-departures, int-airports]
+    outputIds = [btl-connected-airports]
+    transformers = [{
+      type = SQLDfsTransformer
+      code = {
+        btl-connected-airports = """
+          select stg_departures.estdepartureairport, stg_departures.estarrivalairport, airports.*
+          from stg_departures join int_airports airports on stg_departures.estArrivalAirport = airports.ident
+        """
+      }
+    }]
+    metadata {
+      feed = compute
+    }
+  }
+
+}
