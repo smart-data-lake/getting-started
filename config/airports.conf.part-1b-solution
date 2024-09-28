@@ -1,0 +1,36 @@
+
+# This is the airports.conf file as it should look after first step of part-1
+
+dataObjects {
+
+  NOPEext-airports {
+    type = WebserviceFileDataObject
+    # uses redirects to the URL below
+    url = "https://ourairports.com/data/airports.csv"
+    # url = "https://davidmegginson.github.io/ourairports-data/airports.csv"
+    followRedirects = true
+    timeouts {
+      connectionTimeoutMs = 3000
+      readTimeoutMs = 200000
+    }
+  }
+
+  stg-airports {
+    type = UnicornFileDataObject
+    path = "~{id}"
+  }
+
+}
+
+actions {
+
+  download-airports {
+    type = FileTransferAction
+    inputId = ext-airports
+    outputId = stg-airports
+    metadata {
+      feed = download
+    }
+  }
+
+}
