@@ -1,0 +1,54 @@
+
+# This is the departures.conf file as it should look after completing part-1
+
+dataObjects {
+
+  ext-departures {
+    type = com.sample.CustomWebserviceDataObject
+    responseRowSchema = """icao24 string, firstSeen bigint, estDepartureAirport string, lastSeen bigint, estArrivalAirport string, callsign string, estDepartureAirportHorizDistance bigint, estDepartureAirportVertDistance bigint, estArrivalAirportHorizDistance bigint, estArrivalAirportVertDistance bigint, departureAirportCandidatesCount bigint, arrivalAirportCandidatesCount bigint"""
+    baseUrl = "https://opensky-network.org/api/flights/departure"
+    nRetry = 5
+    queryParameters = [{
+      airport = "LSZB"
+    },{
+      airport = "EDDF"
+    }]
+    timeouts {
+      connectionTimeoutMs = 3000
+      readTimeoutMs = 200000
+    }
+  }
+
+  int-departures {
+    type = DeltaLakeTableDataObject
+    path = "~{id}"
+    table = {
+      db = default
+      name = int_departures
+      primaryKey = [icao24, estdepartureairport, dt]
+    }
+    allowSchemaEvolution = true
+  }
+
+}
+
+actions {
+
+  download-deduplicate-departures {
+    type = DeduplicateAction
+    inputId = ext-departures
+    outputId = int-departures
+    mergeModeEnable=true
+    transformers = [{
+      type = SQLDfTransformer
+      code = "select ext_departures.*, date_format(from_unixtime(firstseen),'yyyyMMdd') dt from ext_departures"
+    },{
+      type = DeduplicateTransformer
+      rankingExpression = "lastSeen desc"
+    }]
+    metadata {
+      feed = compute
+    }
+  }
+
+}
