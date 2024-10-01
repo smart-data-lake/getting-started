@@ -1,30 +1,27 @@
 
 // This is the CustomWebserviceDataObject implementation to start with part-3
 
-package io.smartdatalake.workflow.dataobject
+package com.sample
 
+import com.sample.CustomWebserviceDataObject.{twoDaysSeconds, twoWeeksSeconds}
 import com.typesafe.config.Config
 import io.smartdatalake.config.SdlConfigObject.DataObjectId
 import io.smartdatalake.config.{FromConfigFactory, InstanceRegistry}
-import io.smartdatalake.workflow.connection.authMode.AuthMode
 import io.smartdatalake.util.hdfs.PartitionValues
 import io.smartdatalake.util.misc.SmartDataLakeLogger
-import io.smartdatalake.util.webservice.WebserviceMethod.WebserviceMethod
-import io.smartdatalake.util.webservice.{ScalaJWebserviceClient, WebserviceException, WebserviceMethod}
+import io.smartdatalake.util.webservice.SttpUtil
 import io.smartdatalake.workflow.dataframe.GenericSchema
 import io.smartdatalake.workflow.dataframe.spark.SparkSchema
-import io.smartdatalake.workflow.dataobject.CustomWebserviceDataObject.{twoDaysSeconds, twoWeeksSeconds}
+import io.smartdatalake.workflow.dataobject.{CanCreateSparkDataFrame, DataObject, DataObjectMetadata, HttpTimeoutConfig}
 import io.smartdatalake.workflow.{ActionPipelineContext, ExecutionPhase}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.ArrayType
-import org.json4s.jackson.{JsonMethods, Serialization}
 import org.json4s.{DefaultFormats, Formats}
+import sttp.client3.{HttpClientSyncBackend, Identity, SttpBackend, SttpBackendOptions, basicRequest}
+import sttp.model.Uri
 
-import java.time.Instant
-import scala.annotation.tailrec
-import scala.util.{Failure, Success}
-
-case class HttpTimeoutConfig(connectionTimeoutMs: Int, readTimeoutMs: Int)
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.FiniteDuration
 
 // Default to the interval of [2 weeks and 2 days ago] -> [2 weeks ago]
 case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis() / 1000 - twoWeeksSeconds - twoDaysSeconds, end: Long = System.currentTimeMillis() / 1000 - twoWeeksSeconds )
@@ -37,9 +34,7 @@ case class State(airport: String, nextBegin: Long)
 case class CustomWebserviceDataObject(override val id: DataObjectId,
                                       responseRowSchema: GenericSchema,
                                       queryParameters: Seq[DepartureQueryParameters],
-                                      additionalHeaders: Map[String, String] = Map(),
                                       timeouts: Option[HttpTimeoutConfig] = None,
-                                      authMode: Option[AuthMode] = None,
                                       baseUrl: String,
                                       nRetry: Int = 1,
                                       mockJsonDataObject: Option[String] = None,
@@ -48,25 +43,35 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
                                      (@transient implicit val instanceRegistry: InstanceRegistry)
   extends DataObject with CanCreateSparkDataFrame with SmartDataLakeLogger {
 
-  @tailrec
-  private def request(url: String, method: WebserviceMethod = WebserviceMethod.Get, body: String = "", retry: Int = nRetry): Array[Byte] = {
-    val webserviceClient = ScalaJWebserviceClient(url, additionalHeaders, timeouts, authMode, proxy = None, followRedirects = true)
-    val webserviceResult = method match {
-      case WebserviceMethod.Get => webserviceClient.get()
-      case WebserviceMethod.Post => webserviceClient.post(body.getBytes, "application/json")
-    }
-    webserviceResult match {
-      case Success(c) =>
-        logger.info(s"($id) Success for request ${url}")
-        c
-      case Failure(e) =>
+  val sparkResponseRowSchema = responseRowSchema.asInstanceOf[SparkSchema].inner
+
+  @transient private lazy val httpBackend: SttpBackend[Identity, Any] = {
+    val options = SttpBackendOptions.Default
+    timeouts.map(_.connectionTimeoutMs).foreach(ms => options.connectionTimeout(FiniteDuration(ms, TimeUnit.MILLISECONDS)))
+    HttpClientSyncBackend(options = options)
+  }
+
+  private def queryWebservice(url: String, retry: Int = nRetry): String = {
+
+    var request = basicRequest
+      .get(Uri.unsafeParse(url))
+      .followRedirects(true)
+    timeouts.map(_.readTimeoutMs).foreach(ms => request = request.readTimeout(FiniteDuration(ms, TimeUnit.MILLISECONDS)))
+
+    val content = try {
+      SttpUtil.getContent(request.send(httpBackend), "queryWebservice")
+    } catch {
+      case e: Exception =>
         if (retry == 0) {
           logger.error(e.getMessage, e)
-          throw new WebserviceException(e.getMessage)
+          throw e
         }
         logger.info(s"($id) Request will be repeated, because the server responded with: ${e.getMessage}. \nRequest retries left: ${retry - 1}")
-        request(url, method, body, retry - 1)
+        queryWebservice(url, retry - 1)
     }
+    logger.info(s"($id) Success for request ${url}")
+
+    content
   }
 
   override def getSparkDataFrame(partitionValues: Seq[PartitionValues])(implicit context: ActionPipelineContext): DataFrame = {
@@ -74,8 +79,6 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
     implicit val formats: Formats = DefaultFormats
     val session = context.sparkSession
     import session.implicits._
-
-    val byte2String = udf((payload: Array[Byte]) => new String(payload))
 
     // if time interval is more than a week, set end config to 4 days after begin
     def checkQueryParameters(queryParameters: Seq[DepartureQueryParameters]) = {
@@ -90,29 +93,38 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
       }
     }
 
-    // REPLACE BLOCK
-    // use the queryParameters from the config
-    val currentQueryParameters = checkQueryParameters(queryParameters)
-
-    // given the query parameters, generate all requests
-    val departureRequests = currentQueryParameters.map(
-      param => s"${baseUrl}?airport=${param.airport}&begin=${param.begin}&end=${param.end}"
-    )
-    // make requests
-    val departuresResponses = departureRequests.map { req =>
-      logger.info(s"($id) Going to request: " + req)
-      request(req)
+    if(context.phase == ExecutionPhase.Init){
+      // simply return an empty data frame
+      Seq[String]().toDF("response")
+        .select(from_json($"response", ArrayType(sparkResponseRowSchema)).as("response"))
+        .select(explode($"response").as("record"))
+        .select("record.*")
+        .withColumn("created_at", current_timestamp())
+    } else {
+      // use the queryParameters from the config
+      val currentQueryParameters = checkQueryParameters(queryParameters)
+    
+      // given the query parameters, generate all requests
+      val departureRequests = currentQueryParameters.map(
+        param => s"${baseUrl}?airport=${param.airport}&begin=${param.begin}&end=${param.end}"
+      )
+      // make requests
+      val departuresResponses = departureRequests.map { req =>
+        logger.info(s"($id) Going to request: " + req)
+        queryWebservice(req)
+      }
+      // create dataframe with the correct schema and add created_at column with the current timestamp
+      val departuresDf = departuresResponses.toDF("response")
+        .select(from_json($"response", ArrayType(sparkResponseRowSchema)).as("response"))
+        .select(explode($"response").as("record"))
+        .select("record.*")
+        .withColumn("created_at", current_timestamp())
+  
+      // put simple nextState logic below
+    
+      // return
+      departuresDf
     }
-    // create dataframe with the correct schema and add created_at column with the current timestamp
-    val departuresDf = departuresResponses.toDF("responseBinary")
-      .withColumn("responseString", byte2String($"responseBinary"))
-      .select(from_json($"responseString", ArrayType(sparkResponseRowSchema)).as("response"))
-      .select(explode($"response").as("record"))
-      .select("record.*")
-      .withColumn("created_at", current_timestamp())
-    // return
-    departuresDf
-    // REPLACE BLOCK
 
   }
 
