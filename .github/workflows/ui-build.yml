@@ -47,12 +47,12 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Config for Incremental Mode # overwrite part3 solution
+    - name: Config for Incremental Mode # use part3 solution
       run:  |
-        cp -f part3/config/application.conf config/
-        mkdir -p src/main/scala/io/smartdatalake/workflow/dataobject/
-        cp part3/src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala.solution src/main/scala/io/smartdatalake/workflow/dataobject/CustomWebserviceDataObject.scala
-        mv data-fallback-download fallback-download
+        cp config/airports.conf.part-3-solution config/airports.conf
+        cp config/departures.conf.part-3-solution config/departures.conf
+        cp config/btl.conf.part-3-solution config/btl.conf
+        cp src/main/scala/com/sample/CustomWebserviceDataObject.scala.part-3-solution src/main/scala/com/sample/CustomWebserviceDataObject.scala
 
     - name: Build with Maven Package
       run: | 
@@ -62,16 +62,16 @@ jobs:
     - name: Run Getting Started
       id: getting-started1
       continue-on-error: true
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config --state-path viz/state -n getting-started --parallelism 2"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Getting Started Retry with Mock
       id: getting-started2
       if: steps.getting-started1.outcome == 'failure'
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config --state-path viz/state -n getting-started --parallelism 2"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Schema and Statistics export
       id: schema-stats-export
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config --exportPath viz/schema"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config,./envConfig/dev.conf --exportPath viz/schema"
 
     - name: Git Config
       run: |
@@ -88,7 +88,7 @@ jobs:
     - name: Run Export config with additional documentation
       id: config-json-export
       if: steps.getting-started1.outcome == 'success' || steps.getting-started2.outcome == 'success'
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config --filename viz/exportedConfig.json --descriptionPath viz/description"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config,./envConfig/dev.conf --filename viz/exportedConfig.json --descriptionPath viz/description"
 
     - name: Setup Pages
       uses: actions/configure-pages@v3

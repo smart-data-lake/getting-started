@@ -23,4 +23,4 @@ fi
 
 # install python dependencies
 # see also https://github.com/apache/spark/blob/master/dev/infra/Dockerfile, https://github.com/polynote/polynote/blob/master/requirements.txt
-pip install --no-cache-dir numpy pyarrow 'pandas<=1.5.3' scipy 'memory-profiler==0.60.0' 'scikit-learn==1.1.*' 'jep==4.1.1' virtualenv ipython nbconvert 'jedi>=0.18.1' matplotlib
+pip install --no-cache-dir numpy pyarrow 'pandas<=1.5.3' scipy 'scikit-learn==1.1.*' virtualenv ipython nbconvert 'jedi>=0.18.1' matplotlib
