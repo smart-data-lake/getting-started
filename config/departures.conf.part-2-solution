@@ -4,44 +4,50 @@
 dataObjects {
 
   ext-departures {
-    type = com.sample.CustomWebserviceDataObject
-    responseRowSchema = """icao24 string, firstSeen bigint, estDepartureAirport string, lastSeen bigint, estArrivalAirport string, callsign string, estDepartureAirportHorizDistance bigint, estDepartureAirportVertDistance bigint, estArrivalAirportHorizDistance bigint, estArrivalAirportVertDistance bigint, departureAirportCandidatesCount bigint, arrivalAirportCandidatesCount bigint"""
-    baseUrl = "https://opensky-network.org/api/flights/departure"
-    nRetry = 5
-    queryParameters = [{
-      airport = "LSZB"
-    },{
-      airport = "EDDF"
-    }]
+    type = WebserviceFileDataObject
+    url = "https://opensky-network.org/api/flights/departure?airport=LSZB&begin=1630200800&end=1630310979"
     timeouts {
       connectionTimeoutMs = 3000
       readTimeoutMs = 200000
     }
   }
 
+  stg-departures {
+    type = JsonFileDataObject
+    path = ${env.basePath}"~{id}"
+  }
+
   int-departures {
     type = DeltaLakeTableDataObject
-    path = ${env.basePath}"~{id}"
+    path =  ${env.basePath}"~{id}"
     table = {
       db = ${env.database}
       name = int_departures
       primaryKey = [icao24, estdepartureairport, dt]
     }
-    allowSchemaEvolution = true
   }
 
 }
 
 actions {
 
-  download-deduplicate-departures {
-    type = DeduplicateAction
+  download-departures {
+    type = FileTransferAction
     inputId = ext-departures
+    outputId = stg-departures
+    metadata {
+      feed = download
+    }
+  }
+
+  deduplicate-departures {
+    type = DeduplicateAction
+    inputId = stg-departures
     outputId = int-departures
     mergeModeEnable=true
     transformers = [{
       type = SQLDfTransformer
-      code = "select ext_departures.*, date_format(from_unixtime(firstseen),'yyyyMMdd') dt from ext_departures"
+      code = "select stg_departures.*, date_format(from_unixtime(firstseen),'yyyyMMdd') dt from stg_departures"
     },{
       type = DeduplicateTransformer
       rankingExpression = "lastSeen desc"
