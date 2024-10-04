@@ -68,7 +68,7 @@
 									<mainClass>io.smartdatalake.lab.LabCatalogGenerator</mainClass>
 									<arguments>
 										<argument>--config</argument>
-										<argument>./config</argument>
+										<argument>./config,./envConfig/dev.conf</argument>
 										<argument>--srcDirectory</argument>
 										<argument>./src/main/scala-generated</argument>
 									</arguments>
