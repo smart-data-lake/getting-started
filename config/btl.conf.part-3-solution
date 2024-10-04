@@ -1,15 +1,23 @@
-# This is the btl.conf file as it should look after completing part-1
+# This is the btl.conf file as it should look after completing part-3
 
 dataObjects {
 
   btl-departures-arrivals-airports {
-    type = CsvFileDataObject
-    path = "~{id}"
+    type = DeltaLakeTableDataObject
+    path = ${env.basePath}"~{id}"
+    table {
+      db = ${env.database}
+      name = "btl_departures_arrivals_airports"
+    }
   }
 
   btl-distances {
-    type = CsvFileDataObject
-    path = "~{id}"
+    type = DeltaLakeTableDataObject
+    path = ${env.basePath}"~{id}"
+    table {
+      db = ${env.database}
+      name = "btl_distances"
+    }
   }
 
 }
@@ -18,14 +26,14 @@ actions {
 
   join-departures-airports {
     type = CustomDataFrameAction
-    inputIds = [stg-departures, int-airports]
+    inputIds = [int-departures, int-airports]
     outputIds = [btl-departures-arrivals-airports]
     transformers = [{
       type = SQLDfsTransformer
       code = {
         btl-connected-airports = """
-          select stg_departures.estdepartureairport, stg_departures.estarrivalairport, airports.*
-          from stg_departures join int_airports airports on stg_departures.estArrivalAirport = airports.ident
+          select int_departures.estdepartureairport, int_departures.estarrivalairport, airports.*
+          from int_departures join int_airports airports on int_departures.estArrivalAirport = airports.ident
         """
       }
     },{
