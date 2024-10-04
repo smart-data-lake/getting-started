@@ -5,9 +5,9 @@ dataObjects {
 
   ext-departures {
     type = com.sample.CustomWebserviceDataObject
-    responseRowSchema = """icao24 string, firstSeen bigint, estDepartureAirport string, lastSeen bigint, estArrivalAirport string, callsign string, estDepartureAirportHorizDistance bigint, estDepartureAirportVertDistance bigint, estArrivalAirportHorizDistance bigint, estArrivalAirportVertDistance bigint, departureAirportCandidatesCount bigint, arrivalAirportCandidatesCount bigint"""
     baseUrl = "https://opensky-network.org/api/flights/departure"
-    nRetry = 5
+    responseRowSchema = """icao24 string, firstSeen bigint, estDepartureAirport string, lastSeen bigint, estArrivalAirport string, callsign string, estDepartureAirportHorizDistance bigint, estDepartureAirportVertDistance bigint, estArrivalAirportHorizDistance bigint, estArrivalAirportVertDistance bigint, departureAirportCandidatesCount bigint, arrivalAirportCandidatesCount bigint"""
+    nRetry = 1
     queryParameters = [{
       airport = "LSZB"
     },{
@@ -21,9 +21,9 @@ dataObjects {
 
   int-departures {
     type = DeltaLakeTableDataObject
-    path = "~{id}"
+    path =  ${env.basePath}"~{id}"
     table = {
-      db = default
+      db = ${env.database}
       name = int_departures
       primaryKey = [icao24, estdepartureairport, dt]
     }
