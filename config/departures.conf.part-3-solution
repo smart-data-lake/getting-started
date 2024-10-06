@@ -38,7 +38,8 @@ actions {
     type = DeduplicateAction
     inputId = ext-departures
     outputId = int-departures
-    mergeModeEnable=true
+    mergeModeEnable = true
+    updateCapturedColumnOnlyWhenChanged = true
     transformers = [{
       type = SQLDfTransformer
       code = "select ext_departures.*, date_format(from_unixtime(firstseen),'yyyyMMdd') dt from ext_departures"
