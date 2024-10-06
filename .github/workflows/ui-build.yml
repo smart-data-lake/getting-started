@@ -62,16 +62,16 @@ jobs:
     - name: Run Getting Started
       id: getting-started1
       continue-on-error: true
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config --state-path viz/state -n getting-started --parallelism 2"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config,/envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Getting Started Retry with Mock
       id: getting-started2
       if: steps.getting-started1.outcome == 'failure'
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config --state-path viz/state -n getting-started --parallelism 2"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.LocalSmartDataLakeBuilder --feed-sel .* --config ./config,/envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Schema and Statistics export
       id: schema-stats-export
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config --exportPath viz/schema"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config,/envConfig/dev.conf --exportPath viz/schema"
 
     - name: Git Config
       run: |
@@ -88,7 +88,7 @@ jobs:
     - name: Run Export config with additional documentation
       id: config-json-export
       if: steps.getting-started1.outcome == 'success' || steps.getting-started2.outcome == 'success'
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config --filename viz/exportedConfig.json --descriptionPath viz/description"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config,/envConfig/dev.conf --filename viz/exportedConfig.json --descriptionPath viz/description"
 
     - name: Setup Pages
       uses: actions/configure-pages@v3
