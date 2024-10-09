@@ -4,7 +4,7 @@ ARG SPARK_VERSION="3.5"
 #
 # Build stage
 #
-FROM maven:3-eclipse-temurin-17 AS build
+FROM docker.io/maven:3-eclipse-temurin-17 AS build
 COPY ../src /opt/app/src
 COPY pom.xml /opt/app
 RUN mvn --quiet -f /opt/app/pom.xml -Pcopy-libs -Pscala-$SCALA_VERSION -Dmaven.repo.local=/mnt/.mvnrepo dependency:copy-dependencies@copy-libs-exec
@@ -13,12 +13,12 @@ RUN mvn --quiet -f /opt/app/pom.xml -Pcopy-libs -Pscala-$SCALA_VERSION -Dmaven.r
 # Package stage
 # Note that getting-started.jar is provided to the docker image through /mnt/lib and added to the class-path for SDL.
 #
-FROM eclipse-temurin:17
+FROM docker.io/eclipse-temurin:17
 ARG SCALA_VERSION
 ARG SPARK_VERSION
 
 # install python
-RUN apt-get update -y && apt-get install -y procps wget python3 python3-dev python3-pip build-essential
+RUN apt-get update -y && apt-get install -y build-essential procps python3 python3-dev python3-pip wget
 
 WORKDIR /opt
 
@@ -28,7 +28,7 @@ RUN bash -l -c 'echo export SCALA_VERSION="$(cat /opt/spark.version)" >> /etc/ba
 
 # install spark distribution (polynote needs spark-submit command)
 COPY spark/install_spark.sh .
-RUN chmod +x install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) ./install_spark.sh
+RUN chmod +x install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) spark/install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
