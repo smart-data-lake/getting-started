@@ -28,7 +28,7 @@ RUN bash -l -c 'echo export SCALA_VERSION="$(cat /opt/spark.version)" >> /etc/ba
 
 # install spark distribution (polynote needs spark-submit command)
 COPY spark/install_spark.sh .
-RUN chmod +x install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) spark/install_spark.sh
+RUN chmod +x install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) ./install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
