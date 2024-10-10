@@ -27,8 +27,8 @@ RUN wget -q -O - https://dlcdn.apache.org/spark/ | grep -o 'href=".*">' | sed 's
 RUN bash -l -c 'echo export SCALA_VERSION="$(cat /opt/spark.version)" >> /etc/bash.bashrc'
 
 # install spark distribution (polynote needs spark-submit command)
-COPY spark/install_spark.sh .
-RUN chmod +x install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) ./install_spark.sh
+COPY spark/install_spark.sh /opt
+RUN chmod +x /opt/install_spark.sh && SPARK_VERSION=$(cat /opt/spark.version) /opt/install_spark.sh
 ENV SPARK_HOME="/opt/spark"
 ENV PATH="$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin"
 
