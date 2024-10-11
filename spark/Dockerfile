@@ -17,8 +17,13 @@ FROM docker.io/eclipse-temurin:17
 ARG SCALA_VERSION
 ARG SPARK_VERSION
 
-# install python
-RUN apt-get update -y && apt-get install -y build-essential procps python3 python3-dev python3-pip wget
+# update ubuntu with Python 3.12 (needed for add-apt-repository below)
+RUN apt-get update -y && apt-get install --upgrade -y build-essential procps wget gpg python3 python3-pip software-properties-common
+
+# install python 3.11: ubuntu noble (current base of eclipse-temurin:17 is on Python 3.12, Spark needs Python <=3.11
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update -y && apt-get install --upgrade -y python3.11 python3.11-dev
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
 WORKDIR /opt
 
