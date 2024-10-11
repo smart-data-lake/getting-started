@@ -3,7 +3,7 @@
 # prepare webservice fallback data
 if [ ! -d ./data/fallback-download ]; then
   echo "copying webservice fallback data"
-  cp -r ./data-fallback-download ./data/fallback-download
+  #cp -r ./data-fallback-download ./data/fallback-download TODO this generates an error, is this still up to date?
 fi
 
 mkdir -p ./data

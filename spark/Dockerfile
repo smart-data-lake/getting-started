@@ -18,7 +18,7 @@ ARG SCALA_VERSION
 ARG SPARK_VERSION
 
 # update ubuntu with Python 3.12 (needed for add-apt-repository below)
-RUN apt-get update -y && apt-get install --upgrade -y build-essential procps wget gpg python3 python3-pip software-properties-common
+RUN apt-get update -y && apt-get install --upgrade -y build-essential gpg procps python3 python3-pip software-properties-common wget
 
 # install python 3.11: ubuntu noble (current base of eclipse-temurin:17 is on Python 3.12, Spark needs Python <=3.11
 RUN add-apt-repository ppa:deadsnakes/ppa
