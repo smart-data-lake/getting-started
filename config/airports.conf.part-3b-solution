@@ -13,25 +13,12 @@ dataObjects {
       connectionTimeoutMs = 3000
       readTimeoutMs = 200000
     }
-    metadata {
-      tags = ["aviation", "airport", "location"]
-      layer = "extern"
-      subjectArea = "airports"
-      description = "Webservice to query airport masterdata"
-    }
   }
 
   stg-airports {
     type = CsvFileDataObject
     path = ${env.basePath}"~{id}"
     schema = "id string, ident string, type string, name string, latitude_deg string, longitude_deg string, elevation_ft string, continent string, iso_country string, iso_region string, municipality string, scheduled_service string, gps_code string, iata_code string, local_code string, home_link string, wikipedia_link string, keywords string"
-    metadata {
-      name = "Staging file of Airport location data"
-      tags = ["aviation", "airport", "location"]
-      layer = "staging"
-      subjectArea = "airports"
-      description = "contains GPS coordinates, elevation, continent, country, region"
-    }
   }
 
   int-airports {
@@ -41,13 +28,6 @@ dataObjects {
       db = ${env.database}
       name = "int_airports"
       primaryKey = [ident]
-    }
-    metadata {
-      name = "Airport locations"
-      tags = ["aviation", "airport", "location"]
-      layer = "integration"
-      subjectArea = "airports"
-      description = "airport names and locations"
     }
   }
 
@@ -61,9 +41,6 @@ actions {
     outputId = stg-airports
     metadata {
       feed = download
-      name = "Airport ingestion"
-      tags = ["download", "websource"]
-      description = "download airport data and write into CSV"
     }
   }
 
@@ -78,9 +55,6 @@ actions {
     }]
     metadata {
       feed = compute
-      name = "Flight departure data injection"
-      tags = ["deduplicated", "DeltaLake"]
-      description = "download and cleaning of flight departure data"
     }
   }
 }

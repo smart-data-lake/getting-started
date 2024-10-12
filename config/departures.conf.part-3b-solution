@@ -17,13 +17,6 @@ dataObjects {
       connectionTimeoutMs = 3000
       readTimeoutMs = 200000
     }
-    metadata = {
-      name = "Flight Departures Web Download"
-      tags = ["aviation", "flight", "departures"]
-      layer = "extern"
-      subjectArea = "flight data"
-      description = "OpenSky Network flight departures"
-    }
   }
 
   int-departures {
@@ -35,13 +28,6 @@ dataObjects {
       primaryKey = [icao24, estdepartureairport, dt]
     }
     allowSchemaEvolution = true
-    metadata = {
-      name = "Flight Departures"
-      tags = ["aviation", "flight", "departures"]
-      layer = "integration"
-      subjectArea = "flight data"
-      description = "OpenSky Network flight departures"
-    }
   }
 
 }
@@ -63,9 +49,6 @@ actions {
     }]
     metadata {
       feed = compute
-      name = "Flight departure data injection"
-      tags = ["deduplicated", "DeltaLake"]
-      description = "download and cleaning of flight departure data"
     }
   }
 

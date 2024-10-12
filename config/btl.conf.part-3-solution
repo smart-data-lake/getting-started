@@ -9,6 +9,11 @@ dataObjects {
       db = ${env.database}
       name = "btl_departures_arrivals_airports"
     }
+    metadata = {
+      tags = ["aviation", "flight"]
+      layer = "btl"
+      subjectArea = "flight data"
+    }
   }
 
   btl-distances {
@@ -17,6 +22,11 @@ dataObjects {
     table {
       db = ${env.database}
       name = "btl_distances"
+    }
+    metadata = {
+      tags = ["aviation", "flight"]
+      layer = "btl"
+      subjectArea = "flight data"
     }
   }
 
@@ -50,6 +60,9 @@ actions {
     }]
     metadata {
       feed = compute
+      name = "Airport Departure/Arrival Join"
+      tags = ["merge", "airports", "coordinates"]
+      description = "merging flight details and airport locations"
     }
   }
 
@@ -63,6 +76,9 @@ actions {
     }]
     metadata {
       feed = compute
+      name = "Flight distance computation"
+      tags = ["compute", "coordinates", "distances"]
+      description = "compute the flight distance between departure and arrival"
     }
   }
 
