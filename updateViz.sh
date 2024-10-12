@@ -13,21 +13,22 @@ wget --no-check-certificate https://nightly.link/smart-data-lake/sdl-visualizati
 
 # save existing configuration
 if [ -f viz/manifest.json ]; then
-  mv viz/manifest.json viz/manifest.json.save;
-  mv viz/lighttpd.json viz/lighttpd.json.save;
+  mv viz/manifest.json viz/manifest.json.save
+  mv viz/lighttpd.conf viz/lighttpd.conf.save
 fi
 
 unzip -uo sdl-visualizer.zip -d viz
 
 rm sdl-visualizer.zip
 
-# save previous configuration
+# restore previous configuration
 if [ -f viz/manifest.json.save ]; then
   mv viz/manifest.json viz/manifest.json.org
   mv viz/manifest.json.save viz/manifest.json
-  mv viz/lighttpd.json viz/lighttpd.json.org
-  mv viz/lighttpd.json.save viz/lighttpd.json
+  mv viz/lighttpd.conf viz/lighttpd.conf.org
+  mv viz/lighttpd.conf.save viz/lighttpd.conf
 fi
 
 # prepare index for state and config
 chmod +x viz/build_index.sh
+
