@@ -4,10 +4,10 @@ The data is derived from [Airport locations](#/dataObjects/int_airports) and fli
 
 
 # Description
-This business table porvides data about flight distances.
+This business table provides data about flight distances.
 Further, flights with a travel distance <500km are tagged. 
 
-The goal is to identify the amount of flight and all the locations, which are closer than 500km and therewith may be replaced by train travels. 
+The goal is to identify the amount of flights and all the locations, which are closer than 500km and therewith may be replaced by train travels. 
 
 ![less flights more ...](description/dataObjects/train.png)
 
@@ -15,7 +15,6 @@ The goal is to identify the amount of flight and all the locations, which are cl
 
 @column `distance` The computed distance between the departure and arrival airports. The distance is computed as length of on an sphere with radius 6371km using the geographic latitutes and longitudes of both airports.
 @column `could_be_done_by_rail` Boolean describing if the distance is less than 500km (than true)
-@endColumn
 
 # Structure
 

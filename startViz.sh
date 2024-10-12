@@ -6,9 +6,10 @@ pushd viz
 # make symlink to config
 if [ ! -d ./config ]; then ln -s ../config; fi
 if [ ! -d ./envConfig ]; then ln -s ../envConfig; fi
+if [ ! -f ./exportedConfig.json ]; then ln -s ../data/exportedConfig.json; fi
 
-# update state and config index
-./build_index.sh ./state ./config
+# update state and config index - normally not needed as SDLB runs append a line to the index when they finish ordinarily.
+#./build_index.sh ./state ./config
 
 # start slim webserver
 ps -ef | grep lighttpd | grep -v grep | awk '{print $2}' | xargs -r kill

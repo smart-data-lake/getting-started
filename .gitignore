@@ -18,13 +18,16 @@ viz/images
 viz/*.sh
 viz/*.py
 viz/config
+viz/envConfig
 viz/*.md
 viz/*.txt
 viz/*.png
 viz/*.org
+viz/exportedConfig.json
 .vscode
 .metals
 lsp
+maven-metadata.xml
 
 # User-specific stuff
 .idea/**/workspace.xml

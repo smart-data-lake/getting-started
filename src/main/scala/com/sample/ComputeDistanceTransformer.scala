@@ -4,6 +4,10 @@ import io.smartdatalake.workflow.action.spark.customlogic.CustomDfTransformer
 import org.apache.spark.sql.functions.{col, udf}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
+/**
+ * ComputeDistanceTransformer uses method calculateDistanceInKilometer to calculate distance between two GPS coordinates
+ * with respect to the earth radius.
+ */
 class ComputeDistanceTransformer extends CustomDfTransformer {
   override def transform(session: SparkSession, options: Map[String, String], df: DataFrame, dataObjectId: String): DataFrame = {
     val calculateDistanceInKilometerUdf = udf(calculateDistanceInKilometer)
