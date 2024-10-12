@@ -53,11 +53,12 @@ jobs:
         cp config/departures.conf.part-3-solution config/departures.conf
         cp config/btl.conf.part-3-solution config/btl.conf
         cp src/main/scala/com/sample/CustomWebserviceDataObject.scala.part-3-solution src/main/scala/com/sample/CustomWebserviceDataObject.scala
-
-    - name: Build with Maven Package
-      run: | 
-        mvn -B clean package
         echo JAVA_OPTIONS="--add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.cs=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED --add-opens=java.base/sun.util.calendar=ALL-UNNAMED" >> $GITHUB_ENV
+
+    - name: Build using latest SDLB Snapshot
+      run: |
+        mvn versions:update-parent -DallowSnapshots=true
+        mvn -B clean package
 
     - name: Run Getting Started
       id: getting-started1
