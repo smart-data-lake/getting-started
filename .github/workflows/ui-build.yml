@@ -57,7 +57,7 @@ jobs:
 
     - name: Build using latest SDLB Snapshot
       run: |
-        mvn versions:update-parent -DallowSnapshots=true
+        mvn -B versions:update-parent -DallowSnapshots=true
         mvn -B clean package
 
     - name: Run Getting Started
