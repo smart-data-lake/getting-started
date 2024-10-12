@@ -6,8 +6,8 @@ dataObjects {
   ext-airports {
     type = WebserviceFileDataObject
     # uses redirects to the URL below
-    url = "https://ourairports.com/data/airports.csv"
-    # url = "https://davidmegginson.github.io/ourairports-data/airports.csv"
+    #url = "https://ourairports.com/data/airports.csv"
+    url = "https://davidmegginson.github.io/ourairports-data/airports.csv"
     followRedirects = true
     timeouts {
       connectionTimeoutMs = 3000
