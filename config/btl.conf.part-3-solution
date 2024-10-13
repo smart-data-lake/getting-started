@@ -4,7 +4,7 @@ dataObjects {
 
   btl-departures-arrivals-airports {
     type = DeltaLakeTableDataObject
-    path = ${env.basePath}"~{id}"
+    path = ${env.tablePathWithId}
     table {
       db = ${env.database}
       name = "btl_departures_arrivals_airports"
@@ -18,7 +18,7 @@ dataObjects {
 
   btl-distances {
     type = DeltaLakeTableDataObject
-    path = ${env.basePath}"~{id}"
+    path = ${env.tablePathWithId}
     table {
       db = ${env.database}
       name = "btl_distances"

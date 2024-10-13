@@ -5,4 +5,6 @@
 env {
   database = default
   basePath = "./"
+  basePathWithId = ${env.basePath}"~{id}"
+  tablePathWithId = ${env.basePathWithId}
 }
