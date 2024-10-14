@@ -21,6 +21,7 @@ dataObjects {
     type = DeltaLakeTableDataObject
     path = ${env.tablePathWithId}
     table = {
+      catalog = ${env.catalog}
       db = ${env.database}
       name = int_departures
       primaryKey = [icao24, estdepartureairport, dt]

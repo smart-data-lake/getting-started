@@ -6,6 +6,7 @@ dataObjects {
     type = DeltaLakeTableDataObject
     path = ${env.tablePathWithId}
     table {
+      catalog = ${env.catalog}
       db = ${env.database}
       name = "btl_departures_arrivals_airports"
     }
@@ -15,6 +16,7 @@ dataObjects {
     type = DeltaLakeTableDataObject
     path = ${env.tablePathWithId}
     table {
+      catalog = ${env.catalog}
       db = ${env.database}
       name = "btl_distances"
     }

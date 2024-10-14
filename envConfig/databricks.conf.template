@@ -3,8 +3,9 @@
 # These settings can be referenced in other configuration files using Hocon substitution, e.g. ${evn.database}.
 
 env {
+  catalog = "main"
   database = default
-  basePath = "./"
+  basePath = "/Volumes/main/default/getting-started/"
   basePathWithId = ${env.basePath}"~{id}"
   tablePathWithId = null # managed tables need no path
 }
