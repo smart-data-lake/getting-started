@@ -17,13 +17,14 @@ dataObjects {
 
   stg-airports {
     type = CsvFileDataObject
-    path = ${env.basePath}"~{id}"
+    path = ${env.basePathWithId}
   }
 
   int-airports {
     type = DeltaLakeTableDataObject
-    path = ${env.basePath}"~{id}"
+    path = ${env.tablePathWithId}
     table = {
+      catalog = ${env.catalog}
       db = ${env.database}
       name = "int_airports"
       primaryKey = [ident]
