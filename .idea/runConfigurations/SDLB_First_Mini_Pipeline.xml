@@ -1,13 +1,15 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="SDLB_First_Mini_Pipeline" type="Application" factoryName="Application">
-      <envs>
-        <env name="DATALAKEPREFIX" value="data" />
-      </envs>
-      <option name="MAIN_CLASS_NAME" value="io.smartdatalake.app.LocalSmartDataLakeBuilder" />
-      <module name="getting-started" />
-      <option name="PROGRAM_PARAMETERS" value="-c $ProjectFileDir$/config/airports.conf,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel test" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-  </component>
+  <configuration default="false" name="SDLB_First_Mini_Pipeline" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <envs>
+      <env name="DATALAKEPREFIX" value="data" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="io.smartdatalake.app.LocalSmartDataLakeBuilder" />
+    <module name="getting-started" />
+    <option name="PROGRAM_PARAMETERS" value="-c $ProjectFileDir$/config/airports.conf,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel test" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
