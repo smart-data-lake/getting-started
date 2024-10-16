@@ -335,7 +335,6 @@ integration layer to the staging layer using one action.
 </details>
 
 ### PUZZLE TIME!
-TODO add StandardizeColsTransformer
 TODO delete all runconfigs without add opens
 
 You should start the puzzle with the contents of this file:
@@ -510,6 +509,9 @@ The SDLB executes the following phases on each run:
 
 Let's run SDLB_part2 template from IntelliJ. `--partition-values=estdepartureairport=LSZB,EDDF` with debug break point
 While it runs inspect the command
+
+Notice that we use `StandardizeColNamesTransformer` in Action `download-deduplicate-departures`.
+You can see it's effect by comparing the contents of `stg_departures` and `int_departures`. 
 
 **Explain Feeds**
 **start application with `--help`: **
