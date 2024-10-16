@@ -321,15 +321,15 @@ integration layer to the staging layer using one action.
 ### Question 5: Where are the credentials to a SQL-database defined?
 
 
-- [ ] In the actions.
-- [ ] In the connections.
-- [ ] In the data objects.
-- [ ] In the global configurations
+- A: In the actions.
+- B: In the connections.
+- C: In the data objects.
+- D: In the global configurations
 
 <details>
 <summary>Answer</summary>
 
-Credentials are defined **in the connections**
+**B** is correct!
 </details>
 
 </details>
@@ -669,7 +669,7 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 <details>
 <summary>Answer</summary>
 
-**B and C ** are correct!
+B and C are correct!
 </details>
 
 </details>
@@ -689,7 +689,7 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 <details>
 <summary>Answer</summary>
 
-**B and C ** are correct!
+B and C are correct!
 </details>
 
 </details>
@@ -752,7 +752,7 @@ Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 <details>
 <summary>Answer</summary>
 
-**B and C are correct!
+B and C are correct!
 </details>
 
 </details>
@@ -816,7 +816,7 @@ Now it will **fail** because we need to provide a path for the state-path.
 <details>
 <summary>Answer</summary>
 
-**C ** is correct!
+C is correct!
 </details>
 
 </details>
@@ -901,7 +901,7 @@ Hint: search for trigger in [Schema Viewer](https://smartdatalake.ch/json-schema
 <details>
 <summary>Answer</summary>
 
-**D ** are correct!
+D is correct!
 </details>
 
 </details>When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
