@@ -636,40 +636,68 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 >
 > - A: Configuration parsing
 > - B: DAG preparation
-> - C: DAG Init *
-> - D: DAG exec *
-></details>
+> - C: DAG Init 
+> - D: DAG exec 
 
+
+
+<details>
+<summary>Answer</summary>
+
+**C and D** are correct!
+</details>
+></details>
 ><details><summary>Click here to show the question 7</summary>
 > 
 > Q: When your config has a typo and you wrote an Action Type that does not exist, when will SBLD notice it and abort?
 >
-> - A: Configuration parsing *
+> - A: Configuration parsing 
 > - B: DAG preparation
 > - C: DAG Init
 > - D: DAG exec
-></details>
 
+<details>
+<summary>Answer</summary>
 
-><details><summary>Click here to show the question 8</summary>
+**A** is correct!
+</details>
+
+</details>
+<details><summary>Click here to show the question 8</summary>
 >
 > Q: When your Action is trying to process a column that does not exist, when will SBLD notice it and abort?
 >
 > - A: Configuration parsing 
 > - B: DAG preparation
-> - C: DAG Init *
+> - C: DAG Init 
 > - D: DAG exec
-></details>
 
-><details><summary>Click here to show the question 9</summary>
-> 
-> Q: If an earlier action fails during Init or Exec Phase, what will SDLB do with the other actions?
->
+<details>
+<summary>Answer</summary>
+
+**C** is correct!
+</details>
+
+</details>
+
+
+
+<details><summary>Click here to show the question 9</summary>
+ 
+ Q: If an earlier action fails during Init or Exec Phase, what will SDLB do with the other actions?
+
 > - A: Cancel all other Actions
 > - B: Cancel all Actions that depend on the failed Action
 > - C: Actions that do not depend on the failed Action continue running
 > - D: Cancel all other Actions, but only in Exec Phase
-></details>
+>
+<details>
+<summary>Answer</summary>
+
+**B and C ** are correct!
+</details>
+
+</details>
 
 
 ## Data Quality
@@ -682,7 +710,14 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 > - A: If it did not crash it was a success
 > - B: Look at some Data Samples of the output with your intuition
 > - C: Define some rules on your output and execute Queries on the whole output
-></details>
+>
+<details>
+<summary>Answer</summary>
+
+**B and C ** are correct!
+</details>
+
+</details>
 Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 ### Constraints and Expectation
