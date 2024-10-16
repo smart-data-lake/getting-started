@@ -630,31 +630,30 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 		+ for JDBC and DeltaLakeTable, need to be enabled 
         + 
 ### QUIZ TIME!
-><details><summary>Click here to show the question 6</summary>
-> 
-> Q: When does SDLB execute custom code such as ComputeDistanceTransformer?
->
-> - A: Configuration parsing
-> - B: DAG preparation
-> - C: DAG Init 
-> - D: DAG exec 
+<details><summary>Click here to show the question 6</summary>
+ 
+ Q: When does SDLB execute custom code such as ComputeDistanceTransformer?
 
-
+ - A: Configuration parsing
+ - B: DAG preparation
+ - C: DAG Init 
+ - D: DAG exec 
 
 <details>
 <summary>Answer</summary>
-
 **C and D** are correct!
 </details>
-></details>
-><details><summary>Click here to show the question 7</summary>
-> 
-> Q: When your config has a typo and you wrote an Action Type that does not exist, when will SBLD notice it and abort?
->
-> - A: Configuration parsing 
-> - B: DAG preparation
-> - C: DAG Init
-> - D: DAG exec
+</details>
+
+
+<details><summary>Click here to show the question 7</summary>
+ 
+ Q: When your config has a typo and you wrote an Action Type that does not exist, when will SBLD notice it and abort?
+
+ - A: Configuration parsing 
+ - B: DAG preparation
+ - C: DAG Init
+ - D: DAG exec
 
 <details>
 <summary>Answer</summary>
@@ -663,14 +662,15 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 </details>
 
 </details>
+
 <details><summary>Click here to show the question 8</summary>
->
-> Q: When your Action is trying to process a column that does not exist, when will SBLD notice it and abort?
->
-> - A: Configuration parsing 
-> - B: DAG preparation
-> - C: DAG Init 
-> - D: DAG exec
+
+ Q: When your Action is trying to process a column that does not exist, when will SBLD notice it and abort?
+
+ - A: Configuration parsing 
+ - B: DAG preparation
+ - C: DAG Init 
+ - D: DAG exec
 
 <details>
 <summary>Answer</summary>
@@ -679,7 +679,6 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 </details>
 
 </details>
-
 
 
 <details><summary>Click here to show the question 9</summary>
@@ -703,19 +702,13 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 ## Data Quality
 
 ### QUIZ TIME!
-><details><summary>Click here to show the question 10</summary>
->
-> Q: After you built your pipeline, how do you know if it does what you expect?
-> 
-> - A: If it did not crash it was a success
-> - B: Look at some Data Samples of the output with your intuition
-> - C: Define some rules on your output and execute Queries on the whole output
->
-<details>
-<summary>Answer</summary>
+<details><summary>Click here to show the question 10</summary>
 
-**B and C ** are correct!
-</details>
+ Q: After you built your pipeline, how do you know if it does what you expect?
+ 
+ - A: If it did not crash it was a success
+ - B: Look at some Data Samples of the output with your intuition
+ - C: Define some rules on your output and execute Queries on the whole output
 
 </details>
 Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
