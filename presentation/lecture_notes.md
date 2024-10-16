@@ -116,12 +116,6 @@ and are defined in the HOCON-format.
 - **E** -> Its main elements comprise data objects, activities and connections.
 
 
-- [ ] A, C and E.
-- [ ] A and C.
-- [ ] B and E.
-- [ ] B, C and D.
-- [ ] Only C.
-
 <details>
 <summary>Answer</summary>
 
@@ -141,12 +135,6 @@ and are defined in the HOCON-format.
 - **B** -> The staging layer is used to "dump" raw data from the external layer.
 - **C** -> The integration layer comprises some data transformation.
 - **D** -> The business transformation layer comprises some data transformation.
-
-
-- [ ] A, B and D.
-- [ ] A, B and C.
-- [ ] B, C and D.
-- [ ] All are correct.
 
 <details>
 <summary>Answer</summary>
@@ -300,12 +288,6 @@ it also must have two corresponding two input data objects.
 - **C** -> Data objects can have many transformers.
 - **D** -> None of the possibilities are correct.
 
-
-- [ ] A and B.
-- [ ] A and C.
-- [ ] B and D.
-- [ ] Only D.
-
 <details>
 <summary>Answer</summary>
 
@@ -324,12 +306,6 @@ it also must have two corresponding two input data objects.
 integration layer to the staging layer using one action.
 - **C** -> Actions can have many transformers.
 - **D** -> None of the possibilities are correct.
-
-
-- [ ] A and B.
-- [ ] A and C.
-- [ ] B and C.
-- [ ] Only D.
 
 <details>
 <summary>Answer</summary>
@@ -685,11 +661,11 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
  
  Q: If an earlier action fails during Init or Exec Phase, what will SDLB do with the other actions?
 
-> - A: Cancel all other Actions
-> - B: Cancel all Actions that depend on the failed Action
-> - C: Actions that do not depend on the failed Action continue running
-> - D: Cancel all other Actions, but only in Exec Phase
->
+ - A: Cancel all other Actions
+ - B: Cancel all Actions that depend on the failed Action
+ - C: Actions that do not depend on the failed Action continue running
+ - D: Cancel all other Actions, but only in Exec Phase
+
 <details>
 <summary>Answer</summary>
 
@@ -710,7 +686,14 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
  - B: Look at some Data Samples of the output with your intuition
  - C: Define some rules on your output and execute Queries on the whole output
 
+<details>
+<summary>Answer</summary>
+
+**B and C ** are correct!
 </details>
+
+</details>
+
 Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 ### Constraints and Expectation
@@ -734,14 +717,21 @@ Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 
 ### QUIZ TIME!
-><details><summary>Click here to show the question 11</summary>
-> Q: Which statements about expectations and constraints are true?
->
-> A: An Expectation allows to make a check on the expected number of records
-> B: When an Expectation has failed, SDLB will always abort
-> C: A Constraint allows to make a check on individual records
-> D: When a Constraint has failed, SDLB will always abort
-></details>
+<details><summary>Click here to show the question 11</summary>
+ Q: Which statements about expectations and constraints are true?
+
+ - A: An Expectation allows to make a check on the expected number of records
+ - B: When an Expectation has failed, SDLB will always abort
+ - C: A Constraint allows to make a check on individual records
+ - D: When a Constraint has failed, SDLB will always abort
+
+<details>
+<summary>Answer</summary>
+
+**A, C and D ** are correct!
+</details>
+
+</details>
 
 ## Partitions
 
@@ -750,15 +740,22 @@ Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 ### QUIZ TIME!
 
-><details><summary>Click here to show the question 12</summary>
->
-> Q: After partitioning your data...
-> 
-> A: You have more data than before
-> B: *You have divided your data into multiple pieces
-> C: * You can access data faster
-> D: Your data uses up less space
-></details>
+<details><summary>Click here to show the question 12</summary>
+
+ Q: After partitioning your data...
+ 
+-  A: You have more data than before
+-  B: You have divided your data into multiple pieces
+-  C: You can access data faster
+-  D: Your data uses up less space
+
+<details>
+<summary>Answer</summary>
+
+**B and C are correct!
+</details>
+
+</details>
 
 First have a look at `data/btl_distances`.
 
@@ -808,15 +805,22 @@ After changing our config, try to execute the concerned action
 Now it will **fail** because we need to provide a path for the state-path.
 
 ### QUIZ TIME!
-><details><summary>Click here to show question 13</summary>
->
-> Q: Where is the state stored for DataObjectStateIncrementalMode?
-> 
-> - A: In Memory
-> - B: In One Central File
-> - C: In one file per run *
-> - D: The state is not stored
-></details>
+<details><summary>Click here to show question 13</summary>
+
+ Q: Where is the state stored for DataObjectStateIncrementalMode?
+ 
+ - A: In Memory
+ - B: In One Central File
+ - C: In one file per run
+ - D: The state is not stored
+<details>
+<summary>Answer</summary>
+
+**C ** is correct!
+</details>
+
+</details>
+
 Add state path and name: (SDLB_state config file)
 > * **WSL**: `sdlb_cmd --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training`
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures --state-path $ProjectFileDir$/data/state -n SDLB_training`
@@ -886,16 +890,21 @@ Hint: search for trigger in [Schema Viewer](https://smartdatalake.ch/json-schema
 
 ### QUIZ TIME!
 
-><details><summary>Click here to show question 14</summary>
->
-> Q: What does the *1.1* mean in the file *SDLB_training.1.1.json* ?
-> 
-> - A: Version Number of SDLB used
-> - B: Version Number of Spark used
-> - C: Hash of the Data that was processed
-> - D: Run id and attempt id
-></details>
-When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
+<details><summary>Click here to show question 14</summary>
+
+ Q: What does the *1.1* mean in the file *SDLB_training.1.1.json* ?
+ 
+ - A: Version Number of SDLB used
+ - B: Version Number of Spark used
+ - C: Hash of the Data that was processed
+ - D: Run id and attempt id
+<details>
+<summary>Answer</summary>
+
+**D ** are correct!
+</details>
+
+</details>When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
 * requires states (`--state-path`)
 
 Let's try.
