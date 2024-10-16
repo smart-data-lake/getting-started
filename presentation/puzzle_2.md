@@ -1,4 +1,3 @@
-
 # Puzzle #2 code blocks
 
 
@@ -133,7 +132,7 @@ int_airports = ${templates.dataLake} {
     metadata {
       name = "Calculated Airport elevation in meters"
       description = "contains beside GPS coordiantes, elevation, continent, country, region"
-      layer = "staging"
+      layer = "business transformation"
       subjectArea = "airports"
       tags = ["aviation", "airport", "location"]
     }
@@ -142,6 +141,5 @@ int_airports = ${templates.dataLake} {
 </details>
 
 ---
-
 
 

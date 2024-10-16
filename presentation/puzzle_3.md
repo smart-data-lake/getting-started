@@ -1,4 +1,3 @@
-
 # Puzzle #3 code blocks
 
 ---
@@ -72,7 +71,6 @@
 ```
 
 </details>
-
 
 
 
