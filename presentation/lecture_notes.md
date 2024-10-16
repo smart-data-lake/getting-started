@@ -359,6 +359,11 @@ Credentials are defined **in the connections**
 </details>
 
 ### PUZZLE TIME!
+TODO add StandardizeColsTransformer
+TODO delete all runconfigs without add opens
+
+You should start the puzzle with the contents of this file:
+https://github.com/smart-data-lake/getting-started/blob/training_solution/configs_after_exercises/airports_after_manual_writing.conf
 
 <details>
 <summary>Click here to show the puzzle 1</summary>
