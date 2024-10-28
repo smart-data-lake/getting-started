@@ -18,12 +18,12 @@ This guide assumes that you're working on a Windows machine. The setup for Linux
 Most Windows machines come with Java already installed. In order to check if you have Java installed on your machine, open your PowerShell and type `java --version` and then ENTER. The output should look similar to this:
 
 ```
-openjdk 11.0.3 2019-04-16
-OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.3+7)
-OpenJDK 64-Bit Server VM AdoptOpenJDK (build 11.0.3+7, mixed mode)
+openjdk 17.0.2 2022-01-18
+OpenJDK Runtime Environment (build 17.0.2+8-86)
+OpenJDK 64-Bit Server VM (build 17.0.2+8-86, mixed mode, sharing)
 ``` 
 
-In the case above, the machine is running Java 11 per default. If you see a similar message (with Java version 11 or newer), you are all set with this step and can continue with the next section (Installing Hadoop).
+In the case above, the machine is running Java 17 per default. If you see a similar message (with Java version 11 or newer), you are all set with this step and can continue with the next section (Installing Hadoop).
 
 **If the command above wasn't found by your machine**, you'll have to install Java. To do this, click on [this link](https://learn.microsoft.com/en-us/java/openjdk/download) and install Java, for example using the Windows installer as shown in the screenshot:
 
@@ -75,7 +75,7 @@ IntelliJ is the Integrated Development Environment (IDE) where we are going to d
    1. Scala
    2. Avro and Parquet Viewer
    
-3. Do not create a new project. Instead, click on *Get from VSC* and paste the following github URL from the training:
+3. Do not create a new project. Instead, click on *Get from VSC* (Version Control) and paste the following github URL from the training:
 
 `https://github.com/smart-data-lake/getting-started.git`
 

@@ -3,24 +3,21 @@
 Welcome! We are very happy to have you here today! Before starting, there are two organizational points to clear up:
 
 **Training agenda:** The training is divided into two parts / days. 
+
 	1. The first part of the training focuses on the theoretical concepts of the framework. The goal of this session is to arm you with the necessary knowledge for you to build your own pipelines and prepare for the second session. 
-	2. The second part is almost only hands-on: you will be divided into groups and will build a data pipeline. At the end of the session you will present your solution to the group.
-
-- **For ELCA colleagues:** beside the on-site training time, participants are entitled to use additional 8h for:
-	- Setup preparation
-  	- Self-paced exercises with SDLB
-    	+ lecture notes: https://github.com/smart-data-lake/getting-started/blob/training/presentation/lecture_notes.md
-  	- Preparation of use case
-
-
+	2. The second part is hands-on building your own custom pipeline: you will be divided into groups and will build a data pipeline. At the end of the session you will present your solution to the group.
 
 <!-- 
-Tools: In Teams annotation can be used to point to specific aspects in the configs, SchemaViewer,...
+- **For ELCA colleagues:** beside the on-site training time, participants are entitled to use additional 8h for:
+	- Setup preparation
+  	- between the taining days: self-paced exercises with SDLB using this lecture notes and
+    	+ getting started guide https://smartdatalake.ch/docs/getting-started/get-input-data
+  	- Preparation of use case
 -->
 
 <!-- 
 - emphasize that this is and interactive course, motivate for questions
-- provide lecture afterwards
+- provide lecture note afterward
 - long commands should be pasted in the chat
 - ask to follow along and try yourself, no intensive development today, but goal to use the framework by yourself
 
@@ -37,19 +34,31 @@ Tools: In Teams annotation can be used to point to specific aspects in the confi
 
 ![map about flights around Bern](images/flights_BE.png)
 
-* Let's try to abstract this use case... As data engineers, we want to provide elevated data for data scientists and business. **General steps to be followed**:
+
+
+<details>
+<summary> Task: shortly think, what do we, as data engineers, need to gather and process?</summary>
+
+- geolocations of the arrival and destination airports -> can compute the distances later
+- flight information -> count flights satisfying the criteria of <500km 
+</details>
+
+### **General steps to be followed**:
+Let's try to abstract this use case... As data engineers, we want to provide elevated data for data scientists and business.
   - download data
-  - combining/filter/transform data in a general manner
+  - clean/filter/combining/transform data in a general manner
   - store processed data, thus it can be utilized for various use cases
   - analyse/compute data for a specific application
-  - different data layers 
-    - stage layer (raw data)
-    - integration layer (cleaning/structuring/prepared data)
-    - business transformation layer (ready for data analysts/scientists to run/develop their applications)
+
+### Data architecture
+- Typically, data should be structured in multiple layers. Names vary a lot it could be bronze/silver/gold, raw/curation/info. Here we use:
+  - stage layer (raw data)
+  - integration layer (cleaning/structuring/prepared data)
+  - business transformation layer (ready for data analysts/scientists to run/develop their applications)
 
 ![data layer structure for the use case](images/dataLayers.png)
 
-The Smart Data Lake Builder (SDLB) is the tool we will use to accomplish these steps. Let us take a step back for the moment. We will come back to our use-case in a couple of minutes.
+The **Smart Data Lake Builder** (SDLB) is the tool we will use to accomplish these steps. Let us take a step back for the moment. We will come back to our use-case in a couple of minutes.
 
 ## Smart Data Lake vs. Smart Data Lake Builder
 
@@ -104,9 +113,6 @@ and are defined in the HOCON-format.
 
 ## QUIZ TIME!
 
-<details>
-<summary>Click here to show the question 1</summary>
-
 ### Question 1: What is true about the SDLB?
 
 - **A** -> It combines the advantages of a Data Warehouse and Data Lakes
@@ -122,13 +128,6 @@ and are defined in the HOCON-format.
 **Only C** is correct!
 </details>
 
-</details>
-
-
-
-<details>
-<summary>Click here to show the question 2</summary>
-
 ### Question 2: Which statements about the layered architecture are true?
 
 - **A** -> Data in the external layer is stored in external locations.
@@ -142,24 +141,22 @@ and are defined in the HOCON-format.
 **All the options are** correct!
 </details>
 
-</details>
-
-
 # Writing your first configuration file
 
 The data pipelines we will define are in *.conf* files
 (see HOCON-format above). Let's open the project and 
 have a look to the present implementation:
 
-> **WSL**: `ls config ; ls envConfig`
-> <br>
 > **IntelliJ**: show directory structure especially `config` and `envConfig` -> see multiple configuration files
+> <br>
+> **WSL**: `ls config ; ls envConfig`
 
 In the current implementation, there is a distinction between
-"normal" configuration files (pipeline definitions) and
-environment configuration files; which define variables and
+- "normal" **configuration** files (pipeline definitions), general/global settings and
+- **environment configuration** files; which define variables and
 key-value-pairs that we need for different environments
 (local, testing, production, etc...).
+
 ```
 config
 +-- global.conf
@@ -197,18 +194,20 @@ open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-pa
 * distinguish `global`, `dataObjects`, `actions`, and `connections`
 
 
-> - Add a two sections in `airports.conf`:
+Add a two sections in `airports.conf`:
 > 
-> ` dataObjects{ } ` 
+> ```
+> dataObjects{}
 > 
-> `actions{ } ` 
+> actions{}
+> ``` 
 
 
 
 
 <!-- DO THIS PART with SchemaViewer -->
 
-
+## What are these?
 ### DataObjects
 There are data objects of different types: files, database connections, and table formats. In other words, dataObjects define data entities and how they can be accessed by properties including location, type and others.
 To mention **a few** dataObjects:
@@ -244,7 +243,7 @@ Actions describe dependencies between input and output DataObjects and necessary
 
 ![Core components](images/core_components.png)
 
-### Back to the config Structure...
+## Back to the config Structure...
 
 - Reminder: we are aiming at having 3 different layers plus 1 layer for 
 external data entities : **ext**, **stg**, **int**, **btl**. 
@@ -277,9 +276,6 @@ We are concerned about the external layer and the staging layer.
 
 ### QUIZ TIME!
 
-<details>
-<summary>Click here to show question 3</summary>
-
 ### Question 3: Which facts about data objects are correct?
 
 - **A** -> Data objects describe dependencies between data entities
@@ -293,11 +289,6 @@ it also must have two corresponding two input data objects.
 
 **Only D** is correct!
 </details>
-
-</details>
-
-<details>
-<summary>Click here to show question 4</summary>
 
 ### Question 4: Which is true about actions?
 
@@ -313,11 +304,6 @@ integration layer to the staging layer using one action.
 **A and C** are both correct!
 </details>
 
-</details>
-
-<details>
-<summary>Click here to show question 5</summary>
-
 ### Question 5: Where are the credentials to a SQL-database defined?
 
 
@@ -332,27 +318,16 @@ integration layer to the staging layer using one action.
 **B** is correct!
 </details>
 
-</details>
-
-### PUZZLE TIME!
-TODO delete all runconfigs without add opens
-
-You should start the puzzle with the contents of this file:
-https://github.com/smart-data-lake/getting-started/blob/training_solution/configs_after_exercises/airports_after_manual_writing.conf
-
-<details>
-<summary>Click here to show the puzzle 1</summary>
-
-
-It is now time to continue building our pipeline. 
-We want the pipeline to do the following:
+## Airports pipeline
+It is now time to continue building our pipeline for gathering the airport data. 
+The pipeline should do the following:
 
 1. Download the airports data from the given link as a
 .csv file. 
 2. Store the airports table only with the attributes 
 *identity*, _name_, _latitude degree_ and _longitude degree_ in
-the **Delta Lake format**.
-3. Furthermore, we want to store .csv File containing
+the **Delta Lake** format.
+3. Furthermore, we want to store .csv file containing
 also the airport elevation. Since we have colleagues 
 both in the USA and in Europe, we want to provide 
 the airport elevation both in feet and in meters. For this
@@ -363,18 +338,25 @@ In order to build the pipeline, consider the following:
 - How many data objects and actions do you need in total?
 How many did we already configure?
 - Which configuration fields are possible? Which ones are required?
-  (Use the Schema Viewer!)
+  (Use the *Schema Viewer*!)
 - We want to use the Lakehouse Architecture. How can the 
 components be named properly?
 
-For this exercise, you are given some [preconfigured data objects](puzzle_1.md)
+### PUZZLE TIME!
+
+For this exercise, you are given some [preconfigured data objects](https://github.com/smart-data-lake/getting-started/blob/training/presentation/puzzle_1.md)
 and actions. The idea is that you use them to further
 build your airports.config file.
 
 > **TASK**: Copy and paste the proper data objects and actions
 > into your `airports.conf` file!
 
+<details>
+<summary>Solution</summary>
+
+[elements in airport.conf](https://github.com/smart-data-lake/getting-started/blob/training_solution/configs_after_exercises/airports_after_manual_writing.conf)
 </details>
+
 
 ## Two important concepts before testing our pipeline
 
