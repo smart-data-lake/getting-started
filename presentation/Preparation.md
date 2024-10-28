@@ -5,7 +5,7 @@ Welcome! Please follow the steps outlined in this document to complete the techn
 ## What you will need
 
 The following technical requirements are needed in order to participate in the training. Your system may already have some of these installed:
-- Java / JDK 11 (or newer) --> The SDLB is a framework programmed in Scala and it runs on the Java Virtual Machine.
+- Java / JDK (at least 11, or newer) --> The SDLB is a framework programmed in Scala and it runs on the Java Virtual Machine.
 - Hadoop --> A framework for distributed storage (needs to be separately installed). 
 - Intellij (with some plugins) --> Integrated Development Environment (IDE) where you will develop, build and run your data pipelines. In this guide we will install IntelliJ and its add-ons and will make sure that the project can build correctly.
 
@@ -18,9 +18,9 @@ This guide assumes that you're working on a Windows machine. The setup for Linux
 Most Windows machines come with Java already installed. In order to check if you have Java installed on your machine, open your PowerShell and type `java --version` and then ENTER. The output should look similar to this:
 
 ```
-openjdk 17.0.2 2022-01-18
-OpenJDK Runtime Environment (build 17.0.2+8-86)
-OpenJDK 64-Bit Server VM (build 17.0.2+8-86, mixed mode, sharing)
+openjdk 21.0.5 2024-10-15 LTS
+OpenJDK Runtime Environment Microsoft-10377968 (build 21.0.5+11-LTS)
+OpenJDK 64-Bit Server VM Microsoft-10377968 (build 21.0.5+11-LTS, mixed mode, sharing)
 ``` 
 
 In the case above, the machine is running Java 17 per default. If you see a similar message (with Java version 11 or newer), you are all set with this step and can continue with the next section (Installing Hadoop).
