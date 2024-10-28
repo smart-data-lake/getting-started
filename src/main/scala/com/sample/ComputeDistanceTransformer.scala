@@ -1,17 +1,18 @@
 package com.sample
 
 import io.smartdatalake.workflow.action.spark.customlogic.CustomDfTransformer
-import org.apache.spark.sql.functions.{col, udf}
+import org.apache.spark.sql.functions.{col, count, udf}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class ComputeDistanceTransformer extends CustomDfTransformer {
   override def transform(session: SparkSession, options: Map[String, String], df: DataFrame, dataObjectId: String): DataFrame = {
     val calculateDistanceInKilometerUdf = udf(calculateDistanceInKilometer)
-
+    val output =
     df.withColumn("distance",
       calculateDistanceInKilometerUdf(col("dep_latitude_deg"),col("dep_longitude_deg"),col("arr_latitude_deg"), col("arr_longitude_deg")))
       .withColumn("could_be_done_by_rail", col("distance") < 500)
 
+    output
   }
 
   def calculateDistanceInKilometer: (Double, Double, Double, Double) => Double = (depLat: Double, depLng: Double, arrLat: Double, arrLng: Double) => {

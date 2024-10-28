@@ -1,4 +1,3 @@
-
 # Puzzle #2 code blocks
 
 
@@ -13,7 +12,7 @@
       name = "Airport historization and filter"
       description = "Filter name and coordinates of airports and hisorize data"
       tags = ["historize", "filter", "DeltaLake"]
-      feed = transform
+      feed = historize-airport
     }
 
 ```
@@ -31,8 +30,8 @@
 ```
     metadata {
       name = "Airport elevation"
-      description = "Write airport elevation in meters to Csv file"
-      feed = transform
+      description = "Write airport elevation in meters to Parquet file"
+      feed = download-airport
     }
 ```
 

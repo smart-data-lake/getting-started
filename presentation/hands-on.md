@@ -1,24 +1,5 @@
 # Hands-On
 
-## Organization
-Groups for Exercizes
-
-**Group 1**
-
-
-
-**Group 2**
-
-
-**Group 3**
-
-
-**Group 4**
-
-
-**Group 5**
-
-
 ## Task
 * split into groups of **2** or 3
 * find use case you implement next week in a 4h session
