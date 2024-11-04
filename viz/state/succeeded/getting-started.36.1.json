@@ -1,0 +1,219 @@
+{
+  "appConfig" : {
+    "feedSel" : ".*",
+    "applicationName" : "getting-started",
+    "configuration" : [ "./config", "./envConfig/dev.conf" ],
+    "master" : "local[*]",
+    "deployMode" : "client",
+    "parallelism" : 2,
+    "statePath" : "viz/state",
+    "streaming" : false
+  },
+  "runId" : 36,
+  "attemptId" : 1,
+  "runStartTime" : "2024-11-04T05:14:45.953129488",
+  "attemptStartTime" : "2024-11-04T05:14:45.953174363",
+  "actionsState" : {
+    "join-departures-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 36,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-11-04T05:14:52.550367180",
+      "endTstmpPrepare" : "2024-11-04T05:14:52.605250727",
+      "startTstmpInit" : "2024-11-04T05:14:53.886626574",
+      "endTstmpInit" : "2024-11-04T05:14:54.099316289",
+      "startTstmp" : "2024-11-04T05:15:06.858602188",
+      "endTstmp" : "2024-11-04T05:15:11.104397230",
+      "duration" : "PT4.245795042S",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "btl-departures-arrivals-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : false,
+        "metrics" : {
+          "stage" : "$anonfun$recordDeltaOperationInternal$1",
+          "count" : 287,
+          "num_output_bytes" : 13016,
+          "num_tasks" : 1,
+          "count#mainInput" : 81126,
+          "rows_inserted" : 287,
+          "count#int-airports" : 81126,
+          "num_files" : 2,
+          "count#int-departures" : 287,
+          "stage_duration" : "PT0.016S"
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "int-departures", "int-airports" ],
+      "outputIds" : [ "btl-departures-arrivals-airports" ]
+    },
+    "download-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 36,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-11-04T05:14:47.383561893",
+      "endTstmpPrepare" : "2024-11-04T05:14:48.636040779",
+      "startTstmpInit" : "2024-11-04T05:14:52.648185692",
+      "endTstmpInit" : "2024-11-04T05:14:52.698278541",
+      "startTstmp" : "2024-11-04T05:14:54.215399927",
+      "endTstmp" : "2024-11-04T05:14:55.053151032",
+      "duration" : "PT0.837751105S",
+      "results" : [ {
+        "type" : "FileSubFeed",
+        "fileRefs" : [ {
+          "fullPath" : "stg-airports/result.csv",
+          "fileName" : "result.csv",
+          "partitionValues" : { }
+        } ],
+        "dataObjectId" : "stg-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "fileRefMapping" : [ {
+          "src" : {
+            "fullPath" : "",
+            "fileName" : "result",
+            "partitionValues" : { }
+          },
+          "tgt" : {
+            "fullPath" : "stg-airports/result.csv",
+            "fileName" : "result.csv",
+            "partitionValues" : { }
+          }
+        } ],
+        "metrics" : {
+          "files_written" : 1
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "ext-airports" ],
+      "outputIds" : [ "stg-airports" ]
+    },
+    "download-deduplicate-departures" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 36,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-11-04T05:14:48.640168810",
+      "endTstmpPrepare" : "2024-11-04T05:14:52.523319819",
+      "startTstmpInit" : "2024-11-04T05:14:52.702069711",
+      "endTstmpInit" : "2024-11-04T05:14:53.693738979",
+      "startTstmp" : "2024-11-04T05:14:54.219474307",
+      "endTstmp" : "2024-11-04T05:15:06.826311753",
+      "duration" : "PT12.606837446S",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "int-departures",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : true,
+        "metrics" : {
+          "stage" : "$anonfun$recordDeltaOperationInternal$1",
+          "count" : 722,
+          "num_output_bytes" : 34226,
+          "num_tasks" : 1,
+          "rows_inserted" : 722,
+          "num_files" : 2,
+          "stage_duration" : "PT0.163S"
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "ext-departures" ],
+      "outputIds" : [ "int-departures" ]
+    },
+    "historize-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 36,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-11-04T05:14:52.524217560",
+      "endTstmpPrepare" : "2024-11-04T05:14:52.549313615",
+      "startTstmpInit" : "2024-11-04T05:14:53.697804182",
+      "endTstmpInit" : "2024-11-04T05:14:53.883534043",
+      "startTstmp" : "2024-11-04T05:14:55.115029830",
+      "endTstmp" : "2024-11-04T05:15:06.826166409",
+      "duration" : "PT11.711136579S",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "int-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : true,
+        "metrics" : {
+          "stage" : "$anonfun$recordDeltaOperationInternal$1",
+          "count" : 81126,
+          "num_output_bytes" : 3375184,
+          "num_tasks" : 1,
+          "rows_inserted" : 81126,
+          "num_files" : 2,
+          "stage_duration" : "PT0.157S"
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "stg-airports", "int-airports" ],
+      "outputIds" : [ "int-airports" ]
+    },
+    "compute-distances" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 36,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2024-11-04T05:14:52.606780051",
+      "endTstmpPrepare" : "2024-11-04T05:14:52.638986502",
+      "startTstmpInit" : "2024-11-04T05:14:54.102847542",
+      "endTstmpInit" : "2024-11-04T05:14:54.207970594",
+      "startTstmp" : "2024-11-04T05:15:11.119288715",
+      "endTstmp" : "2024-11-04T05:15:12.878932341",
+      "duration" : "PT1.759643626S",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "btl-distances",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "isDummy" : false,
+        "metrics" : {
+          "stage" : "$anonfun$recordDeltaOperationInternal$1",
+          "count" : 287,
+          "num_output_bytes" : 15435,
+          "num_tasks" : 1,
+          "count#mainInput" : 287,
+          "rows_inserted" : 287,
+          "num_files" : 2,
+          "count#btl-departures-arrivals-airports" : 287,
+          "stage_duration" : "PT0.019S"
+        }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "btl-departures-arrivals-airports" ],
+      "outputIds" : [ "btl-distances" ]
+    }
+  },
+  "isFinal" : true,
+  "runStateFormatVersion" : 5,
+  "sdlbVersionInfo" : {
+    "version" : "2.7.2-896-SNAPSHOT",
+    "user" : "runner",
+    "date" : "2024-10-30T15:51:36.875303625",
+    "revision" : "8b04075c25\n"
+  },
+  "appVersionInfo" : {
+    "version" : "2.7.2-896-SNAPSHOT"
+  }
+}
