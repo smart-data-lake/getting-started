@@ -3,7 +3,7 @@
 
 package com.sample
 
-import com.sample.CustomWebserviceDataObject.{twoDaysSeconds, twoWeeksSeconds}
+import com.sample.CustomWebserviceDataObject.{offsetDaysSeconds, offsetWeeksSeconds}
 import com.typesafe.config.Config
 import io.smartdatalake.config.SdlConfigObject.DataObjectId
 import io.smartdatalake.config.{FromConfigFactory, InstanceRegistry}
@@ -27,7 +27,7 @@ import io.smartdatalake.workflow.dataobject.CanCreateIncrementalOutput
 import org.json4s.jackson.{JsonMethods, Serialization}
 
 // Default to the interval of [2 weeks and 2 days ago] -> [2 weeks ago]
-case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis() / 1000 - twoWeeksSeconds - twoDaysSeconds, end: Long = System.currentTimeMillis() / 1000 - twoWeeksSeconds )
+case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis() / 1000 - offsetWeeksSeconds - offsetDaysSeconds, end: Long = System.currentTimeMillis() / 1000 - offsetWeeksSeconds )
 
 case class State(airport: String, nextBegin: Long)
 
@@ -156,6 +156,6 @@ object CustomWebserviceDataObject extends FromConfigFactory[DataObject] with Sma
     extract[CustomWebserviceDataObject](config)
   }
 
-  val twoWeeksSeconds = 60 * 60 * 24 * 14
-  val twoDaysSeconds  = 60 * 60 * 24 * 2
+  val offsetWeeksSeconds = 60 * 60 * 24 * 270
+  val offsetDaysSeconds  = 60 * 60 * 24 * 2
 }
