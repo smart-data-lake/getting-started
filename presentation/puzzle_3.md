@@ -1,4 +1,3 @@
-
 # Puzzle #3 code blocks
 
 ---
@@ -43,9 +42,9 @@
 ```
     constraints = [{
       name = Departure Airport should be different from Arrival Aiport
-      description = "A flight from A to A makes no sense"
-      expression = "estarrivalairport != estdepartureairport"
-      errorMsgCols = [estdepartureairport,estarrivalairport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg,could_be_done_by_rail]
+     description = "A flight from A to A makes no sense"
+      expression = "est_arrival_airport != est_departure_airport"
+     errorMsgCols = [est_departure_airport,est_arrival_airport, arr_name, arr_latitude_deg, arr_longitude_deg, dep_name, dep_latitude_deg, dep_longitude_deg]
     }]
 
 ```
@@ -72,7 +71,6 @@
 ```
 
 </details>
-
 
 
 

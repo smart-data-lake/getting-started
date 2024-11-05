@@ -31,7 +31,7 @@
 		  Set the smartdatalake version to use here.
 		  If version cannot be resolved, make sure maven central repository is defined in settings.xml and the corresponding profile activated.
 		-->
-		<version>2.5.0-SNAPSHOT</version>
+		<version>2.7.2-896-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>getting-started</artifactId>
@@ -42,25 +42,54 @@
 	<properties>
 		<!-- default scala version - use predefined maven profiles to override -->
 		<scala.minor.version>2.12</scala.minor.version>
-		<scala.version>${scala.minor.version}.12</scala.version>
+		<scala.version>${scala.minor.version}.18</scala.version>
 	</properties>
 
 	<profiles>
+
 		<profile>
-			<id>copy-libs</id>
+			<id>generate-catalog</id>
 			<build>
 				<plugins>
-					<!-- copy dependencies to target/lib folder -->
+					<!-- generate catalog scala code. -->
 					<plugin>
-						<artifactId>maven-dependency-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.1.0</version>
 						<executions>
 							<execution>
-								<phase>package</phase>
+								<id>generate-catalog</id>
+								<phase>prepare-package</phase>
 								<goals>
-									<goal>copy-dependencies</goal>
+									<goal>java</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${project.build.directory}/lib</outputDirectory>
+									<mainClass>io.smartdatalake.lab.LabCatalogGenerator</mainClass>
+									<arguments>
+										<argument>--config</argument>
+										<argument>./config,./envConfig/dev.conf</argument>
+										<argument>--srcDirectory</argument>
+										<argument>./src/main/scala-generated</argument>
+									</arguments>
+									<classpathScope>compile</classpathScope>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Compiles Scala sources incl. generated catalog -->
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>scala-maven-plugin</artifactId>
+						<executions>
+							<!-- add additional execution to compile generated catalog (see id generate-catalog) -->
+							<execution>
+								<id>compile-catalog</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<configuration>
+									<sourceDir>./src/main/scala-generated</sourceDir>
 								</configuration>
 							</execution>
 						</executions>
