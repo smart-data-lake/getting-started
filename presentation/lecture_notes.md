@@ -35,9 +35,9 @@ Welcome! We are very happy to have you here today! Before starting, there are tw
 ![map about flights around Bern](images/flights_BE.png)
 
 
-
+> Task: shortly think, what do we, as data engineers, need to gather and process?
 <details>
-<summary> Task: shortly think, what do we, as data engineers, need to gather and process?</summary>
+<summary>Answer</summary>
 
 - geolocations of the arrival and destination airports -> can compute the distances later
 - flight information -> count flights satisfying the criteria of <500km 
@@ -80,7 +80,9 @@ The **Smart Data Lake Builder** (SDLB) is the tool we will use to accomplish the
 * portable -> on any platform with java env., even across platforms
 
 ## Setup
-* clone repo
+> Task: get up-to-date source code
+> 
+> clone repo or update
   ```
   git clone -b training https://github.com/smart-data-lake/getting-started.git SDLB_training
   ```
@@ -113,13 +115,13 @@ and are defined in the HOCON-format.
 
 ## QUIZ TIME!
 
-### Question 1: What is true about the SDLB?
-
-- **A** -> It combines the advantages of a Data Warehouse and Data Lakes
-- **B** -> It is a .NET-based application for data orchestration
-- **C** -> It includes features like historization, incremental load and partitioning
-- **D** -> It features runtime validation while transferring the data
-- **E** -> Its main elements comprise data objects, activities and connections.
+> Q: What is true about the SDLB?
+>
+> - **A** -> It combines the advantages of a Data Warehouse and Data Lakes
+> - **B** -> It is a .NET-based application for data orchestration
+> - **C** -> It includes features like historization, incremental load and partitioning
+> - **D** -> It features runtime validation while transferring the data
+> - **E** -> Its main elements comprise data objects, activities and connections.
 
 
 <details>
@@ -128,12 +130,12 @@ and are defined in the HOCON-format.
 **Only C** is correct!
 </details>
 
-### Question 2: Which statements about the layered architecture are true?
-
-- **A** -> Data in the external layer is stored in external locations.
-- **B** -> The staging layer is used to "dump" raw data from the external layer.
-- **C** -> The integration layer comprises some data transformation.
-- **D** -> The business transformation layer comprises some data transformation.
+> Q: Which statements about the layered architecture are true?
+>
+> - **A** -> Data in the external layer is stored in external locations.
+> - **B** -> The staging layer is used to "dump" raw data from the external layer.
+> - **C** -> The integration layer comprises some data transformation.
+> - **D** -> The business transformation layer comprises some data transformation.
 
 <details>
 <summary>Answer</summary>
@@ -185,27 +187,17 @@ We want to write a pipeline that does the following:
 1. Download the airports data from the given link as a
    .csv file.
 
-> - Create a new file `airports.conf`
+> Task: first configuration
+> - open file `airports.conf`
+> - there is an *ext* dataObject
 > - ....and now?
+> - -> we need stg data object and the related action
 
+<!-- DO THIS PART with SchemaViewer -->
 
 ### Schema Viewer - What can I write?
 open [SDLB Schema Viewer](https://smartdatalake.ch/json-schema-viewer/#viewer-page)
 * distinguish `global`, `dataObjects`, `actions`, and `connections`
-
-
-Add a two sections in `airports.conf`:
-> 
-> ```
-> dataObjects{}
-> 
-> actions{}
-> ``` 
-
-
-
-
-<!-- DO THIS PART with SchemaViewer -->
 
 ## What are these?
 ### DataObjects
@@ -248,14 +240,38 @@ Actions describe dependencies between input and output DataObjects and necessary
 - Reminder: we are aiming at having 3 different layers plus 1 layer for 
 external data entities : **ext**, **stg**, **int**, **btl**. 
 
+> Which are the two layers concerned for
+our mini-pipeline? (Click to see the answer)
 <details>
-<summary>Which are the two layers concerned for 
-our mini-pipeline? (Click to see the answer)</summary>
+<summary>Answer</summary>
 We are concerned about the external layer and the staging layer.
 </details>
 
-> **TASK**: Define the first two data objects and one action
-> to complete this task.
+> **Task**: Add *stg* dataObject and the related *action* in `airports.conf`:
+<details>
+<summary>Answer</summary>
+
+```HOCON
+  dataObjects{
+  #...
+    stg_airports {
+      type = CsvFileDataObject
+      path = "data/~{id}"
+      csvOptions {
+        mode=failfast #this will prevent people from reading a csv with semicolon delimiter and getting a very strange error
+      }
+    }
+  }
+  actions {
+   download-airports {
+     type = FileTransferAction
+     inputId = ext_airports
+     outputId = stg_airports
+     metadata.feed = test
+   }
+  }
+```
+</details> 
 
 <!--
 ## Excursion: env variables
@@ -276,13 +292,13 @@ We are concerned about the external layer and the staging layer.
 
 ### QUIZ TIME!
 
-### Question 3: Which facts about data objects are correct?
-
-- **A** -> Data objects describe dependencies between data entities
-- **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type), 
+> Q: Which facts about data objects are correct?
+>
+> - **A** -> Data objects describe dependencies between data entities
+> - **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type), 
 it also must have two corresponding two input data objects.
-- **C** -> Data objects can have many transformers.
-- **D** -> None of the possibilities are correct.
+> - **C** -> Data objects can have many transformers.
+> - **D** -> None of the possibilities are correct.
 
 <details>
 <summary>Answer</summary>
@@ -290,13 +306,13 @@ it also must have two corresponding two input data objects.
 **Only D** is correct!
 </details>
 
-### Question 4: Which is true about actions?
-
-- **A** -> Actions describe dependencies between data entities
-- **B** -> It is technically impossible to write from the 
+> Q: Which is true about actions?
+>
+> - **A** -> Actions describe dependencies between data entities
+> - **B** -> It is technically impossible to write from the 
 integration layer to the staging layer using one action.
-- **C** -> Actions can have many transformers.
-- **D** -> None of the possibilities are correct.
+> - **C** -> Actions can have many transformers.
+> - **D** -> None of the possibilities are correct.
 
 <details>
 <summary>Answer</summary>
@@ -304,13 +320,12 @@ integration layer to the staging layer using one action.
 **A and C** are both correct!
 </details>
 
-### Question 5: Where are the credentials to a SQL-database defined?
-
-
-- A: In the actions.
-- B: In the connections.
-- C: In the data objects.
-- D: In the global configurations
+> Q: Where are the credentials to a SQL-database defined?
+>
+> - A: In the actions.
+> - B: In the connections.
+> - C: In the data objects.
+> - D: In the global configurations
 
 <details>
 <summary>Answer</summary>
@@ -323,7 +338,7 @@ It is now time to continue building our pipeline for gathering the airport data.
 The pipeline should do the following:
 
 1. Download the airports data from the given link as a
-.csv file. 
+.csv file. (done)
 2. Store the airports table only with the attributes 
 *identity*, _name_, _latitude degree_ and _longitude degree_ in
 the **Delta Lake** format.
@@ -344,15 +359,20 @@ components be named properly?
 
 ### PUZZLE TIME!
 
-For this exercise, you are given some [preconfigured data objects](https://github.com/smart-data-lake/getting-started/blob/training/presentation/puzzle_1.md)
+For this exercise, you are given some [preconfigured data objects, see presentation/puzzle_1.md](https://github.com/smart-data-lake/getting-started/blob/training/presentation/puzzle_1.md)
 and actions. The idea is that you use them to further
 build your airports.config file.
 
 > **TASK**: Copy and paste the proper data objects and actions
-> into your `airports.conf` file!
+into your `airports.conf` file!
 
 <details>
 <summary>Solution</summary>
+
+- Data Object 2 for **int** layer
+- Data object 4 for **btl**, including the path argument
+- Action 2 stg -> btl
+- Action 4 for historization
 
 [elements in airport.conf](https://github.com/smart-data-lake/getting-started/blob/training_solution/configs_after_exercises/airports_after_manual_writing.conf)
 </details>
@@ -369,7 +389,7 @@ While metadata attributes are optional, they can be very useful
 in some situations, as it is the case of *feeds*:
 
 
-Often we do not want to run all defined pipelines. 
+Often we do not want to run all the defined pipeline(s). 
 Especially during development, debugging or in various use case,
 we rely on running only parts. This may be just a single action/transformation, 
 or downloading everything. The way we define the parts we want to run is by 
@@ -455,14 +475,10 @@ authentication {
 
 ### PUZZLE TIME!
 
-<details>
-<summary>Click here to show the puzzle 2</summary>
-
-
-Before testing our pipeline, we want to write some metadata
+Before testing our pipeline, we want to write some **metadata**
 into our data objects and actions. We also want to
-replace some code blocks with template definitions and
-environment variables. Before starting the exercise, please 
+replace some code blocks with **template** definitions and
+**environment variables**. Before starting the exercise, please 
 think about the following:
 
 - Which feeds make sense? Which ones are not really useful?
@@ -471,12 +487,24 @@ existing templates.
 - Do you have to overwrite some of the exiting code?
 
 > **TASK**: 
-> 1. Paste the [code blocks from the puzzle](puzzle_2.md) into your airports.conf file!
-> Note that there are no "extra" blocks this time.
+> 1. Paste the [code blocks from the puzzle, presentation/puzzle2.md](puzzle_2.md) into your airports.conf file!
+> Note that there are no "extra" blocks this time, use all of them at the proper location
 > 2. Try running your pipeline one time!
-</details>
 
-*Pause / Change lecturers here*
+<details>
+<summary>Solution</summary>
+
+ - Block 1 -> action: historize-airports
+ - Block 2 -> action: export-airport-elevations
+ - Block 3 -> dataObject: stg_airports
+ - Block 4 -> swap in dataObject stg_airports and btl_airports_elevation
+ - Block 5 -> use template for int_airports
+ - Block 6 -> dataObject int_airports
+ - Block 7 -> action: download-airports
+ - Block 8 -> dataObject: btl_airports_elevation
+
+The solution should look like [the solution file](https://github.com/smart-data-lake/getting-started/blob/training_solution/config/airports.conf) 
+</details>
 
 ### 3. Execution phases
 
@@ -486,21 +514,20 @@ The SDLB executes the following phases on each run:
 2. **DAG preparation**: Preconditions are validated. This includes testing Connections and DataObject structures that must exists.
 3. **DAG init**: Creates and validates the whole lineage of Actions according to the DAG. For Spark Actions this involves the validation of the DataFrame lineage.
 4. **DAG exec**:  Data is effectively transferred in this phase (and only in this phase!). This phase is not processed in dry-run mode.
-* early validation: in init even custom transformation are checked, e.g. identifying mistakes in column names
+
+* early validation: in the init phase, even custom transformation are checked, e.g. identifying mistakes in column names
 * [Docu: execution phases](https://smartdatalake.ch/docs/reference/executionPhases)
 
-Let's run SDLB_part2 template from IntelliJ. `--partition-values=estdepartureairport=LSZB,EDDF` with debug break point
-While it runs inspect the command
+Let's run `03_SDLB_part2` template from IntelliJ. `--partition-values=estdepartureairport=LSZB,EDDF` with debug break point.
+While it runs inspect the run configuration. Different ways of selecting feeds can be listed by starting SDLB with `--help`:
 
-Notice that we use `StandardizeColNamesTransformer` in Action `download-deduplicate-departures`.
-You can see it's effect by comparing the contents of `stg_departures` and `int_departures`. 
-
-**Explain Feeds**
-**start application with `--help`: **
+Notice in *departure.conf*, we use `StandardizeColNamesTransformer` in Action `download-deduplicate-departures`.
+You can see its effect by comparing the contents of `stg_departures` and `int_departures`. 
 
 ### DAG
+>Task: See DAG in output
+
 * (Directed acyclic graph)
-> show DAG in output
 * automatically created using the specifications in the SDLB config.
 * can fork and join
 * no recursion
@@ -536,7 +563,7 @@ You can see it's effect by comparing the contents of `stg_departures` and `int_d
                   └─────────────────┘
 ```
 
-  show result files
+> Task: inspect result files in data directory
 
 
 
@@ -590,30 +617,24 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 		+ for JDBC and DeltaLakeTable, need to be enabled 
         + 
 ### QUIZ TIME!
-<details><summary>Click here to show the question 6</summary>
- 
- Q: When does SDLB execute custom code such as ComputeDistanceTransformer?
-
- - A: Configuration parsing
- - B: DAG preparation
- - C: DAG Init 
- - D: DAG exec 
+>Q: When does SDLB execute custom code such as ComputeDistanceTransformer?
+>
+> - A: Configuration parsing
+> - B: DAG preparation
+> - C: DAG Init 
+> - D: DAG exec 
 
 <details>
 <summary>Answer</summary>
-**C and D** are correct!
+**C** (without data) and **D** (with data) are correct!
 </details>
-</details>
 
-
-<details><summary>Click here to show the question 7</summary>
- 
- Q: When your config has a typo and you wrote an Action Type that does not exist, when will SBLD notice it and abort?
-
- - A: Configuration parsing 
- - B: DAG preparation
- - C: DAG Init
- - D: DAG exec
+>Q: When your config has a typo and you wrote an Action Type that does not exist, when will SBLD notice it and abort?
+>
+> - A: Configuration parsing 
+> - B: DAG preparation
+> - C: DAG Init
+> - D: DAG exec
 
 <details>
 <summary>Answer</summary>
@@ -621,61 +642,47 @@ Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException:
 **A** is correct!
 </details>
 
-</details>
-
-<details><summary>Click here to show the question 8</summary>
-
- Q: When your Action is trying to process a column that does not exist, when will SBLD notice it and abort?
-
- - A: Configuration parsing 
- - B: DAG preparation
- - C: DAG Init 
- - D: DAG exec
+>Q: When your Action is trying to process a column that does not exist, when will SBLD notice it and abort?
+>
+> - A: Configuration parsing 
+> - B: DAG preparation
+> - C: DAG Init 
+> - D: DAG exec
 
 <details>
 <summary>Answer</summary>
 
 **C** is correct!
 </details>
-
-</details>
-
-
-<details><summary>Click here to show the question 9</summary>
  
- Q: If an earlier action fails during Init or Exec Phase, what will SDLB do with the other actions?
-
- - A: Cancel all other Actions
- - B: Cancel all Actions that depend on the failed Action
- - C: Actions that do not depend on the failed Action continue running
- - D: Cancel all other Actions, but only in Exec Phase
+>Q: If an earlier action fails during Init or Exec Phase, what will SDLB do with the other actions?
+>
+> - A: Cancel all other Actions
+> - B: Cancel all Actions that depend on the failed Action
+> - C: Actions that do not depend on the failed Action continue running
+> - D: Cancel all other Actions, but only in Exec Phase
 
 <details>
 <summary>Answer</summary>
 
 B and C are correct!
 </details>
-
-</details>
-
 
 ## Data Quality
 
 ### QUIZ TIME!
-<details><summary>Click here to show the question 10</summary>
 
- Q: After you built your pipeline, how do you know if it does what you expect?
+>Q: After you built your pipeline, how do you know if it does what you expect?
+> 
+> - A: If it did not crash it was a success
+> - B: Look at some Data Samples of the output with your intuition
+> - C: SDLB compares input and output data and notifies you in case of differences
+> - D: Define some rules on your output and execute Queries on the whole output
  
- - A: If it did not crash it was a success
- - B: Look at some Data Samples of the output with your intuition
- - C: Define some rules on your output and execute Queries on the whole output
-
 <details>
 <summary>Answer</summary>
 
-B and C are correct!
-</details>
-
+B and D are correct!
 </details>
 
 Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
@@ -685,53 +692,65 @@ Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 
 **Puzzle Time!** 
 
-><details><summary>Click here to show puzzle 3</summary>
->
->Insert [the code given in puzzle 3](puzzle_3.md) in the file *distances.conf*.
->
->Execute SDLB on partition estdepartureairport=LSZB (SDLB_data_quality):
-> 
->`-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel compute --partition-values estdepartureairport=LSZB`
->
->Let's change the numbers to see what happens when the expectations and constraints are violated.
->Notice the warning.
->We will come to metrics later when we talk about state.
+>**Task:** Insert 2 to proper blocks from [puzzle 3](puzzle_3.md) into the file *distances.conf*.
+<details>
+<summary>Solution</summary>
+
+Block 3 and 4  
 </details>
 
+> Task: Execute SDLB on partition `estdepartureairport=LSZB` (04_SDLB_data_quality) using arguments:
 
+`-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel compute --partition-values estdepartureairport=LSZB`
+
+Feel free to play around a little, change the numbers to see what happens when the expectations and constraints are violated.
+
+<details>
+<summary>Results</summary>
+
+Here we get the error:
+```commandline
+Exception in thread "main" io.smartdatalake.util.dag.TaskFailedException: Task compute-distances failed. Root cause is 'RuntimeException: (DataObject~btl_distances) Constraint 'Departure Airport should be different from Arrival Aiport' failed for record: est_departure_airport=EDDF est_arrival_airport=EDDF arr_name=Frankfurt Airport arr_latitude_deg=50.030241 arr_longitude_deg=8.561096 dep_name=Frankfurt Airport dep_latitude_deg=50.030241 dep_longitude_deg=8.561096'
+Caused by: org.apache.spark.SparkException: Job aborted due to stage failure: Task 4 in stage 58.0 failed 1 times, most recent failure: Lost task 4.0 in stage 58.0 (TID 86) (NB27029.elcaNet.local executor driver): java.lang.RuntimeException: (DataObject~btl_distances) Constraint 'Departure Airport should be different from Arrival Aiport' failed for record: est_departure_airport=EDDF est_arrival_airport=EDDF arr_name=Frankfurt Airport arr_latitude_deg=50.030241 arr_longitude_deg=8.561096 dep_name=Frankfurt Airport dep_latitude_deg=50.030241 dep_longitude_deg=8.561096
+	at org.apache.spark.sql.catalyst.expressions.RaiseError.eval(misc.scala:90)
+```
+As data engineers we may clean the data removing these unwanted/incorrect records 
+
+OR
+
+For now, we just disable the constraint.
+</details>
+
+We will come to metrics later when we talk about state.
 
 ### QUIZ TIME!
-<details><summary>Click here to show the question 11</summary>
- Q: Which statements about expectations and constraints are true?
-
- - A: An Expectation allows to make a check on the expected number of records
- - B: When an Expectation has failed, SDLB will always abort
- - C: A Constraint allows to make a check on individual records
- - D: When a Constraint has failed, SDLB will always abort
+>Q: Which statements about expectations and constraints are true?
+>
+> - A: An Expectation allows to make a check on the expected number of records
+> - B: When an Expectation has failed, SDLB will always abort
+> - C: A Constraint allows to make a check on individual records
+> - D: When a Constraint has failed, SDLB will always abort
 
 <details>
 <summary>Answer</summary>
 
 **A, C and D ** are correct!
+Hint: constraint fails -> error, expectation fail -> warning or error (selected in `failedSeverity`)
 </details>
 
-</details>
 
 ## Partitions
-
 
 ![Partitions](images/partitions.png)
 
 ### QUIZ TIME!
 
-<details><summary>Click here to show the question 12</summary>
-
- Q: After partitioning your data...
- 
--  A: You have more data than before
--  B: You have divided your data into multiple pieces
--  C: You can access data faster
--  D: Your data uses up less space
+> Q: After partitioning your data...
+>
+> -  A: You have more data than before
+> -  B: You have divided your data into multiple pieces
+> -  C: You can access data faster
+> -  D: Your data uses up less space
 
 <details>
 <summary>Answer</summary>
@@ -739,13 +758,12 @@ Look at documentation here: https://smartdatalake.ch/docs/reference/dataQuality
 B and C are correct!
 </details>
 
-</details>
+First, have a look at `data/btl_distances`.
 
-First have a look at `data/btl_distances`.
+Let's download the data for a different partition, 
+set partitionValues `--partition-values estdepartureairport=EDDF` in the run configuration.
 
-Let's download the data for a different partition, set partitionValues estdepartureairport=EDDF.
-
-When you now look at data/btl_distances, you will only see an a new folder estdepartureairport=EDDF 
+When you now look at data/btl_distances, you will only see a new directory `estdepartureairport=EDDF` 
 and in the logs you find: `start writing to DataObject~btl_distances, partitionValues estdepartureairport=EDDF [exec-compute-distances]`)
 
 Working with partitions forces to create the whole data pipeline around them <br> 
@@ -756,17 +774,17 @@ when dealing with large amounts of data.
 
 ## Execution Modes
 for Actions there are different execution modes, including various incremental modes, e.g.:
-  - see https://smartdatalake.ch/docs/reference/executionModes#dataobjectstateincrementalmode
+  - see [dataobjectstateincrementalmode](https://smartdatalake.ch/docs/reference/executionModes#dataobjectstateincrementalmode)
 
 ### Incremental Load
 
 ![Incremental Load](images/incremental.png)
 
 Here we use `DataObjectStateIncrementalMode`: 
-* 
-* * desire to **not read** (and write) **all** data from input at every run -> incrementally
+
+* desire to **not read** (and write) **all** data from input at every run -> incrementally
 * or **here**: departure source **restricted request** to <7 days
-  - initial request 2 days 29.-20.08.2021
+  - initial request 2 days 2 weeks ago
 * To enable stateIncremental we need to change the action `download-deduplicate-departures` and set these parameters of the DeduplicateAction:
   ```
     executionMode = { type = DataObjectStateIncrementalMode }
@@ -786,11 +804,9 @@ After changing our config, try to execute the concerned action
 > * **WSL**: `sdlb_cmd --feed-sel ids:download-deduplicate-departures`
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures`
 
-Now it will **fail** because we need to provide a path for the state-path.
+Now it will **fail** because we need to provide a state path.
 
 ### QUIZ TIME!
-<details><summary>Click here to show question 13</summary>
-
  Q: Where is the state stored for DataObjectStateIncrementalMode?
  
  - A: In Memory
@@ -803,9 +819,8 @@ Now it will **fail** because we need to provide a path for the state-path.
 C is correct!
 </details>
 
-</details>
 
-Add state path and name: (SDLB_state config file)
+Add state path and name: (`06_SDLB_state` config file)
 > * **WSL**: `sdlb_cmd --feed-sel ids:download-deduplicate-departures --state-path /mnt/data/state -n SDLB_training`
 > * **IntelliJ**: `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel ids:download-deduplicate-departures --state-path $ProjectFileDir$/data/state -n SDLB_training`
 
@@ -840,15 +855,15 @@ Add state path and name: (SDLB_state config file)
 -> monitor the growth of the table
 -> possible see streaming trigger interval of 48s in output: `LocalSmartDataLakeBuilder$ - sleeping 48 seconds for synchronous streaming trigger interval [main]` otherwise process took more than 60 sec  
 
-Task: change the streaming trigger interval to 10s (or alternatively to 120s)
+> Task: change the streaming trigger interval to 10s (or alternatively to 120s)
 Hint: search for trigger in [Schema Viewer](https://smartdatalake.ch/json-schema-viewer/)
 
-> <details><summary>Solution: Click to expand!</summary>
->
-> search interval in Schema Viewer 
-> and add to the `config/global.conf` -> `global`->`synchronousStreamingTriggerIntervalSec = 10` 
-> This defines the interval between 2 starts (not end to start)
-> </details>
+<details><summary>Solution: Click to expand!</summary>
+
+search interval in Schema Viewer 
+and add to the `config/global.conf` -> `global`->`synchronousStreamingTriggerIntervalSec = 10` 
+This defines the interval between 2 starts (not end to start)
+</details>
  
   * Now output looks like this :
     ```
@@ -874,8 +889,6 @@ Hint: search for trigger in [Schema Viewer](https://smartdatalake.ch/json-schema
 
 ### QUIZ TIME!
 
-<details><summary>Click here to show question 14</summary>
-
  Q: What does the *1.1* mean in the file *SDLB_training.1.1.json* ?
  
  - A: Version Number of SDLB used
@@ -888,7 +901,7 @@ Hint: search for trigger in [Schema Viewer](https://smartdatalake.ch/json-schema
 D is correct!
 </details>
 
-</details>When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
+When the run crashes we want to restart from where we left and only run remaining tasks. Especially when handling large datasets.
 * requires states (`--state-path`)
 
 Let's try.
@@ -912,7 +925,7 @@ ActionDAGRun$ActionEventListener - Action~download-deduplicate-departures[Dedupl
 
 ## Parallelism
 Distinguish 2 types of parallelism:
-  - within a spark job: the amount of Spark tasks, controlled by global option `    "spark.sql.shuffle.partitions" = 2`
+  - within a spark job: the amount of Spark tasks, controlled by global option `"spark.sql.shuffle.partitions" = 2`
   - parallel running DAG actions of SDLB, by default serial, *one by one* action
     + see `Action~download-airports[FileTransferAction]: Exec started` and `Action~download-deduplicate-departures[DeduplicateAction]`
     + use command line option `--parallelism 2` to run both tasks in parallel. compare:
@@ -921,7 +934,7 @@ First, measure serial run:
 > * **WSL**: `sdlb_cmd --feed-sel .* --state-path /mnt/data/state -n SDLB_training >& out.serial`
 > * **IntelliJ**: 
 >   * CLI arguments `-c $ProjectFileDir$/config,$ProjectFileDir$/envConfig/local_Intellij.conf --feed-sel .* --state-path $ProjectFileDir$/data/state -n SDLB_training`
->   * Save console output file: `$ProjectFileDir$\out.serial`
+>   * Run configuration: Save console output file: `$ProjectFileDir$\out.serial`
 
 Then run in parallel: adding `--parallelism 2` and change output file name
 > * **WSL**: `sdlb_cmd --feed-sel .* --state-path /mnt/data/state -n SDLB_training --parallelism 2 >& out.parallel`
@@ -958,10 +971,11 @@ Then run in parallel: adding `--parallelism 2` and change output file name
 - :warning: parallel actions are more difficult to **debug**
 
 ## Execution Engines vs Execution Environments
-[Go through documentation](https://smartdatalake.ch/docs/reference/executionEngines)
-> Look at plot at bottom and explain when which Engine is running (see also table on top): 
-> When copying Files, when copying Data from a File to a Spark Table,
-> When Transforming Data with Snowflake via Snowpark
+> [Go through documentation](https://smartdatalake.ch/docs/reference/executionEngines)
+>
+> -> Look at plot at bottom and explain when which Engine is running (see also table on top): <br>
+> When copying Files, when copying Data from a File to a Spark Table, <br>
+> When Transforming Data with Snowflake via Snowpark <br>
 > When Transforming Data between Spark and Snowflake
 
 If you are interested in trying out SDLB with Snowflake, you can follow this [Blog Post](https://smartdatalake.ch/blog/sdl-snowpark/)
@@ -1003,8 +1017,6 @@ The viewer runs separately
 * Integrated MLOps with MFLow (train & predict)
 * Remote Agent support
 * Operations UI for visualizing Runtime Information
-
-Q4:
 * Extended Metrics Collection for Iceberg and Delta Lake
 * Language Server: Code completion for configuration files in Visual Studio Code and IntelliJ
 

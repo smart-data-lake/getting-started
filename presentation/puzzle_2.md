@@ -12,7 +12,7 @@
       name = "Airport historization and filter"
       description = "Filter name and coordinates of airports and hisorize data"
       tags = ["historize", "filter", "DeltaLake"]
-      feed = historize-airport
+      feed = historize-airports
     }
 
 ```
@@ -31,7 +31,7 @@
     metadata {
       name = "Airport elevation"
       description = "Write airport elevation in meters to Parquet file"
-      feed = download-airport
+      feed = download-airports
     }
 ```
 
@@ -49,7 +49,7 @@
       description = "contains beside GPS coordiantes, elevation, continent, country, region"
       layer = "staging"
       subjectArea = "airports"
-      tags = ["aviation", "airport", "location"]
+      tags = ["aviation", "airports", "location"]
     }
 ```
 
@@ -96,7 +96,7 @@ int_airports = ${templates.dataLake} {
       description = "airport names and locations"
       layer = "integration"
       subjectArea = "airports"
-      tags = ["aviation", "airport", "location"]
+      tags = ["aviation", "airports", "location"]
     }
 ```
 
@@ -115,7 +115,7 @@ int_airports = ${templates.dataLake} {
      name = "Airport injection"
      description = "download airport data and write into CSV"
      tags = ["download", "websource"]
-     feed = download-airport
+     feed = download-airports
    }
 ```
 
@@ -134,7 +134,7 @@ int_airports = ${templates.dataLake} {
       description = "contains beside GPS coordiantes, elevation, continent, country, region"
       layer = "business transformation"
       subjectArea = "airports"
-      tags = ["aviation", "airport", "location"]
+      tags = ["aviation", "airports", "location"]
     }
 ```
 
