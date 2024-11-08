@@ -296,7 +296,7 @@ We are concerned about the external layer and the staging layer.
 >
 > - **A** -> Data objects describe dependencies between data entities
 > - **B** -> If a pipeline results in two .CSV files as output (using the CSVFileDataObject type), 
-it also must have two corresponding two input data objects.
+it also must have two corresponding input data objects.
 > - **C** -> Data objects can have many transformers.
 > - **D** -> None of the possibilities are correct.
 
