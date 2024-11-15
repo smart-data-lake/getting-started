@@ -3,6 +3,7 @@ package io.test
 import org.scalatest.FunSuite
 import org.apache.spark.sql
 import org.apache.spark.sql.SparkSession
+import io.smartdatalake.meta.configexporter._
 
 class DataTest extends FunSuite {
   val spark: SparkSession = SparkSession.builder()
@@ -34,5 +35,12 @@ class DataTest extends FunSuite {
       Thread.sleep(10000)
       println(deltaTable.toDF.count())
     }
+  }
+  test("upload sdlb conf to ui") {
+    import com.databricks.sdk.scala.dbutils.DBUtils
+    val dbutils = DBUtils.getDBUtils()
+    // Upload config
+    val repodir = System.getProperty("user.dir")
+    ConfigJsonExporter.main(Array("--config", s"file:///$repodir/config,file:///$repodir/envConfig/local_Intellij.conf", "--target", "uiBackend"))
   }
 }
