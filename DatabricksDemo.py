@@ -4,7 +4,14 @@
 # MAGIC This is a Databricks Notebook to install and demonstrate SDLB on Databricks.
 # MAGIC See recent Blog Post on https://smartdatalake.ch/blog for detailled explanations.
 # MAGIC
-# MAGIC Use the Widgets above to configure most important parameters.
+# MAGIC Run cell below to create Widgets above to configure most important parameters.
+
+# COMMAND ----------
+
+# Create widgets
+dbutils.widgets.text("REPODIR", "", "Repository Directory")
+dbutils.widgets.text("TMPDIR", "", "Temporary Directory")
+dbutils.widgets.text("VOLDIR", "", "Volume Directory")
 
 # COMMAND ----------
 
