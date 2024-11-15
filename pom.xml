@@ -169,6 +169,12 @@
 
 		<dependency>
 			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-lang_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
 			<artifactId>sdl-deltalake_${scala.minor.version}</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

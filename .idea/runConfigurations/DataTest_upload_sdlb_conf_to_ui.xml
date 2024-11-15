@@ -1,0 +1,37 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DataTest.upload sdlb conf to ui" type="ScalaTestRunConfiguration" factoryName="ScalaTest" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
+    <module name="getting-started" />
+    <option name="VMParameters" value="" />
+    <option name="allowRunningInParallel" value="false" />
+    <option name="alternativeJrePath" />
+    <option name="alternativeJrePathEnabled" value="false" />
+    <option name="classpathModifications">
+      <list />
+    </option>
+    <option name="envs">
+      <map>
+        <entry key="DATALAKEPREFIX" value="data" />
+      </map>
+    </option>
+    <option name="passParentEnvs" value="true" />
+    <option name="programParameters" value="" />
+    <option name="projectPathOnTarget" />
+    <option name="selectedOptions">
+      <list />
+    </option>
+    <option name="testKind" value="Test name" />
+    <option name="workingDirectory" value="C:\Users\tbb\WORK\sdl\getting-started" />
+    <option name="envs">
+      <map>
+        <entry key="DATALAKEPREFIX" value="data" />
+      </map>
+    </option>
+    <option name="shortenClasspath" value="ARGS_FILE" />
+    <option name="testClassPath" value="io.test.DataTest" />
+    <option name="testName" value="upload sdlb conf to ui" />
+    <option name="workingDirectory" value="C:\Users\tbb\WORK\sdl\getting-started" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
