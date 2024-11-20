@@ -28,6 +28,7 @@ class DataTest extends FunSuite {
     //deltaTable.history().show(false)
     deltaTable.toDF.show()
   }
+
   test("read deltalake count"){
     import io.delta.tables._
     val deltaTable = DeltaTable.forPath(spark, "data/int_departures")
@@ -36,6 +37,8 @@ class DataTest extends FunSuite {
       println(deltaTable.toDF.count())
     }
   }
+
+  // Use this test for uploading the SDLB configuration to the UI
   test("upload sdlb conf to ui") {
     import com.databricks.sdk.scala.dbutils.DBUtils
     val dbutils = DBUtils.getDBUtils()
