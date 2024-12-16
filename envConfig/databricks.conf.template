@@ -10,28 +10,3 @@ env {
   basePathWithId = ${env.basePath}"~{id}"
   tablePathWithId = null # managed tables need no path
 }
-
-global {
-  uiBackend {
-    baseUrl = "https://nn92uqy13e.execute-api.eu-central-1.amazonaws.com/DEV/api/v1"
-    tenant = PrivateTenant
-    repo = dev-testing
-    env = std
-    authMode {
-      type = AWSUserPwdAuthMode
-      region = eu-central-1
-      userPool = sdlb-ui
-      clientId = ###DBSECRETS#sdlb-ui-clientid###
-      useIdToken = true
-      user = "###DBSECRETS#sdlb-ui-user###"
-      password = "###DBSECRETS#sdlb-ui-pwd###"
-    }
-  }
-
-  secretProviders {
-    DBSECRETS = {
-      className = io.smartdatalake.util.secrets.DatabricksSecretProvider
-      options.scope = ${env.secretScope}
-    }
-  }
-}

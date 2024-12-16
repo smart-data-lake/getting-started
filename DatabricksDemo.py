@@ -2,16 +2,15 @@
 # MAGIC %md
 # MAGIC # Running SDLB on Databricks
 # MAGIC This is a Databricks Notebook to install and demonstrate SDLB on Databricks.
-# MAGIC See recent Blog Post on https://smartdatalake.ch/blog for detailled explanations.
+# MAGIC See recent Blog Post on https://smartdatalake.ch/blog/sdl-databricks for detailled explanations.
 # MAGIC
 # MAGIC Run cell below to create Widgets above to configure most important parameters.
 
 # COMMAND ----------
 
-# Create widgets
-dbutils.widgets.text("REPODIR", "", "Repository Directory")
-dbutils.widgets.text("TMPDIR", "", "Temporary Directory")
-dbutils.widgets.text("VOLDIR", "", "Volume Directory")
+dbutils.widgets.text("REPODIR", "/Workspace/Users/<email>/getting-started", "Repository Directory") #Replace with the full path to where you checked out the getting started-repo
+dbutils.widgets.text("TMPDIR", "/tmp/sdlbBuild", "Temporary Directory")
+dbutils.widgets.text("VOLDIR", "/Volumes/tbb/default/getting-started", "Volume Directory")
 
 # COMMAND ----------
 
@@ -34,7 +33,7 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 # COMMAND ----------
 
 # MAGIC %sh
-# MAGIC # Java version should be 17, otherwise set cluster environment variable JNAME=zulu17-ca-amd64 
+# MAGIC # Java version should be 17, otherwise set cluster environment variable JNAME=zulu17-ca-amd64. If this throws an error you probably still have JAVA 8.
 # MAGIC java --version
 
 # COMMAND ----------
@@ -93,39 +92,6 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Upload Configuration to UI
-
-# COMMAND ----------
-
-# MAGIC %scala
-# MAGIC // Check keystore entries
-# MAGIC import com.databricks.sdk.scala.dbutils.DBUtils
-# MAGIC val dbutils = DBUtils.getDBUtils()
-# MAGIC dbutils.secrets.list(scope = "my_sec").foreach(println)
-# MAGIC // Upload config
-# MAGIC import io.smartdatalake.meta.configexporter._
-# MAGIC val repodir = dbutils.widgets.get("REPODIR")
-# MAGIC ConfigJsonExporter.main(Array("--config", s"file://$repodir/config,file://$repodir/envConfig/dev.conf", "--target", "uiBackend"))
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Upload Schema and Statistics to UI
-
-# COMMAND ----------
-
-# MAGIC %scala
-# MAGIC // ATTENTION: run after first run!
-# MAGIC // Upload schemas and statistics
-# MAGIC // Statistics export is currently broken in Databricks, there seems to be a problem with DeltaSQLConf 
-# MAGIC val t = org.apache.spark.sql.delta.sources.DeltaSQLConf.LOAD_FILE_SYSTEM_CONFIGS_FROM_DATAFRAME_OPTIONS
-# MAGIC //import io.smartdatalake.meta.configexporter._
-# MAGIC //val repodir = dbutils.widgets.get("REPODIR")
-# MAGIC //DataObjectSchemaExporter.main(Array("--config", s"file://$repodir/config,file://$repodir/envConfig/dev.conf", "--target", "uiBackend"))
-
-# COMMAND ----------
-
-# MAGIC %md
 # MAGIC ## Try SDLB Lab interface
 
 # COMMAND ----------
@@ -134,7 +100,8 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 # MAGIC // load SDLB Lab interface
 # MAGIC import io.smartdatalake.generated._
 # MAGIC import io.smartdatalake.lab.SmartDataLakeBuilderLab
-# MAGIC val sdlb = SmartDataLakeBuilderLab[DataObjectCatalog, ActionCatalog](spark,Seq("file:///Workspace/Repos/sdlb/getting-started/config", "file:///Workspace/Repos/sdlb/getting-started/envConfig/dev.conf"), DataObjectCatalog(_, _), ActionCatalog(_, _))
+# MAGIC val repodir = dbutils.widgets.get("REPODIR")
+# MAGIC val sdlb = SmartDataLakeBuilderLab[DataObjectCatalog, ActionCatalog](spark,Seq(s"file://$repodir/config", s"file://$repodir/envConfig/dev.conf"), DataObjectCatalog(_, _), ActionCatalog(_, _))
 # MAGIC implicit val context = sdlb.context
 
 # COMMAND ----------
@@ -152,7 +119,3 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 # MAGIC // access actions via SDLB interface with Code Completion.
 # MAGIC // play with & manipulate transformations, get resulting DataFrames.
 # MAGIC sdlb.actions.computeDistances.buildDataFrames.withFilterEquals("estdepartureairport","EDDF").getOne.show
-
-# COMMAND ----------
-
-
