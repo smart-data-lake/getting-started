@@ -10,7 +10,7 @@
 
 dbutils.widgets.text("REPODIR", "/Workspace/Users/<email>/getting-started", "Repository Directory") #Replace with the full path to where you checked out the getting started-repo
 dbutils.widgets.text("TMPDIR", "/tmp/sdlbBuild", "Temporary Directory")
-dbutils.widgets.text("VOLDIR", "/Volumes/tbb/default/getting-started", "Volume Directory")
+dbutils.widgets.text("VOLDIR", "/Volumes/my_catalog/default/getting-started", "Volume Directory")
 
 # COMMAND ----------
 
