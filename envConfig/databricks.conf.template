@@ -3,8 +3,7 @@
 # These settings can be referenced in other configuration files using Hocon substitution, e.g. ${evn.database}.
 
 env {
-  secretScope = my_sec # REPLACE ME
-  catalog = main # REPLACE ME
+  catalog = my_catalog
   database = default
   basePath = "/Volumes/"${env.catalog}"/"${env.database}"/getting-started/"
   basePathWithId = ${env.basePath}"~{id}"
