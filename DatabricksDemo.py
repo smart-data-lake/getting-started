@@ -85,7 +85,7 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 # MAGIC %sh
 # MAGIC . /tmp/getting-started-env.sh # set env variables prepared above
 # MAGIC cd $TMPDIR
-# MAGIC mvn package -B -Pgenerate-catalog -Pfat-jar
+# MAGIC mvn clean package -B -Pgenerate-catalog -Pfat-jar
 # MAGIC cp target/getting-started-1.0.jar $VOLDIR/getting-started.jar
 # MAGIC cp target/getting-started-1.0-jar-with-dependencies.jar $VOLDIR/getting-started-with-dependencies.jar
 
@@ -93,6 +93,10 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 
 # MAGIC %md
 # MAGIC ## Try SDLB Lab interface
+
+# COMMAND ----------
+# MAGIC %md
+# MAGIC Convert the HOCON Config Files to Scala Classes
 
 # COMMAND ----------
 
@@ -105,6 +109,15 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 # MAGIC implicit val context = sdlb.context
 
 # COMMAND ----------
+# MAGIC %md
+# MAGIC ##Play around with SDLB Interface
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Browse DataObjects
+
+# COMMAND ----------
 
 # MAGIC %scala
 # MAGIC // access dataObjects via SDLB interface with Code Completion
@@ -112,6 +125,11 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 # MAGIC sdlb.dataObjects.btlDistances.printSchema
 # MAGIC sdlb.dataObjects.btlDistances.get
 # MAGIC .where($"could_be_done_by_rail"===true).show
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Run an Action and look at the results
 
 # COMMAND ----------
 
