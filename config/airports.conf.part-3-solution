@@ -23,7 +23,7 @@ dataObjects {
 
   stg-airports {
     type = CsvFileDataObject
-    path = ${env.basePath}"~{id}"
+    path = ${env.basePathWithId}
     schema = "id string, ident string, type string, name string, latitude_deg string, longitude_deg string, elevation_ft string, continent string, iso_country string, iso_region string, municipality string, scheduled_service string, gps_code string, iata_code string, local_code string, home_link string, wikipedia_link string, keywords string"
     metadata {
       name = "Staging file of Airport location data"
@@ -36,8 +36,9 @@ dataObjects {
 
   int-airports {
     type = DeltaLakeTableDataObject
-    path = ${env.basePath}"~{id}"
+    path = ${env.tablePathWithId}
     table = {
+      catalog = ${env.catalog}
       db = ${env.database}
       name = "int_airports"
       primaryKey = [ident]

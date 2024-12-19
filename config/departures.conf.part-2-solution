@@ -14,13 +14,14 @@ dataObjects {
 
   stg-departures {
     type = JsonFileDataObject
-    path = ${env.basePath}"~{id}"
+    path = ${env.basePathWithId}
   }
 
   int-departures {
     type = DeltaLakeTableDataObject
-    path =  ${env.basePath}"~{id}"
+    path = ${env.tablePathWithId}
     table = {
+      catalog = ${env.catalog}
       db = ${env.database}
       name = int_departures
       primaryKey = [icao24, estdepartureairport, dt]
