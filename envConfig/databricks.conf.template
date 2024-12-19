@@ -1,0 +1,37 @@
+
+# envConfig folder should have *one* configuration file per environment, holding environment specific settings.
+# These settings can be referenced in other configuration files using Hocon substitution, e.g. ${evn.database}.
+
+env {
+  secretScope = my_sec # REPLACE ME
+  catalog = main # REPLACE ME
+  database = default
+  basePath = "/Volumes/"${env.catalog}"/"${env.database}"/getting-started/"
+  basePathWithId = ${env.basePath}"~{id}"
+  tablePathWithId = null # managed tables need no path
+}
+
+global {
+  uiBackend {
+    baseUrl = "https://nn92uqy13e.execute-api.eu-central-1.amazonaws.com/DEV/api/v1"
+    tenant = PrivateTenant
+    repo = dev-testing
+    env = std
+    authMode {
+      type = AWSUserPwdAuthMode
+      region = eu-central-1
+      userPool = sdlb-ui
+      clientId = ###DBSECRETS#sdlb-ui-clientid###
+      useIdToken = true
+      user = "###DBSECRETS#sdlb-ui-user###"
+      password = "###DBSECRETS#sdlb-ui-pwd###"
+    }
+  }
+
+  secretProviders {
+    DBSECRETS = {
+      className = io.smartdatalake.util.secrets.DatabricksSecretProvider
+      options.scope = ${env.secretScope}
+    }
+  }
+}
