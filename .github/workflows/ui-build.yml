@@ -67,12 +67,12 @@ jobs:
     - name: Run Getting Started
       id: getting-started1
       continue-on-error: true
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.SparkSmartDataLakeBuilder --master local[*] --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.SparkSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Getting Started Retry with Mock
       id: getting-started2
       if: steps.getting-started1.outcome == 'failure'
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.SparkSmartDataLakeBuilder --master local[*] --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.SparkSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Schema and Statistics export
       id: schema-stats-export
