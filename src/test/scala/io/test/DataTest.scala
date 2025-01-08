@@ -41,6 +41,15 @@ class DataTest extends FunSuite {
     val dbutils = DBUtils.getDBUtils()
     // Upload config
     val repodir = System.getProperty("user.dir")
-    ConfigJsonExporter.main(Array("--config", s"file:///$repodir/config,file:///$repodir/envConfig/local_Intellij.conf", "--target", "uiBackend"))
+    ConfigJsonExporter.main(Array("--config", s"file:///$repodir/config,file:///$repodir/envConfig/local_Intellij.conf",
+      "--target", "uiBackend", "--descriptionPath", s"file:///$repodir/description", "--uploadDescriptions"))
+  }
+  test("upload sdlb schema and statistics") {
+    import com.databricks.sdk.scala.dbutils.DBUtils
+    val dbutils = DBUtils.getDBUtils()
+    // Upload config
+    val repodir = System.getProperty("user.dir")
+    DataObjectSchemaExporter.main(Array("--config", s"file:///$repodir/config,file:///$repodir/envConfig/local_Intellij.conf",
+      "--target", "uiBackend"))
   }
 }
