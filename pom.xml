@@ -60,7 +60,7 @@
 						<executions>
 							<execution>
 								<id>generate-catalog</id>
-								<phase>prepare-package</phase>
+								<phase>process-classes</phase>
 								<goals>
 									<goal>java</goal>
 								</goals>
