@@ -96,7 +96,7 @@ jobs:
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config,./envConfig/dev.conf --filename viz/exportedConfig.json --descriptionPath viz/description"
 
     - name: Setup Pages
-      uses: actions/configure-pages@v3
+      uses: actions/configure-pages@v5
 
     - name: Download and Unzip Latest UI Snapshot
       run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip -n sdl-visualizer.zip -d ./viz
@@ -111,11 +111,11 @@ jobs:
       run: rm -rf viz/.venv/
 
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
+      uses: actions/upload-pages-artifact@v3
       with:
         # Upload vizualizer repository
         path: 'viz'
 
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v2
+      uses: actions/deploy-pages@v4
