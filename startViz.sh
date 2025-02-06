@@ -6,7 +6,7 @@ pushd viz
 # make symlink to config
 if [ ! -d ./config ]; then ln -s ../config; fi
 if [ ! -d ./envConfig ]; then ln -s ../envConfig; fi
-if [ ! -f ./exportedConfig.json ]; then ln -s ../data/exportedConfig.json; fi
+if [ ! -f ./exportedConfig.json ] && [ -f ../data/exportedConfig.json ]; then ln -sf ../data/exportedConfig.json; fi
 
 # update state and config index - normally not needed as SDLB runs append a line to the index when they finish ordinarily.
 #./build_index.sh ./state ./config
