@@ -34,7 +34,7 @@ os.chmod("/tmp/getting-started-env.sh", 0o775) # make it executable
 
 # MAGIC %sh
 # MAGIC # Java version should be 17, otherwise set cluster environment variable JNAME=zulu17-ca-amd64. If this throws an error you probably still have JAVA 8.
-# MAGIC java --version
+# MAGIC java -version
 
 # COMMAND ----------
 
