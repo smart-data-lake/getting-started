@@ -12,7 +12,8 @@ import io.smartdatalake.util.misc.SmartDataLakeLogger
 import io.smartdatalake.util.webservice.SttpUtil
 import io.smartdatalake.workflow.dataframe.GenericSchema
 import io.smartdatalake.workflow.dataframe.spark.SparkSchema
-import io.smartdatalake.workflow.dataobject.{CanCreateSparkDataFrame, DataObject, DataObjectMetadata, HttpTimeoutConfig}
+import io.smartdatalake.workflow.dataobject.{CanCreateSparkDataFrame, DataObject, DataObjectMetadata}
+import io.smartdatalake.util.webservice.HttpTimeoutConfig
 import io.smartdatalake.workflow.{ActionPipelineContext, ExecutionPhase}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.ArrayType
