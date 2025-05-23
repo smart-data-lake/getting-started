@@ -12,7 +12,8 @@ import io.smartdatalake.util.misc.SmartDataLakeLogger
 import io.smartdatalake.util.webservice.SttpUtil
 import io.smartdatalake.workflow.dataframe.GenericSchema
 import io.smartdatalake.workflow.dataframe.spark.SparkSchema
-import io.smartdatalake.workflow.dataobject.{CanCreateSparkDataFrame, DataObject, DataObjectMetadata, HttpTimeoutConfig}
+import io.smartdatalake.workflow.dataobject.{CanCreateSparkDataFrame, DataObject, DataObjectMetadata}
+import io.smartdatalake.util.webservice.HttpTimeoutConfig
 import io.smartdatalake.workflow.{ActionPipelineContext, ExecutionPhase}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.ArrayType
@@ -103,7 +104,7 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
     } else {
       // use the queryParameters from the config
       val currentQueryParameters = checkQueryParameters(queryParameters)
-    
+
       // given the query parameters, generate all requests
       val departureRequests = currentQueryParameters.map(
         param => s"${baseUrl}?airport=${param.airport}&begin=${param.begin}&end=${param.end}"
@@ -119,9 +120,9 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
         .select(explode($"response").as("record"))
         .select("record.*")
         .withColumn("created_at", current_timestamp())
-  
+
       // put simple nextState logic below
-    
+
       // return
       departuresDf
     }
