@@ -9,7 +9,7 @@ apk update && \
 apk add bash && \
 apk add ca-certificates && update-ca-certificates && apk add openssl
 
-ADD entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 
 WORKDIR /opt
 
