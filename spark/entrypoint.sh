@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # define java class to start
-CLASS=${CLASS:-io.smartdatalake.app.LocalSmartDataLakeBuilder}
+CLASS=${CLASS:-io.smartdatalake.app.DefaultSmartDataLakeBuilder}
 echo "starting $CLASS"
 
 # Java options needed by Spark for Java 17

@@ -69,7 +69,6 @@ actions {
     type = HistorizeAction
     inputId = stg-airports
     outputId = int-airports
-    mergeModeEnable = true
     transformers = [{
       type = SQLDfTransformer
       code = "select ident, name, latitude_deg, longitude_deg from stg_airports"

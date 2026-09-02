@@ -45,7 +45,6 @@ actions {
     type = DeduplicateAction
     inputId = stg-departures
     outputId = int-departures
-    mergeModeEnable = true
     updateCapturedColumnOnlyWhenChanged = true
     transformers = [{
       type = SQLDfTransformer

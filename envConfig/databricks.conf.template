@@ -9,3 +9,7 @@ env {
   basePathWithId = ${env.basePath}"~{id}"
   tablePathWithId = null # managed tables need no path
 }
+
+# The Spark engine connections are defined in config/global.conf. On Databricks select the one
+# that attaches to the cluster's existing Spark session instead of creating a local one, by
+# setting the environment variable SDL_DEFAULT_ENGINE_CONNECTION_ID=cluster-engine.

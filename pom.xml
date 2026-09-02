@@ -32,7 +32,7 @@
 		  Set the smartdatalake version to use here.
 		  If version cannot be resolved, make sure maven central repository is defined in settings.xml and the corresponding profile activated.
 		-->
-		<version>2.8.1-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>getting-started</artifactId>
@@ -41,9 +41,11 @@
 	<name>SDL Getting Started</name>
 
 	<properties>
-		<!-- default scala version - use predefined maven profiles to override -->
-		<scala.minor.version>2.12</scala.minor.version>
-		<scala.version>${scala.minor.version}.18</scala.version>
+		<!--
+		  Scala version is inherited from sdl-parent (2.13 since SDLB 3.0.0, which no longer
+		  publishes _2.12 artifacts). Override scala.minor.version here only if you need to
+		  build against a different Scala version that SDLB actually publishes.
+		-->
 	</properties>
 
 	<profiles>
@@ -103,9 +105,9 @@
 	<repositories>
 		<!-- smartdatalake snapshots -->
 		<repository>
-			<id>ossrh</id>
-			<name>ossrh snapshots</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<id>central-snapshots</id>
+			<name>Maven Central snapshots</name>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 			<releases>
 				<enabled>false</enabled>
 			</releases>
@@ -154,6 +156,13 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 
+		<!-- Spark engine support: split out of sdl-core in SDLB 3.0.0 -->
+		<dependency>
+			<groupId>io.smartdatalake</groupId>
+			<artifactId>sdl-spark_${scala.minor.version}</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>io.smartdatalake</groupId>
 			<artifactId>sdl-deltalake_${scala.minor.version}</artifactId>
@@ -164,6 +173,22 @@
 			<groupId>io.smartdatalake</groupId>
 			<artifactId>sdl-lang_${scala.minor.version}</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+
+		<!--
+		  Guava is declared "provided" upstream because a Spark distribution supplies it in
+		  $SPARK_HOME/jars. Running SDLB through "mvn exec:exec" uses only the Maven runtime
+		  classpath, where delta-spark needs Guava at runtime, so request it explicitly.
+		-->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>failureaccess</artifactId>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- needed for derby metastore -->
