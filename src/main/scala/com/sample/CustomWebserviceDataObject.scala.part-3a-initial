@@ -3,7 +3,7 @@
 
 package com.sample
 
-import com.sample.CustomWebserviceDataObject.{twoDaysSeconds, twoWeeksSeconds}
+import com.sample.CustomWebserviceDataObject.{maxIntervalSeconds, threeDaysSeconds}
 import com.typesafe.config.Config
 import io.smartdatalake.config.SdlConfigObject.DataObjectId
 import io.smartdatalake.config.{FromConfigFactory, InstanceRegistry}
@@ -11,8 +11,9 @@ import io.smartdatalake.util.hdfs.PartitionValues
 import io.smartdatalake.util.misc.SmartDataLakeLogger
 import io.smartdatalake.util.webservice.SttpUtil
 import io.smartdatalake.workflow.dataframe.GenericSchema
-import io.smartdatalake.workflow.dataframe.spark.SparkSchema
-import io.smartdatalake.workflow.dataobject.{CanCreateSparkDataFrame, DataObject, DataObjectMetadata}
+import io.smartdatalake.workflow.dataframe.spark.{SparkSchema, SparkSubFeed}
+import io.smartdatalake.workflow.dataobject.spark.CanCreateSparkDataFrame
+import io.smartdatalake.workflow.dataobject.{DataObject, DataObjectMetadata}
 import io.smartdatalake.util.webservice.HttpTimeoutConfig
 import io.smartdatalake.workflow.{ActionPipelineContext, ExecutionPhase}
 import org.apache.spark.sql.DataFrame
@@ -24,8 +25,9 @@ import sttp.model.Uri
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 
-// Default to the interval of [2 weeks and 2 days ago] -> [2 weeks ago]
-case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis() / 1000 - twoWeeksSeconds - twoDaysSeconds, end: Long = System.currentTimeMillis() / 1000 - twoWeeksSeconds )
+// Default to the interval of [6 hours ago] -> [now]. Without an account the OpenSky API only
+// serves recent flights and only over a short interval, see checkQueryParameters below.
+case class DepartureQueryParameters(airport: String, begin: Long = System.currentTimeMillis() / 1000 - maxIntervalSeconds, end: Long = System.currentTimeMillis() / 1000)
 
 case class State(airport: String, nextBegin: Long)
 
@@ -78,19 +80,21 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
   override def getSparkDataFrame(partitionValues: Seq[PartitionValues])(implicit context: ActionPipelineContext): DataFrame = {
     import org.apache.spark.sql.functions._
     implicit val formats: Formats = DefaultFormats
-    val session = context.sparkSession
+    val session = SparkSubFeed.getSparkSession
     import session.implicits._
 
-    // if time interval is more than a week, set end config to 4 days after begin
+    // Without an account the OpenSky API answers "You cannot access historical flights" (403) for
+    // queries that reach too far back or span too long an interval. Keep both inside the limits:
+    // begin no earlier than 3 days ago, and the interval no longer than maxIntervalSeconds.
+    // State from an older run can otherwise drift out of the allowed range; an incremental run then
+    // catches up one interval at a time.
     def checkQueryParameters(queryParameters: Seq[DepartureQueryParameters]) = {
+      val earliestBegin = System.currentTimeMillis() / 1000 - threeDaysSeconds + 3600 // 1h safety margin
       queryParameters.map {
         param =>
-          val diff = param.end - param.begin
-          if (diff / (3600 * 24) >= 7) {
-            param.copy(end = param.begin + 3600 * 24 * 4)
-          } else {
-            param
-          }
+          val begin = math.max(param.begin, earliestBegin)
+          val end = math.min(math.max(param.end, begin), begin + maxIntervalSeconds)
+          param.copy(begin = begin, end = end)
       }
     }
 
@@ -119,7 +123,6 @@ case class CustomWebserviceDataObject(override val id: DataObjectId,
 
   }
 
-  override def factory: FromConfigFactory[DataObject] = CustomWebserviceDataObject
 }
 
 object CustomWebserviceDataObject extends FromConfigFactory[DataObject] with SmartDataLakeLogger {
@@ -127,6 +130,8 @@ object CustomWebserviceDataObject extends FromConfigFactory[DataObject] with Sma
     extract[CustomWebserviceDataObject](config)
   }
 
-  val twoWeeksSeconds = 60 * 60 * 24 * 14
-  val twoDaysSeconds  = 60 * 60 * 24 * 2
+  val threeDaysSeconds = 60 * 60 * 24 * 3
+  // Largest interval anonymous OpenSky access serves: 12h still answers, 18h returns 403.
+  // 6h leaves headroom and lets an incremental run catch up in steps.
+  val maxIntervalSeconds = 60 * 60 * 6
 }

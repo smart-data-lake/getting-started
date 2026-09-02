@@ -40,7 +40,6 @@ actions {
     type = CustomDataFrameAction
     inputIds = [int-departures, int-airports]
     outputIds = [btl-departures-arrivals-airports]
-    breakDataFrameLineage = true
     transformers = [{
       type = SQLDfsTransformer
       code = {

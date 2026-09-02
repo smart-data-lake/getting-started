@@ -40,7 +40,6 @@ actions {
     inputId = ext-departures
     outputId = int-departures
     executionMode = { type = DataObjectStateIncrementalMode }
-    mergeModeEnable = true
     updateCapturedColumnOnlyWhenChanged = true
     transformers = [{
       type = SQLDfTransformer

@@ -54,12 +54,10 @@ jobs:
         key: ${{ runner.os }}-maven-${{ steps.get_spark_version.outputs.spark_version }}-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-maven-${{ steps.get_spark_version.outputs.spark_version }}        
 
-    - name: Config for Incremental Mode # use part3 solution
+    - name: Config for Incremental Mode # seed the completed part-3 pipeline
       run:  |
-        cp config/airports.conf.part-3-solution config/airports.conf
-        cp config/departures.conf.part-3-solution config/departures.conf
-        cp config/btl.conf.part-3-solution config/btl.conf
-        cp src/main/scala/com/sample/CustomWebserviceDataObject.scala.part-3-solution src/main/scala/com/sample/CustomWebserviceDataObject.scala
+        chmod +x ./prepare.sh
+        ./prepare.sh final
         echo JAVA_OPTIONS="--add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.cs=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED --add-opens=java.base/sun.util.calendar=ALL-UNNAMED" >> $GITHUB_ENV
 
     - name: Build using latest SDLB Snapshot
@@ -73,12 +71,12 @@ jobs:
     - name: Run Getting Started
       id: getting-started1
       continue-on-error: true
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.SparkSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.DefaultSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Getting Started Retry with Mock
       id: getting-started2
       if: steps.getting-started1.outcome == 'failure'
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.SparkSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.DefaultSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
     - name: Run Schema and Statistics export
       id: schema-stats-export
