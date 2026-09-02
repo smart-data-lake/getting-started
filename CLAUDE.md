@@ -225,13 +225,17 @@ master**, and deploys `viz/` to GitHub Pages. `paths-ignore` on `viz/state/**` a
   exists in `sdl-parent`. `spark/install_spark.sh` appends a `-scala2.13` filename suffix that
   Spark 4.x tarballs do not have, and the Dockerfile's `grep "spark-"$SPARK_VERSION` matches
   several releases, writing multiple lines into `/opt/spark.version`.
-- **part-1/2's `departures.conf` variants have a permanently dead OpenSky URL.**
-  `departures.conf.part-1/2/2a/2b-solution` hardcode
-  `?airport=LSZB&begin=1630200800&end=1630310979` (August 2021). Anonymous access is limited by
-  *recency*, not only interval width — a 2h window in 2021 is refused just like the original
-  ~30h one — so no edit of those numbers revives it, and `WebserviceFileDataObject.url` is a
-  plain `String` with no expression support for computing a current window. Part-3 escapes this
-  only because `CustomWebserviceDataObject` computes its window in Scala.
+- **part-1/2's `departures.conf` variants hardcode a 2021 OpenSky window; `prepare.sh` rewrites
+  it.** `departures.conf.part-1/2/2a/2b-solution` carry
+  `?airport=LSZB&begin=1630200800&end=1630310979` (August 2021), which anonymous callers can no
+  longer fetch: the API limits by *recency* as well as interval width, so a 2h window in 2021 is
+  refused just like the original ~30h one. `WebserviceFileDataObject.url` is a plain `String`
+  with no expression support, so the window cannot be computed in config — instead `prepare.sh`
+  rewrites `begin`/`end` in the *activated* `config/departures.conf` to the last 6h (never in
+  the tracked `.part-*` variants). `--keep-timestamps` leaves it as the guide prints it, and
+  `--fix-timestamps` rewrites the current file on its own, which is what to use after copying a
+  part-2a/2b variant by hand. Part 3 onwards needs none of this — `CustomWebserviceDataObject`
+  computes its window in Scala.
 - `--test config` validates a config set without touching data:
   `java $JAVA_OPTIONS -cp <cp> io.smartdatalake.app.DefaultSmartDataLakeBuilder --test config
   --feed-sel '.*' --config ./config,./envConfig/dev.conf -n check` (`--test dry-run` also runs
