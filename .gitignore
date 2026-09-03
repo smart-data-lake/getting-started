@@ -24,6 +24,7 @@ viz/*.txt
 viz/*.png
 viz/*.org
 viz/exportedConfig.json
+viz/schema/*.json
 .vscode
 .metals
 lsp
