@@ -134,6 +134,15 @@ where config cannot express something.
   onward loads an envConfig file, and the IntelliJ run configuration passes `-c .../config`
   alone, so defining it in `envConfig/` makes every other part fail with
   "Connection~default-engine not found in instance registry".
+  `default-engine` also sets `enableHive = true`, which is what gives the run a persistent
+  Derby metastore in `./metastore_db` instead of a per-JVM in-memory catalog. Table
+  registrations then survive the process, which `DataObjectSchemaExporter` depends on — it
+  looks its Delta tables up by name through the session catalog, in a JVM of its own.
+  `SparkClassicConnection` defaults this to `false` and SDLB 3.0.0 no longer pulls `spark-hive`
+  in transitively, so `pom.xml` declares it (see Dependency management); without it, enabling
+  Hive fails the run with "Unable to instantiate SparkSession with Hive support because Hive
+  classes are not found", and without enabling Hive the export fails with
+  "`default`.`btl_distances` is not a Delta table".
 - **Layer naming** encodes pipeline stage in the DataObject id: `ext-` (external source,
   e.g. `WebserviceFileDataObject`) → `stg-` (raw staged file) → `int-` (cleaned/historized)
   → `btl-` (business transformation layer, `DeltaLakeTableDataObject`).
@@ -161,7 +170,9 @@ profile `buildSpark.sh` relies on. SDL artifacts are pinned to `${project.parent
 so bumping the parent bumps everything. Scala version is inherited too — the parent defaults
 to `scala.minor.version=2.13` / `scala.version=2.13.17`, and 3.0.0 publishes **only** `_2.13`
 artifacts, so do not reintroduce a 2.12 override. Two explicit additions this project needs:
-`sdl-spark` (Spark support was split out of `sdl-core` in 3.0.0) and `guava` at `compile`
+`sdl-spark` (Spark support was split out of `sdl-core` in 3.0.0), `spark-hive` (dropped from
+`sdl-spark`'s dependencies in 3.0.0, still needed for the local Derby metastore — the parent
+manages its version and scope) and `guava` at `compile`
 scope (upstream marks it `provided` on the assumption a Spark distribution supplies it, but
 `mvn exec:exec` uses only the Maven runtime classpath, where `delta-spark` needs it).
 
@@ -183,6 +194,13 @@ The exporters run as regular SDLB main classes:
 `--descriptionPath viz/description` markdown) and `...DataObjectSchemaExporter` (schemas and
 statistics). `viz/build_index.sh` rebuilds `viz/state/index.json`; normal runs append to it
 automatically.
+
+3.0.0 changed the schema export file naming: one `DataObject~<id>.schema.json` /
+`DataObject~<id>.stats.json` per DataObject, replacing 2.x's timestamped
+`<id>.schema.<epoch>.json` plus `<id>.schema.index`. The 2.x files from the last green CI run
+(March 2024) are still tracked in `viz/schema/` and are now dead weight — nothing rewrites or
+removes them. `DataObjectSchemaExporter` also gained `--mode plan|apply` for writing table and
+column comments back into the catalog (see Gotchas).
 
 ## Lab / interactive exploration
 
@@ -211,20 +229,28 @@ master**, and deploys `viz/` to GitHub Pages. `paths-ignore` on `viz/state/**` a
 
 ## Gotchas
 
-- **`metadata.description` on a Delta table cannot work locally on 3.0.0-SNAPSHOT.**
-  `DeltaLakeTableDataObject.prepare` requires `table.catalog` whenever `metadata.description`
-  is set, but `SQLUtil.scala:121` then emits `USE CATALOG <x>` — Databricks/Unity syntax that
-  open-source Spark rejects (`SET CATALOG` is its form). The two requirements are mutually
-  exclusive off Databricks, with no config-level opt-out. The tracked `.part-*` configs keep
-  their descriptions, so a part-3 run fails in the prepare phase with
-  "you must also define a table.db and a table.catalog" until this is fixed upstream.
-  Removing `description` from the DeltaLakeTableDataObjects makes the pipeline run green.
+- **Table comments are applied at deploy time, not by a pipeline run.** Since
+  [#1121](https://github.com/smart-data-lake/smart-data-lake/issues/1121) a run never writes a
+  `metadata.description` into the table; `DataObjectSchemaExporter --mode apply` does, together
+  with the `@column` comments from `--descriptionPath`. So after a plain run the Delta log holds
+  no `description` — that is expected, not a failure. Use `--mode plan` to see what `apply`
+  would change. No step in `ui-build.yml` runs `apply`, and the UI reads descriptions from
+  `exportedConfig.json`/`viz/description` rather than from the catalog, so nothing depends on
+  it here.
+  (Historical: on earlier 3.0.0 snapshots a `description` plus `table.catalog = null` made
+  `prepare` fail outright, because SDLB emitted Databricks-only `USE CATALOG`. Fixed upstream in
+  [#1127](https://github.com/smart-data-lake/smart-data-lake/issues/1127) by addressing tables
+  through `table.fullName`.)
 - **The container build path has not been updated for 3.0.0 and is untested.**
   `spark/Dockerfile` still pins `SPARK_VERSION="3.5"` / `SCALA_VERSION="2.12"` (the parent now
   uses Spark 4.1.1 and Scala 2.13) and passes `-Pscala-$SCALA_VERSION`, a profile that no longer
   exists in `sdl-parent`. `spark/install_spark.sh` appends a `-scala2.13` filename suffix that
   Spark 4.x tarballs do not have, and the Dockerfile's `grep "spark-"$SPARK_VERSION` matches
   several releases, writing multiple lines into `/opt/spark.version`.
+  `exportConfigSchemaStats.sh` (which only runs through the container) has the same
+  `--target` problem the CI config export had — `file:/mnt/data/exportedConfig.json` is a
+  hadoop path, so it produces a *directory* of that name; it needs `localfile:`. It also reads
+  `$1` for both targets, so the second argument is ignored. Untested, hence not changed.
 - **part-1/2's `departures.conf` variants hardcode a 2021 OpenSky window; `prepare.sh` rewrites
   it.** `departures.conf.part-1/2/2a/2b-solution` carry
   `?airport=LSZB&begin=1630200800&end=1630310979` (August 2021), which anonymous callers can no

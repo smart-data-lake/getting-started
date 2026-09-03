@@ -191,6 +191,17 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!--
+		  Hive support: SDLB 3.0.0 no longer pulls spark-hive in transitively, but the local Derby
+		  metastore below is what makes a table written by one run resolvable by name in the next
+		  JVM - DataObjectSchemaExporter looks its tables up through the session catalog.
+		  Requires connections.default-engine.enableHive = true in config/global.conf.
+		-->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-hive_${scala.minor.version}</artifactId>
+		</dependency>
+
 		<!-- needed for derby metastore -->
 		<dependency>
 			<groupId>org.datanucleus</groupId>
