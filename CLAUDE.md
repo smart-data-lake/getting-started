@@ -179,9 +179,12 @@ scope (upstream marks it `provided` on the assumption a Spark distribution suppl
 ## Visualization UI (`viz/`)
 
 `viz/` hosts the prebuilt [sdl-visualization](https://github.com/smart-data-lake/sdl-visualization)
-SPA plus the data it renders. Only the data is tracked (`viz/state/`, `viz/schema/`,
-`viz/description/`, `lighttpd.conf`, `manifest.json`); the app bundle is gitignored and
-downloaded on demand.
+SPA plus the data it renders. Tracked: `viz/state/`, `viz/description/`, `lighttpd.conf`,
+`manifest.json`. Gitignored: the app bundle (downloaded on demand), `exportedConfig.json`, and
+the schema documents under `viz/schema/` — the workflow regenerates those on every run and
+deploys them with `viz/`, and it commits only `viz/state/` back to the repository, so there is
+nothing for a tracked copy to stay in sync with. `viz/schema/.gitkeep` keeps the directory
+itself.
 
 ```bash
 ./updateViz.sh   # fetch latest sdl-visualizer.zip from nightly.link, preserving local config
@@ -197,10 +200,17 @@ automatically.
 
 3.0.0 changed the schema export file naming: one `DataObject~<id>.schema.json` /
 `DataObject~<id>.stats.json` per DataObject, replacing 2.x's timestamped
-`<id>.schema.<epoch>.json` plus `<id>.schema.index`. The 2.x files from the last green CI run
-(March 2024) are still tracked in `viz/schema/` and are now dead weight — nothing rewrites or
-removes them. `DataObjectSchemaExporter` also gained `--mode plan|apply` for writing table and
-column comments back into the catalog (see Gotchas).
+`<id>.schema.<epoch>.json` plus `<id>.schema.index`. The 2.x files committed by the last green
+CI run (March 2024) were removed, since nothing rewrote or removed them.
+`DataObjectSchemaExporter` also gained `--mode plan|apply` for writing table and column
+comments back into the catalog (see Gotchas).
+
+Both exporters take a `--target` URI, and the scheme decides the shape of the output: a bare
+path or `file:` is a hadoop path, i.e. an output **directory**, while `localfile:` writes a
+single file. This matters only for `ConfigJsonExporter`, whose output is one document —
+`--target ./viz/exportedConfig.json` silently produces `viz/exportedConfig.json/exportedConfig.json`
+and exits 0. Use `localfile:`, as `ui-build.yml` and `exportConfigSchemaStats.sh` now do. The
+deprecated `--filename` and `--exportPath` flags map onto the same directory semantics.
 
 ## Lab / interactive exploration
 
@@ -247,10 +257,10 @@ master**, and deploys `viz/` to GitHub Pages. `paths-ignore` on `viz/state/**` a
   exists in `sdl-parent`. `spark/install_spark.sh` appends a `-scala2.13` filename suffix that
   Spark 4.x tarballs do not have, and the Dockerfile's `grep "spark-"$SPARK_VERSION` matches
   several releases, writing multiple lines into `/opt/spark.version`.
-  `exportConfigSchemaStats.sh` (which only runs through the container) has the same
-  `--target` problem the CI config export had — `file:/mnt/data/exportedConfig.json` is a
-  hadoop path, so it produces a *directory* of that name; it needs `localfile:`. It also reads
-  `$1` for both targets, so the second argument is ignored. Untested, hence not changed.
+  `exportConfigSchemaStats.sh` runs only through the container, so its fixes (`localfile:` for
+  the config target, `$2` for the second positional argument) are correct by inspection but
+  untested end to end. Its `/mnt/data/exportedConfig.json` destination is deliberate:
+  `startViz.sh` symlinks `viz/exportedConfig.json` to `../data/exportedConfig.json`.
 - **part-1/2's `departures.conf` variants hardcode a 2021 OpenSky window; `prepare.sh` rewrites
   it.** `departures.conf.part-1/2/2a/2b-solution` carry
   `?airport=LSZB&begin=1630200800&end=1630310979` (August 2021), which anonymous callers can no
