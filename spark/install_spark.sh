@@ -3,15 +3,24 @@
 
 set -e
 
-echo ScalaVersion=${SCALA_VERSION:?}
 echo SparkVersion=${SPARK_VERSION:?}
-SPARK_VERSION_DIR="spark-${SPARK_VERSION}"
-if [ "$SCALA_VERSION" == "2.13" ]; then SCALA_POSTFIX="-scala2.13"; fi
-SPARK_NAME="spark-${SPARK_VERSION}-bin-hadoop3${SCALA_POSTFIX}"
+SPARK_NAME="spark-${SPARK_VERSION}-bin-hadoop3"
 
 pushd /opt
 rm -rf spark
-wget -q -O - "https://dlcdn.apache.org/spark/${SPARK_VERSION_DIR}/${SPARK_NAME}.tgz" | tar xvz --no-same-owner
+
+# dlcdn mirror carries only the latest patch release of each minor version, so an explicitly pinned
+# older patch version (--build-arg SPARK_VERSION=4.1.1) has to fall back to the archive.
+for base in "https://dlcdn.apache.org/spark" "https://archive.apache.org/dist/spark"; do
+  url="${base}/spark-${SPARK_VERSION}/${SPARK_NAME}.tgz"
+  echo "fetching $url"
+  if wget -q -O spark.tgz "$url"; then break; fi
+  rm -f spark.tgz
+done
+test -s spark.tgz || { echo "could not download ${SPARK_NAME}.tgz"; exit 1; }
+
+tar xzf spark.tgz --no-same-owner
+rm -f spark.tgz
 mv "${SPARK_NAME}" spark
 popd
 
@@ -20,7 +29,3 @@ if test -z "${SPARK_DIST_CLASSPATH}"; then
 else
   echo "export SPARK_DIST_CLASSPATH=\"${SPARK_DIST_CLASSPATH}\"" > /opt/spark/conf/spark-env.sh
 fi
-
-# install python dependencies
-# see also https://github.com/apache/spark/blob/master/dev/infra/Dockerfile, https://github.com/polynote/polynote/blob/master/requirements.txt
-pip install --no-cache-dir numpy pyarrow 'pandas<=1.5.3' scipy 'scikit-learn==1.1.*' virtualenv ipython nbconvert 'jedi>=0.18.1' matplotlib

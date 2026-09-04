@@ -60,8 +60,8 @@ Consequences worth remembering:
 ## Build and run
 
 Requires Java 17. The project builds against `sdl-parent:3.0.0-SNAPSHOT` from
-`https://central.sonatype.com/repository/maven-snapshots/` (the legacy `oss.sonatype.org`
-OSSRH host is retired). Note the workflow's auto-bump cannot recover from an *unresolvable*
+`https://central.sonatype.com/repository/maven-snapshots/`.
+Note the workflow's auto-bump cannot recover from an *unresolvable*
 parent pin, because Maven must resolve the current parent before
 `versions:display-parent-updates` will run.
 
@@ -98,13 +98,20 @@ mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classp
 ```bash
 ./buildJob.sh        # mvn package inside maven:3-eclipse-temurin-17, with -Pgenerate-catalog
 ./buildSpark.sh      # build the sdl-spark image (Spark distro + SDL libs from -Pcopy-libs)
+./buildSpark.sh --build-arg SPARK_VERSION=4.1.1   # pin the Spark patch version (needed today)
 ./startJob.sh --config /mnt/config,/mnt/envConfig/dev.conf --feed-sel .*
 CLASS=io.smartdatalake.app.DefaultSmartDataLakeBuilder ./startJob.sh ...  # override main class
 ```
 
 `startJob.sh` mounts `data/`, `target/`, `config/`, `envConfig/` and the three `viz/`
 subdirectories into the container; the app jar is picked up from the `/mnt/lib` mount
-rather than baked into the image, so `mvn package` output is used live.
+rather than baked into the image, so `mvn package` output is used live. `entrypoint.sh` sets
+`-Duser.dir=/mnt/data`, so a container run writes its tables into `data/` where a local run
+writes them into the repository root — `prepare.sh --clean` clears both.
+
+The image carries the Spark distribution and the SDL libraries (`-Pcopy-libs`, which scopes
+Spark, Hadoop and Hive out of `/opt/app/lib` so they come from the distribution instead); the
+Spark version is not pinned in the Dockerfile but resolved at build time. 
 
 ## Architecture
 
@@ -251,16 +258,6 @@ master**, and deploys `viz/` to GitHub Pages. `paths-ignore` on `viz/state/**` a
   `prepare` fail outright, because SDLB emitted Databricks-only `USE CATALOG`. Fixed upstream in
   [#1127](https://github.com/smart-data-lake/smart-data-lake/issues/1127) by addressing tables
   through `table.fullName`.)
-- **The container build path has not been updated for 3.0.0 and is untested.**
-  `spark/Dockerfile` still pins `SPARK_VERSION="3.5"` / `SCALA_VERSION="2.12"` (the parent now
-  uses Spark 4.1.1 and Scala 2.13) and passes `-Pscala-$SCALA_VERSION`, a profile that no longer
-  exists in `sdl-parent`. `spark/install_spark.sh` appends a `-scala2.13` filename suffix that
-  Spark 4.x tarballs do not have, and the Dockerfile's `grep "spark-"$SPARK_VERSION` matches
-  several releases, writing multiple lines into `/opt/spark.version`.
-  `exportConfigSchemaStats.sh` runs only through the container, so its fixes (`localfile:` for
-  the config target, `$2` for the second positional argument) are correct by inspection but
-  untested end to end. Its `/mnt/data/exportedConfig.json` destination is deliberate:
-  `startViz.sh` symlinks `viz/exportedConfig.json` to `../data/exportedConfig.json`.
 - **part-1/2's `departures.conf` variants hardcode a 2021 OpenSky window; `prepare.sh` rewrites
   it.** `departures.conf.part-1/2/2a/2b-solution` carry
   `?airport=LSZB&begin=1630200800&end=1630310979` (August 2021), which anonymous callers can no

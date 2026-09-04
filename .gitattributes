@@ -1,2 +1,9 @@
 # Set to LF for all files
 * text=auto
+
+# Shell scripts and the container build must keep LF in the working tree, not just in the
+# repository: entrypoint.sh and install_spark.sh are COPYied into a Linux image and run there,
+# and a CR in a shebang line fails as "cannot execute: required file not found". Without this,
+# a checkout with core.autocrlf=true (the Windows default) produces an unusable image.
+*.sh text eol=lf
+Dockerfile text eol=lf
