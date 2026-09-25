@@ -186,33 +186,42 @@ scope (upstream marks it `provided` on the assumption a Spark distribution suppl
 ## Visualization UI (`viz/`)
 
 `viz/` hosts the prebuilt [sdl-visualization](https://github.com/smart-data-lake/sdl-visualization)
-SPA plus the data it renders. Tracked: `viz/state/`, `viz/description/`, `lighttpd.conf`,
-`manifest.json`. Gitignored: the app bundle (downloaded on demand), `exportedConfig.json`, and
-the schema documents under `viz/schema/` — the workflow regenerates those on every run and
-deploys them with `viz/`, and it commits only `viz/state/` back to the repository, so there is
-nothing for a tracked copy to stay in sync with. `viz/schema/.gitkeep` keeps the directory
-itself.
+SPA plus the data it renders. Tracked: `viz/state/`, `viz/schema/`, `viz/description/`,
+`lighttpd.conf`, `manifest.json`. Gitignored: the app bundle (downloaded on demand),
+`exportedConfig.json`, and `viz/schema/*.lineage-debug.txt`. The workflow regenerates
+`viz/schema/` on every run and commits it back together with `viz/state/`.
+`viz/schema/.gitkeep` keeps the directory in a fresh clone.
 
 ```bash
 ./updateViz.sh   # fetch latest sdl-visualizer.zip from nightly.link, preserving local config
 ./startViz.sh    # symlink config/, serve viz/ via lighttpd (port from viz/lighttpd.conf)
-./exportConfigSchemaStats.sh   # export exportedConfig.json + schema/statistics for the UI
+./exportConfigSchemaStats.sh   # export exportedConfig.json + schema/lineage/statistics for the UI
 ```
 
-The exporters run as regular SDLB main classes:
-`io.smartdatalake.meta.configexporter.ConfigJsonExporter` (config graph +
-`--descriptionPath viz/description` markdown) and `...DataObjectSchemaExporter` (schemas and
-statistics). `viz/build_index.sh` rebuilds `viz/state/index.json`; normal runs append to it
+The config graph comes from `io.smartdatalake.meta.configexporter.ConfigJsonExporter`
+(`--descriptionPath viz/description` only matters with `--uploadDescriptions`). Schemas and
+column lineage come from an SDLB dry-run, `DefaultSmartDataLakeBuilder --test
+dry-run-with-lineage-export`, which writes one `DataObject~<id>.schema.json` and
+`DataObject~<id>.lineage.json` per *output* DataObject to `global.dataObjectsSchemaSource`, and
+merges the `@column` descriptions of `global.descriptionPath` into the schemas — the UI reads
+column descriptions from there. The dry-run exports no statistics, so
+`DataObjectSchemaExporter --withSchema false` runs after it and adds one
+`DataObject~<id>.stats.json` per DataObject without overwriting those schemas; it must run
+*after* the dry-run, whose step deletes all `viz/schema/*.json` first. Both globals are wired in `config/global.conf`:
+`descriptionPath` defaults to `viz/description` (relative to the CWD, i.e. the repo root for
+`mvn exec`) and is overridden by `SDLB_DESCRIPTION_PATH`; `dataObjectsSchemaSource` is set
+**only** through `SDLB_SCHEMA_SOURCE`, because once defined, the init phase of every run takes
+schemas of DataObjects without a declared schema from there. For the same reason the export
+deletes the previous documents first — otherwise the dry-run reads its input schemas from the
+stale export and writes them back unchanged. `startJob.sh` passes both variables into the
+container. `viz/build_index.sh` rebuilds `viz/state/index.json`; normal runs append to it
 automatically.
 
-3.0.0 changed the schema export file naming: one `DataObject~<id>.schema.json` /
-`DataObject~<id>.stats.json` per DataObject, replacing 2.x's timestamped
+3.0.0 changed the schema export file naming: one `DataObject~<id>.schema.json` per
+DataObject, replacing 2.x's timestamped
 `<id>.schema.<epoch>.json` plus `<id>.schema.index`. The 2.x files committed by the last green
 CI run (March 2024) were removed, since nothing rewrote or removed them.
-`DataObjectSchemaExporter` also gained `--mode plan|apply` for writing table and column
-comments back into the catalog (see Gotchas).
-
-Both exporters take a `--target` URI, and the scheme decides the shape of the output: a bare
+Both `ConfigJsonExporter` and `DataObjectSchemaExporter` take a `--target` URI, and the scheme decides the shape of the output: a bare
 path or `file:` is a hadoop path, i.e. an output **directory**, while `localfile:` writes a
 single file. This matters only for `ConfigJsonExporter`, whose output is one document —
 `--target ./viz/exportedConfig.json` silently produces `viz/exportedConfig.json/exportedConfig.json`
@@ -240,19 +249,19 @@ pipeline with `./prepare.sh final` (it `chmod +x`es it first, because this repo 
 `core.fileMode=false` so the script is committed non-executable), auto-bumps the parent to the newest non-feature SDLB snapshot
 (`versions:display-parent-updates` → `versions:update-parent`), builds, runs the pipeline,
 retries with `-DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock` if the
-live flight API fails, exports schema/stats, **commits the updated `viz/state/` back to
-master**, and deploys `viz/` to GitHub Pages. `paths-ignore` on `viz/state/**` and
-`viz/schemas/**` prevents that self-commit from re-triggering the workflow.
+live flight API fails, exports schema/column lineage with a dry-run and statistics with `DataObjectSchemaExporter`, **commits the updated
+`viz/state/` and `viz/schema/` back to master**, and deploys `viz/` to GitHub Pages.
+`paths-ignore` on `viz/state/**` and `viz/schema/**` prevents that self-commit from re-triggering the workflow.
 
 ## Gotchas
 
 - **Table comments are applied at deploy time, not by a pipeline run.** Since
   [#1121](https://github.com/smart-data-lake/smart-data-lake/issues/1121) a run never writes a
-  `metadata.description` into the table; `DataObjectSchemaExporter --mode apply` does, together
-  with the `@column` comments from `--descriptionPath`. So after a plain run the Delta log holds
+  `metadata.description` into the table; `CatalogSchemaUpdater --mode apply` does, together
+  with the `@column` comments from `--descriptionPath` (default `global.descriptionPath`). So after a plain run the Delta log holds
   no `description` — that is expected, not a failure. Use `--mode plan` to see what `apply`
   would change. No step in `ui-build.yml` runs `apply`, and the UI reads descriptions from
-  `exportedConfig.json`/`viz/description` rather than from the catalog, so nothing depends on
+  `exportedConfig.json`, `viz/description` and the column descriptions merged into `viz/schema` rather than from the catalog, so nothing depends on
   it here.
   (Historical: on earlier 3.0.0 snapshots a `description` plus `table.catalog = null` made
   `prepare` fail outright, because SDLB emitted Databricks-only `USE CATALOG`. Fixed upstream in

@@ -1,9 +1,9 @@
-# viz/schema holds the DataObject schema and statistics documents written by
-# io.smartdatalake.meta.configexporter.DataObjectSchemaExporter, one
-# DataObject~<id>.schema.json / .stats.json per DataObject.
+# viz/schema holds the DataObject schema and column lineage documents written by an SDLB
+# dry-run with --test dry-run-with-lineage-export, one DataObject~<id>.schema.json /
+# .lineage.json per output DataObject, with the @column descriptions of
+# global.descriptionPath merged into the schemas, plus one .stats.json per DataObject
+# written by DataObjectSchemaExporter --withSchema false.
 #
-# The documents themselves are run output and are not tracked: the workflow
-# regenerates them on every run and deploys them with viz/, and it only commits
-# viz/state/ back to the repository. This file only keeps the directory itself in
-# git, so that startJob.sh has a real bind-mount source and the UI layout is
-# complete in a fresh clone. The exporter creates the directory if it is missing.
+# The workflow regenerates them on every run and commits them back to the repository
+# together with viz/state/. This file keeps the directory in git, so that startJob.sh has a
+# real bind-mount source in a fresh clone.
