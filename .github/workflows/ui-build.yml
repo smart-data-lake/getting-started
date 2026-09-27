@@ -82,9 +82,8 @@ jobs:
       id: schema-lineage-export
       # A dry-run exports the schemas, merged with the @column descriptions of global.descriptionPath,
       # and the column lineage of all output DataObjects to global.dataObjectsSchemaSource.
-      # The previous export is removed first, as the dry-run also reads input schemas from there.
       env:
-        SDLB_SCHEMA_SOURCE: viz/schema # a bare relative path: Hadoop rejects "file:./viz/schema"
+        SDLB_SCHEMA_SOURCE: "localfile:viz/schema"
       run: |
         rm -f viz/schema/*.json viz/schema/*.txt
         mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.DefaultSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf -n getting-started --test dry-run-with-lineage-export"
@@ -92,7 +91,7 @@ jobs:
     - name: Run Statistics export
       id: stats-export
       # The dry-run exports no statistics, so DataObjectSchemaExporter adds them, without its own schemas.
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config,./envConfig/dev.conf --target viz/schema --withSchema false"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config,./envConfig/dev.conf --target localfile:viz/schema --withSchema false"
 
     - name: Git Config
       run: |
