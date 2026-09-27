@@ -6,7 +6,7 @@
 # .../exportedConfig.json/exportedConfig.json instead. The schema/lineage export writes documents
 # per DataObject, so a directory target is correct there.
 CONFIG_TARGET="${1:-localfile:/mnt/data/exportedConfig.json}"
-SCHEMA_TARGET="${2:-/mnt/schema}"
+SCHEMA_TARGET="${2:-localfile:/mnt/schema}"
 
 # export configuration
 export CLASS=io.smartdatalake.meta.configexporter.ConfigJsonExporter
