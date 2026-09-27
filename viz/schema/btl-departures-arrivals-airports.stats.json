@@ -1,0 +1,53 @@
+{
+  "numDataFilesCurrent" : 2,
+  "oldestSnapshotTs" : 1790498103,
+  "columns" : {
+    "dep_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "50.026706",
+      "max" : "50.026706"
+    },
+    "dep_name" : {
+      "nullCount" : 0,
+      "min" : "Frankfurt Main Airport",
+      "max" : "Frankfurt Main Airport"
+    },
+    "dep_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "8.55835",
+      "max" : "8.55835"
+    },
+    "estdepartureairport" : {
+      "nullCount" : 0,
+      "min" : "EDDF",
+      "max" : "EDDF"
+    },
+    "estarrivalairport" : {
+      "nullCount" : 0,
+      "min" : "LDRO",
+      "max" : "LQLV"
+    },
+    "arr_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "35.531207",
+      "max" : "44.845517"
+    },
+    "arr_name" : {
+      "nullCount" : 0,
+      "min" : "Chania International Airport",
+      "max" : "Otočac Airfield"
+    },
+    "arr_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "15.288607",
+      "max" : "24.150673"
+    }
+  },
+  "sizeInBytesCurrent" : 5688,
+  "lastModifiedAt" : 1790498103,
+  "numRows" : 3,
+  "lastCommitMsg" : "getting-started runId=80 attemptId=1",
+  "numFiles" : 4,
+  "sizeInBytes" : 13601,
+  "createdAt" : 1790498101
+}
