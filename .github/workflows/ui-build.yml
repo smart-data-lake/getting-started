@@ -85,6 +85,7 @@ jobs:
       env:
         SDLB_SCHEMA_SOURCE: "localfile:viz/schema"
       run: |
+        mkdir -p viz/schema
         rm -f viz/schema/*.json viz/schema/*.txt
         mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.DefaultSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf -n getting-started --test dry-run-with-lineage-export"
 
