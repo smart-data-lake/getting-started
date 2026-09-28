@@ -1,0 +1,76 @@
+{
+  "schema" : [ {
+    "name" : "id",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "ident",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "type",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "name",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "latitude_deg",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "longitude_deg",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "elevation_ft",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "continent",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "iso_country",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "iso_region",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "municipality",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "scheduled_service",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "gps_code",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "iata_code",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "local_code",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "home_link",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "wikipedia_link",
+    "dataType" : "string",
+    "nullable" : true
+  }, {
+    "name" : "keywords",
+    "dataType" : "string",
+    "nullable" : true
+  } ],
+  "subFeedType" : "SparkSubFeed"
+}

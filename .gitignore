@@ -24,7 +24,7 @@ viz/*.txt
 viz/*.png
 viz/*.org
 viz/exportedConfig.json
-viz/schema/*.json
+viz/schema/*.lineage-debug.txt
 .vscode
 .metals
 lsp

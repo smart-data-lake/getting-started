@@ -5,7 +5,7 @@ on:
     #The workflow runs for any changes that happen, except in ignored paths.
     paths-ignore:
       - 'viz/state/**'
-      - 'viz/schemas/**'
+      - 'viz/schema/**'
     branches:
       - master
 
@@ -78,20 +78,32 @@ jobs:
       if: steps.getting-started1.outcome == 'failure'
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath -DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock io.smartdatalake.app.DefaultSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf --state-path viz/state -n getting-started --parallelism 2"
 
-    - name: Run Schema and Statistics export
-      id: schema-stats-export
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config,./envConfig/dev.conf --exportPath viz/schema"
+    - name: Run Schema and Column Lineage export
+      id: schema-lineage-export
+      # A dry-run exports the schemas, merged with the @column descriptions of global.descriptionPath,
+      # and the column lineage of all output DataObjects to global.dataObjectsSchemaSource.
+      env:
+        SDLB_SCHEMA_SOURCE: "localfile:viz/schema"
+      run: |
+        mkdir -p viz/schema
+        mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.app.DefaultSmartDataLakeBuilder --feed-sel .* --config ./config,./envConfig/dev.conf -n getting-started --test dry-run-with-lineage-export"
+
+    - name: Run Statistics export
+      id: stats-export
+      # The dry-run exports no statistics, so DataObjectSchemaExporter adds them, without its own schemas.
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config,./envConfig/dev.conf --target localfile:viz/schema --withSchema false"
 
     - name: Git Config
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
 
-    - name: Commit and Push New State File
+    - name: Commit and Push New State, Schema, Lineage and Statistics Files
       run: |
         git pull
         git add viz/state/
-        git commit -m "Update state file"
+        git add -A viz/schema/
+        git commit -m "Update state, schema, lineage and statistics files"
         git push
 
     - name: Run Export config with additional documentation
@@ -103,7 +115,7 @@ jobs:
       run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config,./envConfig/dev.conf --target localfile:./viz/exportedConfig.json --descriptionPath viz/description"
 
     - name: Setup Pages
-      uses: actions/configure-pages@v5
+      uses: actions/configure-pages@v6
 
     - name: Download and Unzip Latest UI Snapshot
       run: wget https://nightly.link/smart-data-lake/sdl-visualization/workflows/build/develop/sdl-visualizer.zip && unzip -n sdl-visualizer.zip -d ./viz
@@ -113,9 +125,6 @@ jobs:
           chmod +x ./build_index.sh  
           ./build_index.sh ./state
       working-directory: viz/
-
-    - name: Remove .venv Folder
-      run: rm -rf viz/.venv/
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
