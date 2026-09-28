@@ -126,9 +126,6 @@ jobs:
           ./build_index.sh ./state
       working-directory: viz/
 
-    - name: Remove .venv Folder
-      run: rm -rf viz/.venv/
-
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
       with:
