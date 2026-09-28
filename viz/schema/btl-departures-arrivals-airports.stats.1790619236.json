@@ -1,0 +1,53 @@
+{
+  "numDataFilesCurrent" : 2,
+  "oldestSnapshotTs" : 1790619183,
+  "columns" : {
+    "dep_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "50.026706",
+      "max" : "50.026706"
+    },
+    "dep_name" : {
+      "nullCount" : 0,
+      "min" : "Frankfurt Main Airport",
+      "max" : "Frankfurt Main Airport"
+    },
+    "dep_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "8.55835",
+      "max" : "8.55835"
+    },
+    "estdepartureairport" : {
+      "nullCount" : 0,
+      "min" : "EDDF",
+      "max" : "EDDF"
+    },
+    "estarrivalairport" : {
+      "nullCount" : 0,
+      "min" : "LDDU",
+      "max" : "LTBJ"
+    },
+    "arr_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "38.2924",
+      "max" : "43.301102"
+    },
+    "arr_name" : {
+      "nullCount" : 0,
+      "min" : "Adnan Menderes International Air",
+      "max" : "Dubrovnik Ruđer Bošković Airport"
+    },
+    "arr_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "-2.91061",
+      "max" : "27.157"
+    }
+  },
+  "sizeInBytesCurrent" : 5827,
+  "lastModifiedAt" : 1790619183,
+  "numRows" : 5,
+  "lastCommitMsg" : "getting-started runId=83 attemptId=1",
+  "numFiles" : 4,
+  "sizeInBytes" : 13728,
+  "createdAt" : 1790619180
+}
