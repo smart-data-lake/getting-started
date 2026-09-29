@@ -1,0 +1,53 @@
+{
+  "numDataFilesCurrent" : 2,
+  "oldestSnapshotTs" : 1790698206,
+  "columns" : {
+    "dep_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "50.026706",
+      "max" : "50.026706"
+    },
+    "dep_name" : {
+      "nullCount" : 0,
+      "min" : "Frankfurt Main Airport",
+      "max" : "Frankfurt Main Airport"
+    },
+    "dep_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "8.55835",
+      "max" : "8.55835"
+    },
+    "estdepartureairport" : {
+      "nullCount" : 0,
+      "min" : "EDDF",
+      "max" : "EDDF"
+    },
+    "estarrivalairport" : {
+      "nullCount" : 0,
+      "min" : "EDDP",
+      "max" : "LTXE"
+    },
+    "arr_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "37.097222",
+      "max" : "51.420657"
+    },
+    "arr_name" : {
+      "nullCount" : 0,
+      "min" : "Ikaria Airport",
+      "max" : "Leipzig/Halle Airport"
+    },
+    "arr_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "12.232705",
+      "max" : "30.648264"
+    }
+  },
+  "sizeInBytesCurrent" : 5632,
+  "lastModifiedAt" : 1790698206,
+  "numRows" : 3,
+  "lastCommitMsg" : "getting-started runId=82 attemptId=1",
+  "numFiles" : 4,
+  "sizeInBytes" : 13513,
+  "createdAt" : 1790698203
+}
