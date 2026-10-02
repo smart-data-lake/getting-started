@@ -1,0 +1,200 @@
+{
+  "appConfig" : {
+    "feedSel" : ".*",
+    "applicationName" : "getting-started",
+    "configuration" : [ "./config", "./envConfig/dev.conf" ],
+    "configurationValueOverwrite" : { },
+    "parallelism" : 2,
+    "statePath" : "viz/state",
+    "streaming" : false
+  },
+  "runId" : 83,
+  "attemptId" : 1,
+  "runStartTime" : "2026-10-02T22:21:54.728Z",
+  "attemptStartTime" : "2026-10-02T22:21:54.728Z",
+  "actionsState" : {
+    "join-departures-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 83,
+        "attemptId" : 1
+      },
+      "state" : "SKIPPED",
+      "startTstmpPrepare" : "2026-10-02T22:22:04.987Z",
+      "endTstmpPrepare" : "2026-10-02T22:22:05.077Z",
+      "startTstmpInit" : "2026-10-02T22:22:06.434Z",
+      "endTstmpInit" : "2026-10-02T22:22:06.580Z",
+      "startTstmp" : "2026-10-02T22:22:17.722Z",
+      "endTstmp" : "2026-10-02T22:22:20.849Z",
+      "duration" : "PT3.127283812S",
+      "msg" : "NoDataToProcessWarning: (Action~join-departures-airports) no data to process for DataObject~btl-departures-arrivals-airports",
+      "results" : [ {
+        "type" : "InitSubFeed",
+        "dataObjectId" : "btl-departures-arrivals-airports",
+        "partitionValues" : [ ],
+        "isSkipped" : true,
+        "executionModeResultOptions" : { }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "int-departures", "int-airports" ],
+      "outputIds" : [ "btl-departures-arrivals-airports" ]
+    },
+    "download-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 83,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2026-10-02T22:21:56.489Z",
+      "endTstmpPrepare" : "2026-10-02T22:21:56.506Z",
+      "startTstmpInit" : "2026-10-02T22:22:05.143Z",
+      "endTstmpInit" : "2026-10-02T22:22:05.167Z",
+      "startTstmp" : "2026-10-02T22:22:06.707Z",
+      "endTstmp" : "2026-10-02T22:22:07.732Z",
+      "duration" : "PT1.025032414S",
+      "results" : [ {
+        "type" : "FileSubFeed",
+        "fileRefs" : [ {
+          "fullPath" : "stg-airports/result.csv",
+          "fileName" : "result.csv",
+          "partitionValues" : { }
+        } ],
+        "dataObjectId" : "stg-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "fileRefMapping" : [ {
+          "src" : {
+            "fullPath" : "",
+            "fileName" : "result",
+            "partitionValues" : { }
+          },
+          "tgt" : {
+            "fullPath" : "stg-airports/result.csv",
+            "fileName" : "result.csv",
+            "partitionValues" : { }
+          }
+        } ],
+        "metrics" : {
+          "files_written" : 1
+        },
+        "executionModeResultOptions" : { }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "ext-airports" ],
+      "outputIds" : [ "stg-airports" ]
+    },
+    "download-deduplicate-departures" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 83,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2026-10-02T22:21:56.508Z",
+      "endTstmpPrepare" : "2026-10-02T22:22:04.948Z",
+      "startTstmpInit" : "2026-10-02T22:22:05.170Z",
+      "endTstmpInit" : "2026-10-02T22:22:06.312Z",
+      "startTstmp" : "2026-10-02T22:22:06.707Z",
+      "endTstmp" : "2026-10-02T22:22:17.672Z",
+      "duration" : "PT10.965107946S",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "int-departures",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "filters" : [ ],
+        "metrics" : {
+          "count" : 28,
+          "num_output_bytes" : 5589,
+          "num_tasks" : 1,
+          "rows_inserted" : 28,
+          "num_files" : 1,
+          "records_written" : 28,
+          "bytes_written" : 5589
+        },
+        "executionModeResultOptions" : { }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "ext-departures" ],
+      "outputIds" : [ "int-departures" ]
+    },
+    "historize-airports" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 83,
+        "attemptId" : 1
+      },
+      "state" : "SUCCEEDED",
+      "startTstmpPrepare" : "2026-10-02T22:22:04.949Z",
+      "endTstmpPrepare" : "2026-10-02T22:22:04.986Z",
+      "startTstmpInit" : "2026-10-02T22:22:06.315Z",
+      "endTstmpInit" : "2026-10-02T22:22:06.432Z",
+      "startTstmp" : "2026-10-02T22:22:07.746Z",
+      "endTstmp" : "2026-10-02T22:22:17.711Z",
+      "duration" : "PT9.964833506S",
+      "results" : [ {
+        "type" : "SparkSubFeed",
+        "dataObjectId" : "int-airports",
+        "partitionValues" : [ ],
+        "isDAGStart" : false,
+        "isSkipped" : false,
+        "filters" : [ ],
+        "metrics" : {
+          "num_output_bytes" : 3541770,
+          "num_tasks" : 2,
+          "count#mainInput" : 86156,
+          "rows_inserted" : 86156,
+          "num_files" : 2,
+          "records_written" : 86156,
+          "bytes_written" : 3541770,
+          "count" : 86156,
+          "count#stg-airports" : 86156
+        },
+        "executionModeResultOptions" : { }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "stg-airports", "int-airports" ],
+      "outputIds" : [ "int-airports" ]
+    },
+    "compute-distances" : {
+      "executionId" : {
+        "type" : "SDLExecutionId",
+        "runId" : 83,
+        "attemptId" : 1
+      },
+      "state" : "SKIPPED",
+      "startTstmpPrepare" : "2026-10-02T22:22:05.078Z",
+      "endTstmpPrepare" : "2026-10-02T22:22:05.136Z",
+      "startTstmpInit" : "2026-10-02T22:22:06.583Z",
+      "endTstmpInit" : "2026-10-02T22:22:06.700Z",
+      "startTstmp" : "2026-10-02T22:22:20.873Z",
+      "endTstmp" : "2026-10-02T22:22:20.884Z",
+      "duration" : "PT0.010903697S",
+      "msg" : "TaskSkippedDontStopWarning: (Action~compute-distances) execution skipped because mainInput subFeed btl-departures-arrivals-airports is skipped",
+      "results" : [ {
+        "type" : "InitSubFeed",
+        "dataObjectId" : "btl-distances",
+        "partitionValues" : [ ],
+        "isSkipped" : true,
+        "executionModeResultOptions" : { }
+      } ],
+      "dataObjectsState" : [ ],
+      "inputIds" : [ "btl-departures-arrivals-airports" ],
+      "outputIds" : [ "btl-distances" ]
+    }
+  },
+  "isFinal" : true,
+  "runStateFormatVersion" : 6,
+  "sdlbVersionInfo" : {
+    "version" : "3.0.0-SNAPSHOT",
+    "user" : "runner",
+    "date" : "2026-10-02T22:01:05.216Z",
+    "revision" : "13aa475d17"
+  },
+  "appVersionInfo" : {
+    "version" : "3.0.0-SNAPSHOT"
+  }
+}

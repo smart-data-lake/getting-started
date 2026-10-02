@@ -1,0 +1,21 @@
+{
+  "numDataFilesCurrent" : 0,
+  "oldestSnapshotTs" : 1790979739,
+  "columns" : {
+    "dep_latitude_deg" : { },
+    "dep_name" : { },
+    "dep_longitude_deg" : { },
+    "estdepartureairport" : { },
+    "estarrivalairport" : { },
+    "arr_latitude_deg" : { },
+    "arr_name" : { },
+    "arr_longitude_deg" : { }
+  },
+  "sizeInBytesCurrent" : 0,
+  "lastModifiedAt" : 1790979739,
+  "numRows" : 0,
+  "lastCommitMsg" : "getting-started runId=83 attemptId=1",
+  "numFiles" : 3,
+  "sizeInBytes" : 5005,
+  "createdAt" : 1790979738
+}
