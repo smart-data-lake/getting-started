@@ -34,6 +34,10 @@ dataObjects {
       db = ${env.database}
       name = int_departures
       primaryKey = [icao24, estdepartureairport, dt]
+      foreignKeys = [
+        { name = "fk_departure_airport", dataObjectId = "int-airports", columns = { estdepartureairport = "ident" } }
+        { name = "fk_arrival_airport",   dataObjectId = "int-airports", columns = { estarrivalairport = "ident" } }
+      ]
     }
     allowSchemaEvolution = true
     metadata = {

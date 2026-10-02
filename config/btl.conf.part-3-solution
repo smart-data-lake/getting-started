@@ -9,6 +9,10 @@ dataObjects {
       catalog = ${env.catalog}
       db = ${env.database}
       name = "btl_departures_arrivals_airports"
+      foreignKeys = [
+        { name = "fk_departure_airport", dataObjectId = "int-airports", columns = { estdepartureairport = "ident" } }
+        { name = "fk_arrival_airport",   dataObjectId = "int-airports", columns = { estarrivalairport = "ident" } }
+      ]
     }
     metadata = {
       tags = ["aviation", "flight"]
@@ -24,6 +28,10 @@ dataObjects {
       catalog = ${env.catalog}
       db = ${env.database}
       name = "btl_distances"
+      foreignKeys = [
+        { name = "fk_departure_airport", dataObjectId = "int-airports", columns = { estdepartureairport = "ident" } }
+        { name = "fk_arrival_airport",   dataObjectId = "int-airports", columns = { estarrivalairport = "ident" } }
+      ]
     }
     metadata = {
       tags = ["aviation", "flight"]
