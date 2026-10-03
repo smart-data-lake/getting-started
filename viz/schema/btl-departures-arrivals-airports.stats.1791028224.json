@@ -1,0 +1,53 @@
+{
+  "numDataFilesCurrent" : 2,
+  "oldestSnapshotTs" : 1791028175,
+  "columns" : {
+    "dep_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "50.026706",
+      "max" : "50.026706"
+    },
+    "dep_name" : {
+      "nullCount" : 0,
+      "min" : "Frankfurt Main Airport",
+      "max" : "Frankfurt Main Airport"
+    },
+    "dep_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "8.55835",
+      "max" : "8.55835"
+    },
+    "estdepartureairport" : {
+      "nullCount" : 0,
+      "min" : "EDDF",
+      "max" : "EDDF"
+    },
+    "estarrivalairport" : {
+      "nullCount" : 0,
+      "min" : "LIAU",
+      "max" : "LOWW"
+    },
+    "arr_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "41.116001",
+      "max" : "48.110298"
+    },
+    "arr_name" : {
+      "nullCount" : 0,
+      "min" : "Capua Airport",
+      "max" : "Vienna International Airport"
+    },
+    "arr_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "11.202822",
+      "max" : "16.5697"
+    }
+  },
+  "sizeInBytesCurrent" : 5609,
+  "lastModifiedAt" : 1791028175,
+  "numRows" : 3,
+  "lastCommitMsg" : "getting-started runId=84 attemptId=1",
+  "numFiles" : 4,
+  "sizeInBytes" : 13478,
+  "createdAt" : 1791028172
+}
