@@ -1,0 +1,88 @@
+{
+  "numDataFilesCurrent" : 1,
+  "oldestSnapshotTs" : 1791201322,
+  "columns" : {
+    "lastSeen" : {
+      "nullCount" : 0,
+      "min" : 1791192414,
+      "max" : 1791201306
+    },
+    "callsign" : {
+      "nullCount" : 0,
+      "min" : "AEE831  ",
+      "max" : "UZB232  "
+    },
+    "estArrivalAirportVertDistance" : {
+      "nullCount" : 86,
+      "min" : 0,
+      "max" : 7451
+    },
+    "estArrivalAirport" : {
+      "nullCount" : 87,
+      "min" : "LDSB",
+      "max" : "LRIA"
+    },
+    "estArrivalAirportHorizDistance" : {
+      "nullCount" : 86,
+      "min" : 0,
+      "max" : 28473
+    },
+    "dl_ts_captured" : {
+      "nullCount" : 0,
+      "min" : "2026-10-05T11:55:06.388Z",
+      "max" : "2026-10-05T11:55:06.388Z"
+    },
+    "firstSeen" : {
+      "nullCount" : 0,
+      "min" : 1791186273,
+      "max" : 1791201219
+    },
+    "icao24" : {
+      "nullCount" : 0,
+      "min" : "300394",
+      "max" : "abbb2c"
+    },
+    "estDepartureAirport" : {
+      "nullCount" : 0,
+      "min" : "EDDF",
+      "max" : "LSZB"
+    },
+    "estDepartureAirportHorizDistance" : {
+      "nullCount" : 0,
+      "min" : 317,
+      "max" : 69970
+    },
+    "arrivalAirportCandidatesCount" : {
+      "nullCount" : 0,
+      "min" : 0,
+      "max" : 17
+    },
+    "dt" : {
+      "nullCount" : 0,
+      "min" : "20261005",
+      "max" : "20261005"
+    },
+    "estDepartureAirportVertDistance" : {
+      "nullCount" : 0,
+      "min" : 3,
+      "max" : 148
+    },
+    "created_at" : {
+      "nullCount" : 0,
+      "min" : "2026-10-05T11:55:18.777Z",
+      "max" : "2026-10-05T11:55:18.777Z"
+    },
+    "departureAirportCandidatesCount" : {
+      "nullCount" : 0,
+      "min" : 115,
+      "max" : 151
+    }
+  },
+  "sizeInBytesCurrent" : 7495,
+  "lastModifiedAt" : 1791201322,
+  "numRows" : 92,
+  "lastCommitMsg" : "getting-started runId=85 attemptId=1",
+  "numFiles" : 3,
+  "sizeInBytes" : 16010,
+  "createdAt" : 1791201318
+}

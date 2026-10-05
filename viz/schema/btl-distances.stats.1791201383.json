@@ -1,0 +1,61 @@
+{
+  "numDataFilesCurrent" : 2,
+  "oldestSnapshotTs" : 1791201333,
+  "columns" : {
+    "dep_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "50.026706",
+      "max" : "50.026706"
+    },
+    "dep_name" : {
+      "nullCount" : 0,
+      "min" : "Frankfurt Main Airport",
+      "max" : "Frankfurt Main Airport"
+    },
+    "dep_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "8.55835",
+      "max" : "8.55835"
+    },
+    "could_be_done_by_rail" : {
+      "nullCount" : 0
+    },
+    "estdepartureairport" : {
+      "nullCount" : 0,
+      "min" : "EDDF",
+      "max" : "EDDF"
+    },
+    "estarrivalairport" : {
+      "nullCount" : 0,
+      "min" : "LDSB",
+      "max" : "LRIA"
+    },
+    "arr_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "36.400045",
+      "max" : "47.179633"
+    },
+    "arr_name" : {
+      "nullCount" : 0,
+      "min" : "Bari Karol Wojtyła International",
+      "max" : "Visoko Kenan Jusufbasic Airfield"
+    },
+    "arr_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "16.678362",
+      "max" : "27.621431"
+    },
+    "distance" : {
+      "nullCount" : 0,
+      "min" : 971.5212912812243,
+      "max" : 2034.0236165295448
+    }
+  },
+  "sizeInBytesCurrent" : 6972,
+  "lastModifiedAt" : 1791201333,
+  "numRows" : 5,
+  "lastCommitMsg" : "getting-started runId=85 attemptId=1",
+  "numFiles" : 4,
+  "sizeInBytes" : 15717,
+  "createdAt" : 1791201333
+}
