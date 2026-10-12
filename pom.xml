@@ -58,23 +58,27 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>3.1.0</version>
+						<version>3.6.3</version>
 						<executions>
 							<execution>
 								<id>generate-catalog</id>
 								<phase>process-classes</phase>
 								<goals>
-									<goal>java</goal>
+									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<mainClass>io.smartdatalake.lab.LabCatalogGenerator</mainClass>
+									<!-- run in a separate JVM: exec:java closes its classloader before Hadoop's shutdown hooks run -->
+									<executable>${java.home}/bin/java</executable>
 									<arguments>
+										<argument>-classpath</argument>
+										<classpath/>
+										<argument>io.smartdatalake.lab.LabCatalogGenerator</argument>
 										<argument>--config</argument>
 										<argument>./config,./envConfig/dev.conf</argument>
 										<argument>--srcDirectory</argument>
 										<argument>./src/main/scala-generated</argument>
 									</arguments>
-									<classpathScope>compile</classpathScope>
+									<classpathScope>provided</classpathScope>
 								</configuration>
 							</execution>
 						</executions>

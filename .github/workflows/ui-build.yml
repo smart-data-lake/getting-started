@@ -90,8 +90,8 @@ jobs:
 
     - name: Run Statistics export
       id: stats-export
-      # The dry-run exports no statistics, so DataObjectSchemaExporter adds them, without its own schemas.
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.DataObjectSchemaExporter --config ./config,./envConfig/dev.conf --target localfile:viz/schema --withSchema false"
+      # The dry-run exports no statistics, so CatalogStatsExporter adds them.
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.CatalogStatsExporter --config ./config,./envConfig/dev.conf --target localfile:viz/schema"
 
     - name: Git Config
       run: |
@@ -112,7 +112,7 @@ jobs:
       # --target replaces the deprecated --filename: in SDLB 3.0.0 a bare path is a hadoop
       # directory, so --filename viz/exportedConfig.json writes viz/exportedConfig.json/exportedConfig.json.
       # The localfile: scheme keeps it a single file where the UI expects it.
-      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config,./envConfig/dev.conf --target localfile:./viz/exportedConfig.json --descriptionPath viz/description"
+      run: mvn -B exec:exec -Dexec.executable="java" -Dexec.args="$JAVA_OPTIONS -cp %classpath io.smartdatalake.meta.configexporter.ConfigJsonExporter --config ./config,./envConfig/dev.conf --target localfile:./viz/exportedConfig.json --types configJson"
 
     - name: Setup Pages
       uses: actions/configure-pages@v6
