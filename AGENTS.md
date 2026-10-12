@@ -143,7 +143,7 @@ where config cannot express something.
   "Connection~default-engine not found in instance registry".
   `default-engine` also sets `enableHive = true`, which is what gives the run a persistent
   Derby metastore in `./metastore_db` instead of a per-JVM in-memory catalog. Table
-  registrations then survive the process, which `DataObjectSchemaExporter` depends on — it
+  registrations then survive the process, which `CatalogStatsExporter` depends on — it
   looks its Delta tables up by name through the session catalog, in a JVM of its own.
   `SparkClassicConnection` defaults this to `false` and SDLB 3.0.0 no longer pulls `spark-hive`
   in transitively, so `pom.xml` declares it (see Dependency management); without it, enabling
@@ -201,12 +201,12 @@ SPA plus the data it renders. Tracked: `viz/state/`, `viz/schema/`, `viz/descrip
 The config graph comes from `io.smartdatalake.meta.configexporter.ConfigJsonExporter`
 (`--descriptionPath viz/description` only matters with `--uploadDescriptions`). Schemas and
 column lineage come from an SDLB dry-run, `DefaultSmartDataLakeBuilder --test
-dry-run-with-lineage-export`, which writes one `DataObject~<id>.schema.json` and
-`DataObject~<id>.lineage.json` per *output* DataObject to `global.dataObjectsSchemaSource`, and
+dry-run-with-lineage-export`, which writes one `<id>.schema.json` and
+`<id>.lineage.json` per *output* DataObject to `global.dataObjectsSchemaSource`, and
 merges the `@column` descriptions of `global.descriptionPath` into the schemas — the UI reads
 column descriptions from there. The dry-run exports no statistics, so
-`DataObjectSchemaExporter --withSchema false` runs after it and adds one
-`DataObject~<id>.stats.json` per DataObject without overwriting those schemas; it must run
+`CatalogStatsExporter --withSchema false` runs after it and adds one
+`<id>.stats.json` per DataObject without overwriting those schemas; it must run
 *after* the dry-run, whose step deletes all `viz/schema/*.json` first. Both globals are wired in `config/global.conf`:
 `descriptionPath` defaults to `viz/description` (relative to the CWD, i.e. the repo root for
 `mvn exec`) and is overridden by `SDLB_DESCRIPTION_PATH`; `dataObjectsSchemaSource` is set
@@ -217,7 +217,7 @@ stale export and writes them back unchanged. `startJob.sh` passes both variables
 container. `viz/build_index.sh` rebuilds `viz/state/index.json`; normal runs append to it
 automatically.
 
-3.0.0 changed the schema export file naming: one `DataObject~<id>.schema.json` per
+3.0.0 changed the schema export file naming: one `<id>.schema.json` per
 DataObject, replacing 2.x's timestamped
 `<id>.schema.<epoch>.json` plus `<id>.schema.index`. The 2.x files committed by the last green
 CI run (March 2024) were removed, since nothing rewrote or removed them.
@@ -249,7 +249,7 @@ pipeline with `./prepare.sh final` (it `chmod +x`es it first, because this repo 
 `core.fileMode=false` so the script is committed non-executable), auto-bumps the parent to the newest non-feature SDLB snapshot
 (`versions:display-parent-updates` → `versions:update-parent`), builds, runs the pipeline,
 retries with `-DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock` if the
-live flight API fails, exports schema/column lineage with a dry-run and statistics with `DataObjectSchemaExporter`, **commits the updated
+live flight API fails, exports schema/column lineage with a dry-run and statistics with `CatalogStatsExporter`, **commits the updated
 `viz/state/` and `viz/schema/` back to master**, and deploys `viz/` to GitHub Pages.
 `paths-ignore` on `viz/state/**` and `viz/schema/**` prevents that self-commit from re-triggering the workflow.
 
