@@ -3,7 +3,7 @@
 # Optional overrides:
 # $1 for the configuration export file
 # $2 for the schema/lineage/statistics export directory
-CONFIG_TARGET="${1:-localfile:/mnt/data/exportedConfig.json}"
+CONFIG_TARGET="${1:-localfile:/mnt/data}"
 SCHEMA_TARGET="${2:-localfile:/mnt/schema}"
 
 # export configuration
