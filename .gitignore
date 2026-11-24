@@ -65,3 +65,5 @@ maven-metadata.xml
 .idea/sonarlint
 *.iml
 *.ipr
+
+.sdlb/*.jar

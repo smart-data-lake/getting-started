@@ -59,11 +59,11 @@ Consequences worth remembering:
 
 ## Build and run
 
-Requires Java 17. The project builds against `sdl-parent:3.0.0-SNAPSHOT` from
-`https://central.sonatype.com/repository/maven-snapshots/`.
-Note the workflow's auto-bump cannot recover from an *unresolvable*
+Requires Java 17. The project builds against the released `sdl-parent:3.0.0` from Maven
+Central (the `central-snapshots` repository in `pom.xml` is only needed to switch to a
+snapshot by hand). Note the workflow's auto-bump cannot recover from an *unresolvable*
 parent pin, because Maven must resolve the current parent before
-`versions:display-parent-updates` will run.
+`versions:update-parent` will run.
 
 ```bash
 mvn clean package                     # build the thin getting-started.jar
@@ -246,8 +246,8 @@ that installs Maven, builds the project, and runs SDLB on a cluster. It pairs wi
 
 `.github/workflows/ui-build.yml` on `master` (push, weekly cron, manual): seeds the completed
 pipeline with `./prepare.sh final` (it `chmod +x`es it first, because this repo has
-`core.fileMode=false` so the script is committed non-executable), auto-bumps the parent to the newest non-feature SDLB snapshot
-(`versions:display-parent-updates` → `versions:update-parent`), builds, runs the pipeline,
+`core.fileMode=false` so the script is committed non-executable), auto-bumps the parent to the newest SDLB *release*
+(`versions:update-parent`, which skips snapshots by default), builds, runs the pipeline,
 retries with `-DdataObjects.ext-departures.mockJsonDataObject=stg-departures-mock` if the
 live flight API fails, exports schema/column lineage with a dry-run and statistics with `CatalogStatsExporter`, **commits the updated
 `viz/state/` and `viz/schema/` back to master**, and deploys `viz/` to GitHub Pages.
