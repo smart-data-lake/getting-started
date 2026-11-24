@@ -1,0 +1,61 @@
+{
+  "numDataFilesCurrent" : 2,
+  "oldestSnapshotTs" : 1795554588,
+  "columns" : {
+    "dep_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "46.912736",
+      "max" : "50.026706"
+    },
+    "dep_name" : {
+      "nullCount" : 0,
+      "min" : "Bern Airport",
+      "max" : "Frankfurt Main Airport"
+    },
+    "dep_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "7.498819",
+      "max" : "8.55835"
+    },
+    "could_be_done_by_rail" : {
+      "nullCount" : 0
+    },
+    "estdepartureairport" : {
+      "nullCount" : 0,
+      "min" : "EDDF",
+      "max" : "LSZB"
+    },
+    "estarrivalairport" : {
+      "nullCount" : 0,
+      "min" : "EDDB",
+      "max" : "LTFM"
+    },
+    "arr_latitude_deg" : {
+      "nullCount" : 0,
+      "min" : "32.011398",
+      "max" : "53.630402"
+    },
+    "arr_name" : {
+      "nullCount" : 0,
+      "min" : "Adolfo Suárez Madrid–Barajas Air",
+      "max" : "İstanbul Airport"
+    },
+    "arr_longitude_deg" : {
+      "nullCount" : 0,
+      "min" : "-0.185739",
+      "max" : "9.98823"
+    },
+    "distance" : {
+      "nullCount" : 0,
+      "min" : 0.0,
+      "max" : 2953.345743527266
+    }
+  },
+  "sizeInBytesCurrent" : 9779,
+  "lastModifiedAt" : 1795554588,
+  "numRows" : 71,
+  "lastCommitMsg" : "getting-started runId=90 attemptId=1",
+  "numFiles" : 4,
+  "sizeInBytes" : 18397,
+  "createdAt" : 1795554588
+}
